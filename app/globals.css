@@ -1,0 +1,235 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 195, 100%, 45%;
+    --primary-foreground: 0, 0%, 0%;
+    --secondary: 212, 63%, 95%;
+    --secondary-foreground: 210, 25%, 15%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 195, 100%, 45%;
+    --primary-foreground: 0, 0%, 10%;
+    --secondary: 210, 20%, 12%;
+    --secondary-foreground: 210, 67%, 95%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.blob {
+  background-image: url('../public/blob-scene-haikei.svg');
+}
+
+.dark .blob {
+  background-image: url('../public/blob-scene-haikei-dark.svg');
+}
+
+.haikei {
+  aspect-ratio: 960/300;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+.editor-code {
+  position: relative;
+  display: block;
+  min-height: 3rem;
+  padding: 1rem 1rem 1rem 4.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+  font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  white-space: pre;
+  overflow-x: auto;
+  overflow-y: hidden;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
+}
+
+.editor-code::before {
+  content: attr(data-gutter);
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4rem;
+  white-space: pre;
+  text-align: right;
+  padding: 1rem 0.75rem;
+  border-right: 1px solid hsl(var(--border));
+  background-color: hsl(var(--card));
+  color: hsl(var(--muted-foreground));
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  font-family: inherit;
+  user-select: none;
+}
+
+.editor-code > * {
+  display: inline;
+  white-space: inherit;
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+  line-height: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+.editor-code .token.keyword,
+.editor-code .token.boolean,
+.editor-code .token.constant {
+  color: #f472b6;
+}
+
+.editor-code .token.string,
+.editor-code .token.attr-value,
+.editor-code .token.char {
+  color: #facc15;
+}
+
+.editor-code .token.function,
+.editor-code .token.builtin {
+  color: #38bdf8;
+}
+
+.editor-code .token.comment {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.editor-code .token.number {
+  color: #c084fc;
+}
+
+.editor-code .token.operator,
+.editor-code .token.punctuation {
+  color: #94a3b8;
+}
+
+.editor-image {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.image-resizer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.image-resizer--active {
+  border-radius: 0.75rem;
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.4);
+}
+
+.image-resizer-handle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--background));
+  background-color: hsl(var(--primary));
+  box-shadow: 0 0 4px rgba(15, 23, 42, 0.3);
+  pointer-events: auto;
+}
+
+.editor-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background-color: hsl(var(--card));
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+}
+
+.editor-table-cell,
+.editor-table-cell-header {
+  border: 1px solid hsl(var(--border));
+  padding: 0.75rem 1rem;
+  min-width: 110px;
+  background-color: hsl(var(--card));
+  position: relative;
+}
+
+.editor-table-row > .editor-table-cell:last-child,
+.editor-table-row > .editor-table-cell-header:last-child {
+  border-right: none;
+}
+
+.editor-table-row:last-child > .editor-table-cell,
+.editor-table-row:last-child > .editor-table-cell-header {
+  border-bottom: none;
+}
+
+.editor-table-cell:focus-within,
+.editor-table-cell-header:focus-within {
+  box-shadow: inset 0 0 0 1px rgba(0, 171, 228, 0.3);
+  background-color: hsl(var(--secondary));
+}
+
+.editor-table-cell-header {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--secondary-foreground));
+}
