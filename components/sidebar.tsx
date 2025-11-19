@@ -1,12 +1,12 @@
-import Link from "next/link";
+import Link from "next/link"
 import { BadgeQuestionMark, FileCodeCorner, Newspaper } from "lucide-react";
 
 export default function Sidebar() {
     return (
-        <aside className="border-l border-foreground/10 max-w-sm h-screen">
-            <div className="flex flex-col text-lg">
+        <aside className="border-r border-foreground/10 max-w-sm">
+            <div className="flex flex-col">
                 <Link href="/question/create"
-                    className="border-b border-foreground/10 px-5 py-3 items-center flex gap-3 hover:bg-accent">
+                    className="px-5 py-3 rounded-s-[30] items-center flex gap-3 hover:bg-accent">
                     <BadgeQuestionMark strokeWidth={1.3} size={80} />
 
                     <div>
@@ -20,7 +20,7 @@ export default function Sidebar() {
                 </Link>
 
                 <Link href="/review-kodingan/create"
-                    className="border-b border-foreground/10 px-5 py-3 flex items-center gap-3 hover:bg-accent">
+                    className="px-5 py-3 rounded-s-[30] flex items-center gap-3 hover:bg-accent">
                     <FileCodeCorner strokeWidth={1.3} size={80} />
 
                     <div>
@@ -34,7 +34,7 @@ export default function Sidebar() {
 
 
                 <Link href="/blogs/create"
-                    className="border-b border-foreground/10 px-5 py-3 flex items-center gap-3 hover:bg-accent">
+                    className="px-5 py-3 rounded-s-[30] flex items-center gap-3 hover:bg-accent">
                     <Newspaper strokeWidth={1} size={80} />
 
                     <div>

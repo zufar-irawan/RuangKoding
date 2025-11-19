@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader } from "./ui/card";
 
 export default function PostCard() {
     return (
-        <Link href="/protected/posts/1" className="flex-1 px-5 py-3">
+        <Link href="/#" className="flex-1">
             <Card>
                 <CardHeader>
                     Apa yang terjadi jika kita belajar coding setiap hari?

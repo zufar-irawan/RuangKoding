@@ -2,7 +2,6 @@
 
 import {
     DecoratorNode,
-    LexicalEditor,
     LexicalNode,
     NodeKey,
     SerializedLexicalNode,
@@ -98,7 +97,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
         return false;
     }
 
-    decorate(editor: LexicalEditor): JSX.Element {
+    decorate(): JSX.Element {
         return (
             <Suspense fallback={null}>
                 <ImageComponent

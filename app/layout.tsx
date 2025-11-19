@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-
-// @ts-ignore
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
