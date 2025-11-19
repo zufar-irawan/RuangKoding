@@ -100,7 +100,7 @@ const theme = {
     }
 }
 
-function onError(error: any) {
+function onError(error: Error) {
     console.error(error);
 }
 

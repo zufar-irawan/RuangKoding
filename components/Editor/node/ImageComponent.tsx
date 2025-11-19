@@ -18,6 +18,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { ImageResizer } from "../ImageResizer";
 import { $isImageNode } from "./ImageNode";
+import Image from "next/image";
 
 interface ImageComponentProps {
     src: string;
@@ -78,7 +79,7 @@ export default function ImageComponent({
 
     return (
         <>
-            <img
+            <Image
                 ref={imageRef}
                 src={src}
                 alt={altText}
