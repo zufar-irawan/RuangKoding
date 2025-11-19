@@ -10,7 +10,7 @@ export default function Home() {
 
         <Navbar />
 
-        <div className="flex flex-1 gap-4 pt-3">
+        <div className="flex flex-1 gap-4">
           <PostCard />
 
           <Sidebar />
