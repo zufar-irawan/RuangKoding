@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { BadgeQuestionMark, FileCodeCorner, Newspaper } from "lucide-react";
+import { BadgeQuestionMark, FileCodeCorner, Newspaper, PlusIcon } from "lucide-react";
 
 export default function Sidebar() {
     return (
@@ -7,13 +7,13 @@ export default function Sidebar() {
             <div className="flex flex-col">
                 <Link href="/question/create"
                     className="px-5 py-3 rounded-s-[30] items-center flex gap-3 hover:bg-accent">
-                    <BadgeQuestionMark strokeWidth={1.3} size={80} />
+                    <PlusIcon strokeWidth={1.3} size={80} />
 
                     <div>
                         Bikin pertanyaan baru
 
                         <p className="text-sm text-gray-500">
-                            Malu bertanya sesat dijalan. Apapun masalahnya, kirim kodingannya, dan tanyakan kesini!
+                            Malu bertanya sesat dijalan. Kirim kodingannya, dan tanya ke sepuh!
                         </p>
                     </div>
 
@@ -27,7 +27,7 @@ export default function Sidebar() {
                         Review Kodingan
 
                         <p className="text-sm text-gray-500">
-                            Kirim kodinganmu, dan serahkan pada Reviewer yang udah khatam syntax! Kita nilai sampe akar-akarnya.
+                            Kirim kodinganmu, biar sepuh nilai dari kompleksitasi hingga kerapihan!
                         </p>
                     </div>
                 </Link>
@@ -41,7 +41,7 @@ export default function Sidebar() {
                         Tulis Blog
 
                         <p className="text-sm text-gray-500">
-                            Punya pengalaman ngoding? Jangan di gatekeep dong, biar junior lain bisa belajar dari sepuh kayak kamu!
+                            Sepuh ngoding? Jangan di gatekeep dong. Tulis aja di blog!
                         </p>
 
                     </div>
