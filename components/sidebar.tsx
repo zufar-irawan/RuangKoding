@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { BadgeQuestionMark, FileCodeCorner, Newspaper, PlusIcon } from "lucide-react";
+import { FileCodeCorner, Newspaper, PlusIcon } from "lucide-react";
 
 export default function Sidebar() {
     return (
