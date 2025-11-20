@@ -134,7 +134,7 @@ export function Editor() {
 
     return (
         <LexicalComposer initialConfig={initialConfig}>
-            <div className="mx-auto my-8 flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-2xl">
+            <div className="my-4 flex w-full flex-col overflow-hidden rounded-md border border-border bg-card text-card-foreground">
                 <ToolbarPlugin />
 
                 <div className="relative">

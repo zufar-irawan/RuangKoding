@@ -1,50 +1,30 @@
 import Link from "next/link"
-import { FileCodeCorner, Newspaper, PlusIcon } from "lucide-react";
+import { CircleQuestionMark, FileCodeCorner, Home, MessageCircleQuestionMark, Newspaper, PlusIcon } from "lucide-react";
 
 export default function Sidebar() {
     return (
-        <aside className="border-r border-foreground/10 max-w-sm">
-            <div className="flex flex-col">
+        <aside className="border-r border-foreground/10 max-w-xs w-full">
+            <div className="flex flex-col py-5 w-full">
                 <Link href="/question/create"
-                    className="px-5 py-3 rounded-s-[30] items-center flex gap-3 hover:bg-accent">
-                    <PlusIcon strokeWidth={1.3} size={80} />
+                    className="ps-5 rounded-e-xl h-14 bg-blue-100/60 items-center flex justify-between gap-3 hover:bg-accent">
+                    <div className="flex gap-4">
+                        <Home strokeWidth={2} className="text-primary" size={24} />
 
-                    <div>
-                        Bikin pertanyaan baru
-
-                        <p className="text-sm text-gray-500">
-                            Malu bertanya sesat dijalan. Kirim kodingannya, dan tanya ke sepuh!
-                        </p>
+                        Home
                     </div>
 
+                    <div className="h-full text-primary w-2 rounded-xl bg-primary">.</div>
                 </Link>
 
                 <Link href="/review-kodingan/create"
-                    className="px-5 py-3 rounded-s-[30] flex items-center gap-3 hover:bg-accent">
-                    <FileCodeCorner strokeWidth={1.3} size={80} />
+                    className="ps-5 rounded-e-xl h-12 items-center flex justify-between gap-3 hover:bg-accent">
+                    <div className="flex gap-4">
+                        <MessageCircleQuestionMark strokeWidth={2} className="text-primary" size={24} />
 
-                    <div>
-                        Review Kodingan
-
-                        <p className="text-sm text-gray-500">
-                            Kirim kodinganmu, biar sepuh nilai dari kompleksitasi hingga kerapihan!
-                        </p>
+                        Pertanyaan
                     </div>
-                </Link>
 
-
-                <Link href="/blogs/create"
-                    className="px-5 py-3 rounded-s-[30] flex items-center gap-3 hover:bg-accent">
-                    <Newspaper strokeWidth={1} size={80} />
-
-                    <div>
-                        Tulis Blog
-
-                        <p className="text-sm text-gray-500">
-                            Sepuh ngoding? Jangan di gatekeep dong. Tulis aja di blog!
-                        </p>
-
-                    </div>
+                    {/* <div className="h-full text-primary w-3 rounded-xl bg-primary">.</div> */}
                 </Link>
             </div>
         </aside>

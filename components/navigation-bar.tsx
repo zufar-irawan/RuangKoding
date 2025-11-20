@@ -7,7 +7,8 @@ import SearchBar from "./searchbar";
 export default function Navbar() {
     return (
         <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-            <div className="flex w-[1380px] justify-between items-center py-3 px-5 text-sm">
+
+            <div className="flex w-full justify-between items-center py-3 px-10 text-sm">
                 <div className="flex gap-5 font-semibold">
                     <Link href={"/"}>
                         <Image
@@ -19,9 +20,11 @@ export default function Navbar() {
                     </Link>
                 </div>
 
-                <div className="flex flex-1 items-center gap-2">
+                <div className="flex flex-1 items-center justify-center">
                     <SearchBar />
+                </div>
 
+                <div className="flex items-center gap-2">
                     <ThemeSwitcher />
 
                     <AuthButton />
