@@ -1,12 +1,12 @@
 import Link from "next/link"
-import { CircleQuestionMark, FileCodeCorner, Home, MessageCircleQuestionMark, Newspaper, PlusIcon } from "lucide-react";
+import { Home, MessageCircleQuestionMark, } from "lucide-react";
 
 export default function Sidebar() {
     return (
         <aside className="border-r border-foreground/10 max-w-xs w-full">
             <div className="flex flex-col py-5 w-full">
                 <Link href="/question/create"
-                    className="ps-5 rounded-e-xl h-14 bg-blue-100/60 items-center flex justify-between gap-3 hover:bg-accent">
+                    className="ps-5 rounded-e-xl h-14 bg-blue-200/30 items-center flex justify-between gap-3 hover:bg-accent">
                     <div className="flex gap-4">
                         <Home strokeWidth={2} className="text-primary" size={24} />
 
