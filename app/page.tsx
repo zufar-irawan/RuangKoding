@@ -1,6 +1,5 @@
 import Navbar from "@/components/navigation-bar";
 import Footer from "@/components/footer";
-import PostCard from "@/components/post-card";
 import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";

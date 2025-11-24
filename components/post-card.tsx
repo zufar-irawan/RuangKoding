@@ -5,8 +5,10 @@ import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
 import { CheckCircle, Eye, ThumbsUp } from "lucide-react";
 
+import type { Question } from "@/lib/type";
+
 interface PostCardProps {
-    question: any;
+    question: Question;
 }
 
 export default function PostCard({ question }: PostCardProps) {
@@ -15,12 +17,12 @@ export default function PostCard({ question }: PostCardProps) {
         locale: id,
     });
 
-    const userProfile = question.profiles
+    const userProfile = question.profiles;
 
-    const questionTags = question.quest_tags
+    const questionTags = question.quest_tags ?? [];
 
-    const answerCount = question.answers.count || 0;
-    const votesCount = question.votes.count || 0;
+    const answerCount = question.answers?.[0]?.count ?? 0;
+    const votesCount = question.votes?.[0]?.count ?? 0;
 
     return (
         <Card className="flex-1">
@@ -58,9 +60,9 @@ export default function PostCard({ question }: PostCardProps) {
 
                     <div className="flex flex-col gap-3">
                         <div className="flex gap-2 items-center">
-                            {questionTags.map((t: any) => (
-                                <Link href={'#'} key={t.tags.tag} className="px-2 py-1 bg-accent text-accent-foreground rounded-md text-sm">
-                                    {t.tags.tag}
+                            {questionTags.map((t) => (
+                                <Link href={'#'} key={t.tags?.tag ?? "tag"} className="px-2 py-1 bg-accent text-accent-foreground rounded-md text-sm">
+                                    {t.tags?.tag ?? "Tanpa tag"}
                                 </Link>
                             ))}
                         </div>

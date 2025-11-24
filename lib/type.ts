@@ -16,3 +16,28 @@ export interface QuestionsType {
     created_at: Timestamp;
     updated_at: Timestamp;
 }
+
+type QuestionTag = {
+    tags: {
+        tag: string;
+    } | null;
+};
+
+type AggregateCount = Array<{ count: number } | null> | null;
+
+export interface Question {
+    id: number;
+    title: string;
+    excerpt: string;
+    created_at: string;
+    view: number;
+    profiles: {
+        id: string;
+        fullname: string;
+        bio: string | null;
+        profile_pic: string | null;
+    };
+    quest_tags: QuestionTag[];
+    votes: AggregateCount;
+    answers: AggregateCount;
+}

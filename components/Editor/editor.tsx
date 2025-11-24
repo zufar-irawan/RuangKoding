@@ -121,7 +121,7 @@ function Placeholder() {
     )
 }
 
-export function Editor({ initialState, onChange, excerpt }: EditorProps) {
+export function Editor({ onChange, excerpt }: EditorProps) {
     const initialConfig = {
         namespace: "MyEditor",
         theme,

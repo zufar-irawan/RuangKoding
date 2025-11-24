@@ -110,7 +110,7 @@ export default function QuestionCreateForm() {
                         </p>
                     </div>
 
-                    <Editor onChange={setBodyJson} initialState={bodyJson} excerpt={setExcerpt} />
+                    <Editor onChange={setBodyJson} excerpt={setExcerpt} />
                 </div>
 
                 <div className="flex flex-col gap-1">
