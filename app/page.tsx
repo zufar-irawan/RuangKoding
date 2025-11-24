@@ -2,28 +2,25 @@ import Navbar from "@/components/navigation-bar";
 import Footer from "@/components/footer";
 import PostCard from "@/components/post-card";
 import Sidebar from "@/components/sidebar";
-import HomeCardButton from "@/components/homeCardButton";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center">
-      <div className="flex-1 w-full flex flex-col items-center">
-
-        <Navbar />
-
-        <div className="flex flex-1 w-[1380px]">
-          <Sidebar />
-
-          <div className="flex flex-col gap-2 py-3 px-5">
-
-            <HomeCardButton />
-
-            <PostCard />
+      <div className="flex-1 w-full flex flex-col gap-20 items-center">
+        <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
+          <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
+            <div className="flex gap-5 items-center font-semibold">
+              <Link href={"/"}>Next.js Supabase Starter</Link>
+            </div>
+            {!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
           </div>
-        </div>
-
-        <Footer />
       </div>
-    </main>
+
+      <Footer />
+    </div>
+    </main >
   );
 }

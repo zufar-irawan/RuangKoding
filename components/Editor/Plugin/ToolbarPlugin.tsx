@@ -47,6 +47,9 @@ import {
 } from "@lexical/table";
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
 
+import { createClient } from "@/lib/supabase/client";
+import { nanoid } from "nanoid";
+
 const blockTypeToBlockName = {
     paragraph: "Normal",
     h1: "Heading 1",
@@ -223,25 +226,30 @@ export function ToolbarPlugin() {
         fileInputRef.current?.click();
     }, [])
 
-    const handleImageSelected = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    const handleImageSelected = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        if (!file) {
-            return;
-        }
+        if (!file) return;
 
-        const reader = new FileReader();
-        reader.onload = () => {
-            const result = reader.result;
-            if (typeof result === "string") {
-                editor.focus();
-                editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
-                    src: result,
-                    altText: file.name || "Uploaded image",
-                });
-            }
-        };
-        reader.readAsDataURL(file);
-        event.target.value = "";
+        try {
+            const supabase = createClient()
+            const filePath = `question/${nanoid()}-${file.name}`;
+            const { error } = await supabase.storage
+                .from("editor-image")
+                .upload(filePath, file, { cacheControl: "3600", contentType: file.type })
+
+            if (error) throw error;
+
+            const { data } = supabase.storage.from("editor-image").getPublicUrl(filePath);
+            editor.focus();
+            editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
+                src: data.publicUrl,
+                altText: file.name || "Uploaded image",
+            });
+        } catch (error) {
+            console.error("Error uploading image:", error);
+        } finally {
+            event.target.value = "";
+        }
     }, [editor])
 
     const insertTable = useCallback(() => {

@@ -26,6 +26,14 @@ import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { CodeHighlightRegisterPlugin } from "./Plugin/CodeHighlightRegisterPlugin";
 import { CodeBlockPlugin } from "./Plugin/CodeBlockPlugin";
 import { AutoGrowPlugin } from "./Plugin/AutoGrowPlugin";
+import { useCallback } from "react";
+import { EditorState } from "lexical";
+import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
+
+type EditorProps = {
+    initialState?: string;
+    onChange?: (payload: string) => void;
+}
 
 const theme = {
     text: {
@@ -106,13 +114,13 @@ function onError(error: Error) {
 
 function Placeholder() {
     return (
-        <div className="pointer-events-none absolute left-4 top-3 text-sm text-muted-foreground/80">
+        <div className="pointer-events-none absolute left-5 top-6 text-sm text-muted-foreground/80">
             Mulai menulis konten...
         </div>
     )
 }
 
-export function Editor() {
+export function Editor({ initialState, onChange }: EditorProps) {
     const initialConfig = {
         namespace: "MyEditor",
         theme,
@@ -132,9 +140,17 @@ export function Editor() {
         ]
     }
 
+    const handleEditorChange = useCallback(
+        (editorState: EditorState) => {
+            if (!onChange) return;
+            const json = JSON.stringify(editorState.toJSON());
+            onChange(json)
+        }, [onChange]
+    )
+
     return (
         <LexicalComposer initialConfig={initialConfig}>
-            <div className="mx-auto my-8 flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-2xl">
+            <div className="my-4 flex w-full flex-col overflow-hidden rounded-md border border-border bg-card text-card-foreground">
                 <ToolbarPlugin />
 
                 <div className="relative">
@@ -147,6 +163,7 @@ export function Editor() {
                     />
                 </div>
 
+                <OnChangePlugin onChange={handleEditorChange} />
                 <HistoryPlugin />
                 <AutoFocusPlugin />
                 <ListPlugin />
