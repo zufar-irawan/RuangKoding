@@ -2,7 +2,9 @@ import Navbar from "@/components/navigation-bar";
 import Footer from "@/components/footer";
 import PostCard from "@/components/post-card";
 import Sidebar from "@/components/sidebar";
-import HomeCardButton from "@/components/homeCardButton";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -11,12 +13,20 @@ export default function Home() {
 
         <Navbar />
 
-        <div className="flex flex-1 w-[1380px]">
+        <div className="flex flex-1 ">
           <Sidebar />
 
           <div className="flex flex-col gap-2 py-3 px-5">
 
-            <HomeCardButton />
+            <div className="w-full justify-end flex">
+              <Link href="/question/create">
+                <Button>
+                  <Plus className="mr-2" size={16} />
+
+                  Buat pertanyaan baru
+                </Button>
+              </Link>
+            </div>
 
             <PostCard />
           </div>

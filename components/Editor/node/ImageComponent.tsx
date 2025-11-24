@@ -83,8 +83,8 @@ export default function ImageComponent({
                 ref={imageRef}
                 src={src}
                 alt={altText}
-                width={width === "inherit" ? undefined : width}
-                height={height === "inherit" ? undefined : height}
+                width={width === "inherit" ? 800 : width}
+                height={height === "inherit" ? 600 : height}
                 className={cn(
                     "block h-auto max-w-full rounded-xl border border-transparent shadow-sm",
                     isSelected && "ring-2 ring-primary ring-offset-2 ring-offset-background",
