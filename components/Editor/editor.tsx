@@ -27,12 +27,13 @@ import { CodeHighlightRegisterPlugin } from "./Plugin/CodeHighlightRegisterPlugi
 import { CodeBlockPlugin } from "./Plugin/CodeBlockPlugin";
 import { AutoGrowPlugin } from "./Plugin/AutoGrowPlugin";
 import { useCallback } from "react";
-import { EditorState } from "lexical";
+import { $getRoot, EditorState } from "lexical";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 
 type EditorProps = {
     initialState?: string;
     onChange?: (payload: string) => void;
+    excerpt?: (payload: string) => void;
 }
 
 const theme = {
@@ -120,7 +121,7 @@ function Placeholder() {
     )
 }
 
-export function Editor({ initialState, onChange }: EditorProps) {
+export function Editor({ initialState, onChange, excerpt }: EditorProps) {
     const initialConfig = {
         namespace: "MyEditor",
         theme,
@@ -145,7 +146,16 @@ export function Editor({ initialState, onChange }: EditorProps) {
             if (!onChange) return;
             const json = JSON.stringify(editorState.toJSON());
             onChange(json)
-        }, [onChange]
+
+            if (excerpt) {
+                editorState.read(() => {
+                    const bodyText = $getRoot().getTextContent();
+                    const excerptText = bodyText.length > 210 ? `${bodyText.slice(0, 207)}...` : bodyText;
+                    excerpt(excerptText);
+                })
+            }
+
+        }, [onChange, excerpt]
     )
 
     return (

@@ -16,6 +16,7 @@ import { redirect } from "next/navigation";
 export default function QuestionCreateForm() {
     const [title, setTitle] = useState("");
     const [bodyJson, setBodyJson] = useState("");
+    const [excerpt, setExcerpt] = useState("");
     const [selectedTags, setSelectedTags] = useState<TagsType[]>([]);
 
     const getUser = async () => {
@@ -48,8 +49,9 @@ export default function QuestionCreateForm() {
         const user = await getUser();
 
         const payload = {
-            title,
             user_id: user?.sub,
+            title,
+            excerpt,
             body: bodyJson,
         };
 
@@ -108,7 +110,7 @@ export default function QuestionCreateForm() {
                         </p>
                     </div>
 
-                    <Editor onChange={setBodyJson} initialState={bodyJson} />
+                    <Editor onChange={setBodyJson} initialState={bodyJson} excerpt={setExcerpt} />
                 </div>
 
                 <div className="flex flex-col gap-1">

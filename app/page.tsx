@@ -5,22 +5,37 @@ import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import Questions from "@/components/questions";
 
 export default function Home() {
+
   return (
     <main className="min-h-screen flex flex-col items-center">
-      <div className="flex-1 w-full flex flex-col gap-20 items-center">
-        <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-          <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-            <div className="flex gap-5 items-center font-semibold">
-              <Link href={"/"}>Next.js Supabase Starter</Link>
-            </div>
-            {!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
-          </div>
-      </div>
+      <div className="flex-1 w-full flex flex-col items-center">
 
-      <Footer />
-    </div>
-    </main >
+        <Navbar />
+
+        <div className="flex flex-1 ">
+          <Sidebar />
+
+          <div className="flex flex-col gap-2 py-3 px-5">
+
+            <div className="w-full justify-end flex">
+              <Link href="/question/create">
+                <Button>
+                  <Plus className="mr-2" size={16} />
+
+                  Buat pertanyaan baru
+                </Button>
+              </Link>
+            </div>
+
+            <Questions />
+          </div>
+        </div>
+
+        <Footer />
+      </div>
+    </main>
   );
 }
