@@ -5,8 +5,10 @@ import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import Questions from "@/components/questions";
 
 export default function Home() {
+
   return (
     <main className="min-h-screen flex flex-col items-center">
       <div className="flex-1 w-full flex flex-col items-center">
@@ -28,7 +30,7 @@ export default function Home() {
               </Link>
             </div>
 
-            <PostCard />
+            <Questions />
           </div>
         </div>
 
