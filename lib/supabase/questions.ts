@@ -24,6 +24,7 @@ const getQuestions = async () => {
                 )
             ),
             view,
+            slug,
             votes:quest_vote_question_id_fkey ( count ),
             answers:answers!answers_question_id_fkey ( count )
         `)

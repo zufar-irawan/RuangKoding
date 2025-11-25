@@ -11,7 +11,7 @@ export default async function Questions() {
     if (!data || data.length === 0) {
 
         return (
-            <div className="rounded-lg border border-dashed border-foreground/20 p-6 text-center text-muted-foreground">
+            <div className="flex-1 rounded-lg border border-dashed border-foreground/20 p-6 text-center text-muted-foreground">
                 Belum ada pertanyaan.
             </div>
         );

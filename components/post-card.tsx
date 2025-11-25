@@ -17,9 +17,19 @@ export default function PostCard({ question }: PostCardProps) {
         locale: id,
     });
 
-    const userProfile = question.profiles;
+    const userProfile = Array.isArray(question.profiles)
+        ? question.profiles[0]
+        : question.profiles;
 
     const questionTags = question.quest_tags ?? [];
+    const flattenedTags = questionTags.flatMap((item) => {
+        if (!item.tags) return [];
+        if (Array.isArray(item.tags)) {
+            return item.tags.map((tag) => tag.tag);
+        }
+        return [item.tags.tag];
+    });
+    const slug = question.slug;
 
     const answerCount = question.answers?.[0]?.count ?? 0;
     const votesCount = question.votes?.[0]?.count ?? 0;
@@ -29,15 +39,19 @@ export default function PostCard({ question }: PostCardProps) {
             <CardHeader>
                 <div className="flex flex-col gap-1">
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <p className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-secondary-foreground">
-                                {userProfile.fullname.charAt(0).toUpperCase()}
-                            </p>
+                        {userProfile ? (
+                            <div className="flex items-center gap-3">
+                                <p className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-secondary-foreground">
+                                    {userProfile.fullname.charAt(0).toUpperCase()}
+                                </p>
 
-                            <p className="text-md ">
-                                {userProfile.fullname}
-                            </p>
-                        </div>
+                                <p className="text-md ">
+                                    {userProfile.fullname}
+                                </p>
+                            </div>
+                        ) : (
+                            <span className="text-sm text-muted-foreground">Pengguna tidak diketahui</span>
+                        )}
 
                         <p className="text-muted-foreground text-sm flex justify-end">
                             {createdAtLabel}
@@ -45,7 +59,7 @@ export default function PostCard({ question }: PostCardProps) {
                     </div>
 
                     <div className="flex justify-between">
-                        <Link href={`/question/${question.id}`} className="text-2xl font-bold text-primary hover:underline">
+                        <Link href={`/question/${slug}`} className="text-2xl font-bold text-primary hover:underline">
                             {question.title}
                         </Link>
                     </div>
@@ -60,11 +74,15 @@ export default function PostCard({ question }: PostCardProps) {
 
                     <div className="flex flex-col gap-3">
                         <div className="flex gap-2 items-center">
-                            {questionTags.map((t) => (
-                                <Link href={'#'} key={t.tags?.tag ?? "tag"} className="px-2 py-1 bg-accent text-accent-foreground rounded-md text-sm">
-                                    {t.tags?.tag ?? "Tanpa tag"}
-                                </Link>
-                            ))}
+                            {flattenedTags.length === 0 ? (
+                                <span className="text-xs text-muted-foreground">Belum ada tag</span>
+                            ) : (
+                                flattenedTags.map((tag) => (
+                                    <Link href={'#'} key={tag} className="px-2 py-1 bg-accent text-accent-foreground rounded-md text-sm">
+                                        {tag}
+                                    </Link>
+                                ))
+                            )}
                         </div>
 
                         <div className="flex gap-8 text-sm">

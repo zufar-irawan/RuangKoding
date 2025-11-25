@@ -18,9 +18,14 @@ export interface QuestionsType {
 }
 
 type QuestionTag = {
-    tags: {
+    tags:
+    | {
         tag: string;
-    } | null;
+    }
+    | Array<{
+        tag: string;
+    }>
+    | null;
 };
 
 type AggregateCount = Array<{ count: number } | null> | null;
@@ -31,13 +36,22 @@ export interface Question {
     excerpt: string;
     created_at: string;
     view: number;
-    profiles: {
+    slug: string;
+    profiles:
+    | {
         id: string;
         fullname: string;
         bio: string | null;
         profile_pic: string | null;
-    };
-    quest_tags: QuestionTag[];
+    }
+    | Array<{
+        id: string;
+        fullname: string;
+        bio: string | null;
+        profile_pic: string | null;
+    }>
+    | null;
+    quest_tags: QuestionTag[] | null;
     votes: AggregateCount;
     answers: AggregateCount;
 }

@@ -48,11 +48,17 @@ export default function QuestionCreateForm() {
 
         const user = await getUser();
 
+        const slug = title
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)+/g, "");
+
         const payload = {
             user_id: user?.sub,
             title,
             excerpt,
             body: bodyJson,
+            slug,
         };
 
         const supabase = await createClient();

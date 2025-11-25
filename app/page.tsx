@@ -14,10 +14,10 @@ export default function Home() {
 
         <Navbar />
 
-        <div className="flex flex-1 ">
+        <div className="flex flex-1 w-full">
           <Sidebar />
 
-          <div className="flex flex-col gap-2 py-3 px-5">
+          <div className="flex flex-col flex-1 gap-2 py-3 px-5">
 
             <div className="w-full justify-end flex">
               <Link href="/question/create">
