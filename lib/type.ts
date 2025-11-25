@@ -55,3 +55,7 @@ export interface Question {
     votes: AggregateCount;
     answers: AggregateCount;
 }
+
+export interface QuestionWithBody extends Question {
+    body: string | null;
+}

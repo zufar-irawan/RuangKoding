@@ -1,4 +1,4 @@
-import { getQuestions } from "@/lib/supabase/questions";
+import { getQuestions } from "@/lib/questions";
 import PostCard from "./post-card";
 
 export default async function Questions() {

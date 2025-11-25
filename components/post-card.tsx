@@ -21,7 +21,11 @@ export default function PostCard({ question }: PostCardProps) {
         ? question.profiles[0]
         : question.profiles;
 
-    const questionTags = question.quest_tags ?? [];
+    const questionTags = Array.isArray(question.quest_tags)
+        ? question.quest_tags
+        : question.quest_tags
+            ? [question.quest_tags]
+            : [];
     const flattenedTags = questionTags.flatMap((item) => {
         if (!item.tags) return [];
         if (Array.isArray(item.tags)) {
@@ -29,7 +33,9 @@ export default function PostCard({ question }: PostCardProps) {
         }
         return [item.tags.tag];
     });
+
     const slug = question.slug;
+    const questionId = question.id;
 
     const answerCount = question.answers?.[0]?.count ?? 0;
     const votesCount = question.votes?.[0]?.count ?? 0;
@@ -59,7 +65,7 @@ export default function PostCard({ question }: PostCardProps) {
                     </div>
 
                     <div className="flex justify-between">
-                        <Link href={`/question/${slug}`} className="text-2xl font-bold text-primary hover:underline">
+                        <Link href={`/question/${slug}-${questionId}`} className="text-2xl font-bold text-primary hover:underline">
                             {question.title}
                         </Link>
                     </div>

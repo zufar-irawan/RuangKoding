@@ -33,7 +33,7 @@ export default function QuestionCreateForm() {
 
         for (const tag of selectedTags) {
             const { error } = await supabase.from("quest_tags").insert({
-                post_id,
+                question_id: post_id,
                 tag_id: tag.id,
             });
 
