@@ -1,8 +1,51 @@
 'use server'
 
-import { createClient } from "@/lib/supabase/server";
+import type { PostgrestError } from "@supabase/supabase-js";
 
-const getQuestions = async () => {
+import { createClient } from "@/lib/supabase/server";
+import type { Database } from "@/lib/supabase/types";
+
+type QuestionRow = Database["public"]["Tables"]["questions"]["Row"];
+type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
+type TagRow = Database["public"]["Tables"]["tags"]["Row"];
+
+type CountAgg = { count: number | null };
+type CountRelation = CountAgg | CountAgg[] | null;
+
+type ProfilePreview = Pick<ProfileRow, "id" | "fullname" | "bio" | "profile_pic">;
+type TagPreview = { tags: Pick<TagRow, "tag"> | null } | null;
+type TagRelation = TagPreview | TagPreview[] | null;
+
+type QuestionListFields = Pick<
+    QuestionRow,
+    "id" | "title" | "excerpt" | "created_at" | "view" | "slug"
+>;
+
+type QuestionDetailFields = Pick<
+    QuestionRow,
+    "id" | "title" | "body" | "created_at" | "view" | "slug"
+>;
+
+type QuestionListItem = QuestionListFields & {
+    profiles: ProfilePreview | ProfilePreview[] | null;
+    quest_tags: TagRelation;
+    votes: CountRelation;
+    answers: CountRelation;
+};
+
+type QuestionDetailItem = QuestionDetailFields & {
+    profiles: ProfilePreview | ProfilePreview[] | null;
+    quest_tags: TagRelation;
+    votes: CountRelation;
+    answers: CountRelation;
+};
+
+type SupabaseResponse<T> = {
+    data: T | null;
+    error: PostgrestError | null;
+};
+
+const getQuestions = async (): Promise<SupabaseResponse<QuestionListItem[]>> => {
     const supabase = await createClient();
 
     const { data, error } = await supabase
@@ -33,7 +76,7 @@ const getQuestions = async () => {
     return { data, error }
 }
 
-const getQuestionFromID = async (id: number) => {
+const getQuestionFromID = async (id: number): Promise<SupabaseResponse<QuestionDetailItem[]>> => {
     const supabase = await createClient();
 
     const { data, error } = await supabase

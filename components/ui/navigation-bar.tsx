@@ -1,12 +1,12 @@
 import Link from "next/link"
 import Image from "next/image";
-import { AuthButton } from "@/components/auth-button";
-import { ThemeSwitcher } from "./theme-switcher";
+import { AuthButton } from "@/components/Auth/auth-button";
+import { ThemeSwitcher } from "../theme-switcher";
 import SearchBar from "./searchbar";
 
 export default function Navbar() {
     return (
-        <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
+        <nav className="fixed top-0 left-0 w-full flex justify-center border-b border-b-foreground/10 h-16 bg-secondary">
 
             <div className="flex w-full justify-between items-center py-3 px-10 text-sm">
                 <div className="flex gap-5 font-semibold">

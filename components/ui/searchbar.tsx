@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import { Input } from "./input";
+import { Button } from "./button";
 
 export default function SearchBar() {
     return (
@@ -10,7 +10,7 @@ export default function SearchBar() {
 
                 <Input
                     type="text"
-                    className="flex-1 bg-secondary pl-10"
+                    className="flex-1 bg-background pl-10"
                     placeholder="Cari disini..."
                 />
             </div>

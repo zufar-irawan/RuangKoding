@@ -9,7 +9,6 @@ import { LinkNode } from "@lexical/link";
 import { TableNode, TableRowNode, TableCellNode } from "@lexical/table";
 import {
     ElementNode,
-    type LexicalNode,
     type NodeKey,
     type SerializedLexicalNode,
     type Spread,

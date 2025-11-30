@@ -1,5 +1,5 @@
-import Navbar from "@/components/navigation-bar";
-import Footer from "@/components/footer";
+import Navbar from "@/components/ui/navigation-bar";
+import Footer from "@/components/ui/footer";
 
 export default function ProtectedLayout({
   children,

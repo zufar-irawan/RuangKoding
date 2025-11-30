@@ -1,5 +1,5 @@
 import { getQuestions } from "@/lib/questions";
-import PostCard from "./post-card";
+import PostCard from "../post-card";
 
 export default async function Questions() {
     const { data, error } = await getQuestions();
