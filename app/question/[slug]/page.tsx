@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Undo2, Eye, CheckCircle, ThumbsUp, } from "lucide-react";
 
 import { getQuestionFromID } from "@/lib/questions";
+import type { CountRelation, AnswerPreview } from "@/lib/questions";
 import { parseSlug } from "@/lib/utils";
 
 import { format } from "date-fns";
@@ -13,20 +14,32 @@ import UserProfilesQuestion from "@/components/Questions/profiles-question";
 import SharesNVote from "@/components/Questions/share-vote";
 import AnswersSection from "@/components/Answers/answers-section";
 
-type CountRelation = { count: number | null } | { count: number | null }[] | null | undefined;
-
 type Props = {
     params: {
         slug: string;
     }
 }
 
-function getCountValue(relation: CountRelation): number {
+function getCountValue(relation?: CountRelation | null): number {
+    if (!relation) {
+        return 0;
+    }
+
     if (Array.isArray(relation)) {
         return relation[0]?.count ?? 0;
     }
 
-    return relation?.count ?? 0;
+    return relation.count ?? 0;
+}
+
+type AnswerRelation = AnswerPreview | AnswerPreview[] | null | undefined;
+
+function normalizeAnswers(relation: AnswerRelation): AnswerPreview[] {
+    if (Array.isArray(relation)) {
+        return relation;
+    }
+
+    return relation ? [relation] : [];
 }
 
 export default async function QuestionDetailPage({ params }: Props) {
@@ -34,20 +47,31 @@ export default async function QuestionDetailPage({ params }: Props) {
     const { id: questionId } = parseSlug(slug);
 
     const questions = await getQuestionFromID(Number(questionId));
+    console.log('Fetched question data:', questions);
     const question = questions.data ? questions.data[0] : null;
+
+    if (!question) {
+        return (
+            <main className="min-h-screen w-full flex flex-col items-center justify-center">
+                <p className="text-muted-foreground">Pertanyaan tidak ditemukan.</p>
+            </main>
+        );
+    }
 
     const profiles = question?.profiles;
     const profile = Array.isArray(profiles)
         ? profiles[0] ?? null
         : profiles ?? null;
 
-    const createdAt = new Date(question?.created_at || "");
-    const createdAtLabel = format(createdAt, "d MMMM yyyy", { locale: id });
+    const createdAtLabel = question.created_at
+        ? format(new Date(question.created_at), "d MMMM yyyy", { locale: id })
+        : "";
 
     console.log('Question detail fetched:', question);
 
-    const answerCount = getCountValue(question?.answers);
     const votesCount = getCountValue(question?.votes);
+    const answers = normalizeAnswers(question?.answers);
+    const answerCount = answers.length;
 
     return (
         <main className="min-h-screen w-full flex flex-col">
@@ -98,7 +122,10 @@ export default async function QuestionDetailPage({ params }: Props) {
 
                         <div className="flex border border-foreground/10 w-full"></div>
 
-                        <AnswersSection answerCount={answerCount} />
+                        <AnswersSection
+                            answers={answers}
+                            questionId={question?.id}
+                        />
                     </div>
 
                 </div>

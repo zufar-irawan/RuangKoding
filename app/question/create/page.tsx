@@ -8,7 +8,7 @@ export default function QuestionCreate() {
         <main className="min-h-screen flex flex-col">
             <Navbar />
 
-            <div className="flex flex-1 gap-2">
+            <div className="flex flex-1 gap-2 mt-16">
                 <QuestionCreateForm />
 
                 <div className="w-px bg-foreground/10 ml-20" aria-hidden></div>

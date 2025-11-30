@@ -12,21 +12,13 @@ import { createClient } from "@/lib/supabase/client";
 import type { TagsType } from "@/lib/type";
 
 import { redirect } from "next/navigation";
+import { getUser } from "@/utils/GetUser";
 
 export default function QuestionCreateForm() {
     const [title, setTitle] = useState("");
     const [bodyJson, setBodyJson] = useState("");
     const [excerpt, setExcerpt] = useState("");
     const [selectedTags, setSelectedTags] = useState<TagsType[]>([]);
-
-    const getUser = async () => {
-        const supabase = await createClient();
-        const { data, error } = await supabase.auth.getClaims();
-        if (error || !data?.claims) {
-            redirect("/auth/login");
-        }
-        return data.claims;
-    }
 
     const handleTagSubmit = async (post_id: number) => {
         const supabase = await createClient();

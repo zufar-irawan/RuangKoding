@@ -8,13 +8,24 @@ import type { Database } from "@/lib/supabase/types";
 type QuestionRow = Database["public"]["Tables"]["questions"]["Row"];
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 type TagRow = Database["public"]["Tables"]["tags"]["Row"];
+type AnswerRow = Database["public"]["Tables"]["answers"]["Row"];
 
 type CountAgg = { count: number | null };
 type CountRelation = CountAgg | CountAgg[] | null;
 
 type ProfilePreview = Pick<ProfileRow, "id" | "fullname" | "bio" | "profile_pic">;
+type AnswerProfile = Pick<ProfileRow, "id" | "fullname" | "profile_pic">;
 type TagPreview = { tags: Pick<TagRow, "tag"> | null } | null;
 type TagRelation = TagPreview | TagPreview[] | null;
+
+type AnswerPreview = Pick<
+    AnswerRow,
+    "id" | "content" | "helpful" | "created_at"
+> & {
+    profiles: AnswerProfile | AnswerProfile[] | null;
+};
+
+type AnswerRelation = AnswerPreview | AnswerPreview[] | null;
 
 type QuestionListFields = Pick<
     QuestionRow,
@@ -37,7 +48,7 @@ type QuestionDetailItem = QuestionDetailFields & {
     profiles: ProfilePreview | ProfilePreview[] | null;
     quest_tags: TagRelation;
     votes: CountRelation;
-    answers: CountRelation;
+    answers: AnswerRelation;
 };
 
 type SupabaseResponse<T> = {
@@ -100,7 +111,17 @@ const getQuestionFromID = async (id: number): Promise<SupabaseResponse<QuestionD
             view,
             slug,
             votes:quest_vote_question_id_fkey ( count ),
-            answers:answers!answers_question_id_fkey ( count )
+            answers:answers!answers_question_id_fkey (
+                id,
+                content,
+                helpful,
+                created_at,
+                profiles (
+                    id,
+                    fullname,
+                    profile_pic
+                )
+            )
         `)
         .order("created_at", { ascending: false })
         .eq("id", id);
@@ -109,3 +130,4 @@ const getQuestionFromID = async (id: number): Promise<SupabaseResponse<QuestionD
 }
 
 export { getQuestions, getQuestionFromID };
+export type { QuestionListItem, QuestionDetailItem, CountRelation, AnswerPreview };

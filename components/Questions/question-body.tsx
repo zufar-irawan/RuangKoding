@@ -1,9 +1,9 @@
-import type { QuestionWithBody } from "@/lib/type"
-import { parseLexicalBodyToHTML } from "@/lib/lexical-parser"
+import type { QuestionDetailItem } from "@/lib/questions"
+import { parseLexicalBodyToHTML } from "@/lib/lexical/lexical-parser"
 import styles from "@/styles/BlogContent.module.css"
 
 type QuestionBodyProps = {
-    question: Pick<QuestionWithBody, "body"> | null
+    question: Pick<QuestionDetailItem, "body"> | null
 }
 
 export default function QuestionBody({ question }: QuestionBodyProps) {
@@ -11,7 +11,12 @@ export default function QuestionBody({ question }: QuestionBodyProps) {
         return null
     }
 
-    const html = parseLexicalBodyToHTML(question.body)
+    const serializedBody =
+        typeof question.body === "string" || typeof question.body === "object"
+            ? (question.body as string | Record<string, unknown>)
+            : null
+
+    const html = parseLexicalBodyToHTML(serializedBody)
 
     if (!html) {
         return null
