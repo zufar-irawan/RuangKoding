@@ -1,6 +1,6 @@
-import Footer from "@/components/footer";
-import Navbar from "@/components/navigation-bar";
-import QuestionCreateForm from "@/components/question-create-form";
+import Footer from "@/components/ui/footer";
+import Navbar from "@/components/ui/navigation-bar";
+import QuestionCreateForm from "@/components/Questions/question-create-form";
 
 export default function QuestionCreate() {
 

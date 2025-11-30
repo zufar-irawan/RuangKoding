@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { createClient } from "@/lib/supabase/server";
-import { LogoutButton } from "./logout-button";
+import { LogoutButton } from "../Auth/logout-button";
 
 export async function AuthButton() {
   const supabase = await createClient();
@@ -49,7 +49,7 @@ export async function AuthButton() {
           />
 
         ) : (
-          <p className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-base font-semibold text-secondary-foreground">
+          <p className="flex h-10 w-10 items-center justify-center rounded-full bg-background border text-base font-semibold text-secondary-foreground">
             {userProfileInitial}
           </p>
         )}
