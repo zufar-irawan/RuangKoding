@@ -72,7 +72,6 @@ const ThemeSwitcher = () => {
             <Laptop size={ICON_SIZE} className="text-muted-foreground" />{" "}
             <span>System</span>
           </DropdownMenuRadioItem>
-
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

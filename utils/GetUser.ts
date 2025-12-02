@@ -1,11 +1,18 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/server";
 
-export const getUser = async () => {
-    const supabase = await createClient();
-    const { data, error } = await supabase.auth.getClaims();
-    if (error || !data?.claims) {
-        redirect("/auth/login");
-    }
-    return data.claims;
+type UserClaims = {
+  sub: string;
+  email?: string;
+  [key: string]: unknown;
+} | null;
+
+export async function getUser(): Promise<UserClaims> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getClaims();
+
+  if (error || !data?.claims) {
+    return null;
+  }
+
+  return data.claims as UserClaims;
 }

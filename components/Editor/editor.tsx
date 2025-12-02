@@ -34,6 +34,7 @@ type EditorProps = {
     initialState?: string;
     onChange?: (payload: string) => void;
     excerpt?: (payload: string) => void;
+    autoFocus?: boolean;
 }
 
 const theme = {
@@ -121,7 +122,7 @@ function Placeholder() {
     )
 }
 
-export function Editor({ onChange, excerpt }: EditorProps) {
+export function Editor({ onChange, excerpt, autoFocus = true }: EditorProps) {
     const initialConfig = {
         namespace: "MyEditor",
         theme,
@@ -175,7 +176,7 @@ export function Editor({ onChange, excerpt }: EditorProps) {
 
                 <OnChangePlugin onChange={handleEditorChange} />
                 <HistoryPlugin />
-                <AutoFocusPlugin />
+                {autoFocus && <AutoFocusPlugin />}
                 <ListPlugin />
                 <CodeHighlightRegisterPlugin />
                 <CodeBlockPlugin />

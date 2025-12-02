@@ -5,10 +5,41 @@ import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
 import { CheckCircle, Eye, ThumbsUp } from "lucide-react";
 
-import type { Question } from "@/lib/type";
+import type { QuestionListItem, CountRelation } from "@/lib/questions";
 
 interface PostCardProps {
-    question: Question;
+    question: QuestionListItem;
+}
+
+type TagRelation = QuestionListItem["quest_tags"];
+
+function getCountValue(relation: CountRelation | undefined): number {
+    if (!relation) {
+        return 0;
+    }
+
+    if (Array.isArray(relation)) {
+        return relation[0]?.count ?? 0;
+    }
+
+    return relation.count ?? 0;
+}
+
+function normalizeTags(relation: TagRelation): { tag: string | null }[] {
+    if (!relation) return [];
+
+    const list = Array.isArray(relation) ? relation : [relation];
+
+    return list.flatMap((item) => {
+        if (!item || !item.tags) return [];
+        const tags = item.tags;
+
+        if (Array.isArray(tags)) {
+            return tags.map((tag) => ({ tag: tag?.tag ?? null }));
+        }
+
+        return [{ tag: tags.tag ?? null }];
+    });
 }
 
 export default function PostCard({ question }: PostCardProps) {
@@ -21,24 +52,13 @@ export default function PostCard({ question }: PostCardProps) {
         ? question.profiles[0]
         : question.profiles;
 
-    const questionTags = Array.isArray(question.quest_tags)
-        ? question.quest_tags
-        : question.quest_tags
-            ? [question.quest_tags]
-            : [];
-    const flattenedTags = questionTags.flatMap((item) => {
-        if (!item.tags) return [];
-        if (Array.isArray(item.tags)) {
-            return item.tags.map((tag) => tag.tag);
-        }
-        return [item.tags.tag];
-    });
+    const flattenedTags = normalizeTags(question.quest_tags).map((tag) => tag.tag).filter(Boolean);
 
     const slug = question.slug;
     const questionId = question.id;
 
-    const answerCount = question.answers?.[0]?.count ?? 0;
-    const votesCount = question.votes?.[0]?.count ?? 0;
+    const answerCount = getCountValue(question.answers);
+    const votesCount = getCountValue(question.votes);
 
     return (
         <Card className="flex-1">
