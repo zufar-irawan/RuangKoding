@@ -5,6 +5,9 @@ import AnswerForm from "./answer-form";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
 import CommentForm from "../Comments/comment-form";
+import styles from "@/styles/BlogContent.module.css";
+import { getClientUser } from "@/utils/GetClientUser";
+import { useEffect, useState } from "react";
 
 type Props = {
   answers?: AnswerWithHTML[];
@@ -13,6 +16,8 @@ type Props = {
 
 export default function AnswersSection({ answers = [], questionId }: Props) {
   const answerCount = answers.length;
+  const [hasAnswered, setHasAnswered] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const createdAtLabel = answers.map((answer) =>
     answer.created_at
@@ -22,6 +27,29 @@ export default function AnswersSection({ answers = [], questionId }: Props) {
         })
       : "",
   );
+
+  useEffect(() => {
+    async function checkIfUserHasAnswered() {
+      setIsLoading(true);
+      const user = await getClientUser();
+
+      if (!user) {
+        setHasAnswered(false);
+        setIsLoading(false);
+        return;
+      }
+
+      // Cek apakah user sudah menjawab
+      const userHasAnswered = answers.some(
+        (answer) => answer.user_id === user.id,
+      );
+
+      setHasAnswered(userHasAnswered);
+      setIsLoading(false);
+    }
+
+    checkIfUserHasAnswered();
+  }, [answers]);
 
   return (
     <div className="w-full flex flex-col gap-2">
@@ -35,12 +63,19 @@ export default function AnswersSection({ answers = [], questionId }: Props) {
               <span className="font-semibold">pertama menjawab!</span>
             </h1>
 
-            <AnswerForm questionId={questionId} />
+            {!isLoading &&
+              (hasAnswered ? (
+                <p className="text-sm text-muted-foreground mt-4 p-4 bg-secondary/50 rounded-md">
+                  Kamu sudah memberikan jawaban untuk pertanyaan ini.
+                </p>
+              ) : (
+                <AnswerForm questionId={questionId} />
+              ))}
           </>
         ) : (
           <div className="flex flex-col gap-4">
             {answers.map((answer, idx) => (
-              <article
+              <div
                 key={answer.id}
                 className="px-4 py-8 border-b border-foreground/10"
               >
@@ -89,26 +124,31 @@ export default function AnswersSection({ answers = [], questionId }: Props) {
                   }
 
                   return (
-                    <div
-                      className="mt-2 text-foreground prose prose-invert max-w-none"
+                    <article
+                      className={`w-full mx-auto py-4 ${styles["blog-content"]}`}
                       dangerouslySetInnerHTML={{ __html: html }}
                     />
                   );
                 })()}
 
                 <CommentForm answer={answer} />
-              </article>
+              </div>
             ))}
 
             {/*<div className="border border-foreground/10 w-full flex my-5"></div>*/}
 
-            <div className="flex flex-col">
-              <h1 className="text-md text-foreground">
-                Tahu jawaban lainnya? Tambahkan jawabanmu di bawah!
-              </h1>
+            {!isLoading &&
+              (hasAnswered ? (
+                <></>
+              ) : (
+                <div className="flex flex-col">
+                  <h1 className="text-md text-foreground">
+                    Tahu jawaban lainnya? Tambahkan jawabanmu di bawah!
+                  </h1>
 
-              <AnswerForm questionId={questionId} />
-            </div>
+                  <AnswerForm questionId={questionId} />
+                </div>
+              ))}
           </div>
         )}
       </div>
