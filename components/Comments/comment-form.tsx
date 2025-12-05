@@ -152,9 +152,9 @@ export default function CommentForm({ answer }: Props) {
       {isOpen && (
         <CommentTextarea
           value={commentText}
-          onChange={setCommentText}
-          onSubmit={handleSubmit}
-          onCancel={() => setIsOpen(false)}
+          onChangeAction={setCommentText}
+          onSubmitAction={handleSubmit}
+          onCancelAction={() => setIsOpen(false)}
           placeholder="Tulis komentar..."
           rows={4}
           isLoading={isLoadingCreate}
@@ -247,9 +247,11 @@ export default function CommentForm({ answer }: Props) {
                       {replyingTo === comment.id && (
                         <CommentTextarea
                           value={replyText}
-                          onChange={setReplyText}
-                          onSubmit={(e) => handleReplySubmit(e, comment.id)}
-                          onCancel={() => toggleReply(comment.id)}
+                          onChangeAction={setReplyText}
+                          onSubmitAction={(e) =>
+                            handleReplySubmit(e, comment.id)
+                          }
+                          onCancelAction={() => toggleReply(comment.id)}
                           placeholder="Tulis balasan..."
                           rows={3}
                           isLoading={isLoadingCreate}
@@ -263,7 +265,6 @@ export default function CommentForm({ answer }: Props) {
                   <CommentReplies
                     replies={replies}
                     currentUser={currentUser}
-                    answerId={answer.id}
                     onDeleteAction={handleDelete}
                   />
                 </div>
