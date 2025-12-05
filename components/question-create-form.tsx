@@ -137,7 +137,10 @@ export default function QuestionCreateForm() {
             </p>
           </div>
 
-          <TagSelector value={selectedTags} onChange={setSelectedTags} />
+          <TagSelector
+            value={selectedTags}
+            updateTagsAction={setSelectedTags}
+          />
         </div>
 
         <div className="flex gap-4">
