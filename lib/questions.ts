@@ -1,4 +1,4 @@
-'use server'
+"use server";
 
 import type { PostgrestError } from "@supabase/supabase-js";
 
@@ -8,49 +8,79 @@ import type { Database } from "@/lib/supabase/types";
 type QuestionRow = Database["public"]["Tables"]["questions"]["Row"];
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 type TagRow = Database["public"]["Tables"]["tags"]["Row"];
+type AnswerRow = Database["public"]["Tables"]["answers"]["Row"];
 
 type CountAgg = { count: number | null };
 type CountRelation = CountAgg | CountAgg[] | null;
 
-type ProfilePreview = Pick<ProfileRow, "id" | "fullname" | "bio" | "profile_pic">;
+type ProfilePreview = Pick<
+  ProfileRow,
+  "id" | "fullname" | "bio" | "profile_pic"
+>;
+type AnswerProfile = Pick<ProfileRow, "id" | "fullname" | "profile_pic">;
 type TagPreview = { tags: Pick<TagRow, "tag"> | null } | null;
 type TagRelation = TagPreview | TagPreview[] | null;
 
+type AnswerPreview = Pick<
+  AnswerRow,
+  "id" | "content" | "helpful" | "created_at" | "user_id"
+> & {
+  profiles: AnswerProfile | AnswerProfile[] | null;
+};
+
+type AnswerRelation = AnswerPreview | AnswerPreview[] | null;
+
+type AnswerWithHTML = AnswerPreview & {
+  html: string;
+};
+
 type QuestionListFields = Pick<
-    QuestionRow,
-    "id" | "title" | "excerpt" | "created_at" | "view" | "slug"
+  QuestionRow,
+  "id" | "title" | "excerpt" | "created_at" | "view" | "slug"
 >;
 
 type QuestionDetailFields = Pick<
-    QuestionRow,
-    "id" | "title" | "body" | "created_at" | "view" | "slug"
+  QuestionRow,
+  "id" | "title" | "body" | "created_at" | "view" | "slug"
 >;
 
 type QuestionListItem = QuestionListFields & {
-    profiles: ProfilePreview | ProfilePreview[] | null;
-    quest_tags: TagRelation;
-    votes: CountRelation;
-    answers: CountRelation;
+  profiles: ProfilePreview | ProfilePreview[] | null;
+  quest_tags: TagRelation;
+  votes: CountRelation;
+  answers: CountRelation;
 };
 
 type QuestionDetailItem = QuestionDetailFields & {
-    profiles: ProfilePreview | ProfilePreview[] | null;
-    quest_tags: TagRelation;
-    votes: CountRelation;
-    answers: CountRelation;
+  profiles: ProfilePreview | ProfilePreview[] | null;
+  quest_tags: TagRelation;
+  votes: CountRelation;
+  answers: AnswerRelation;
 };
 
 type SupabaseResponse<T> = {
-    data: T | null;
-    error: PostgrestError | null;
+  data: T | null;
+  error: PostgrestError | null;
 };
 
-const getQuestions = async (): Promise<SupabaseResponse<QuestionListItem[]>> => {
-    const supabase = await createClient();
+type AnswerComment = Database["public"]["Tables"]["answ_comment"]["Row"];
 
-    const { data, error } = await supabase
-        .from("questions")
-        .select(`
+type AnswerCommentItem = Pick<
+  AnswerComment,
+  "id" | "text" | "created_at" | "reply_id"
+> & {
+  profiles: ProfilePreview | ProfilePreview[] | null;
+};
+
+const getQuestions = async (): Promise<
+  SupabaseResponse<QuestionListItem[]>
+> => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("questions")
+    .select(
+      `
             id,
             title,
             excerpt,
@@ -70,18 +100,22 @@ const getQuestions = async (): Promise<SupabaseResponse<QuestionListItem[]>> => 
             slug,
             votes:quest_vote_question_id_fkey ( count ),
             answers:answers!answers_question_id_fkey ( count )
-        `)
-        .order("created_at", { ascending: false });
+        `,
+    )
+    .order("created_at", { ascending: false });
 
-    return { data, error }
-}
+  return { data, error };
+};
 
-const getQuestionFromID = async (id: number): Promise<SupabaseResponse<QuestionDetailItem[]>> => {
-    const supabase = await createClient();
+const getQuestionFromID = async (
+  id: number,
+): Promise<SupabaseResponse<QuestionDetailItem[]>> => {
+  const supabase = await createClient();
 
-    const { data, error } = await supabase
-        .from("questions")
-        .select(`
+  const { data, error } = await supabase
+    .from("questions")
+    .select(
+      `
             id,
             title,
             body,
@@ -100,12 +134,34 @@ const getQuestionFromID = async (id: number): Promise<SupabaseResponse<QuestionD
             view,
             slug,
             votes:quest_vote_question_id_fkey ( count ),
-            answers:answers!answers_question_id_fkey ( count )
-        `)
-        .order("created_at", { ascending: false })
-        .eq("id", id);
+            answers:answers!answers_question_id_fkey (
+                id,
+                content,
+                helpful,
+                created_at,
+                user_id,
+                profiles (
+                    id,
+                    fullname,
+                    profile_pic
+                )
+            )
+        `,
+    )
+    .order("created_at", { ascending: false })
+    .eq("id", id);
 
-    return { data, error }
-}
+  return { data, error };
+};
 
 export { getQuestions, getQuestionFromID };
+export type {
+  QuestionListItem,
+  QuestionDetailItem,
+  CountRelation,
+  AnswerPreview,
+  AnswerWithHTML,
+  AnswerComment,
+  AnswerCommentItem,
+  ProfilePreview,
+};
