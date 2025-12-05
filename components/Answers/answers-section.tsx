@@ -4,7 +4,7 @@ import type { AnswerWithHTML } from "@/lib/questions";
 import AnswerForm from "./answer-form";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
-import CommentForm from "../ui/comment-form";
+import CommentForm from "../Comments/comment-form";
 
 type Props = {
   answers?: AnswerWithHTML[];

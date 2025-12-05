@@ -11,6 +11,7 @@ const getComments = async (id: number) => {
       id,
       text,
       created_at,
+      reply_id,
       profiles(
        id,
        fullname,
@@ -19,7 +20,8 @@ const getComments = async (id: number) => {
       )
     `,
     )
-    .eq("answer_id", id);
+    .eq("answer_id", id)
+    .order("created_at", { ascending: true });
 
   if (error) {
     throw new Error(error.message);
@@ -28,7 +30,7 @@ const getComments = async (id: number) => {
   return data;
 };
 
-const createComment = async (id: number, text: string) => {
+const createComment = async (id: number, text: string, reply?: number) => {
   const supabase = await createClient();
 
   const user = await getClientUser();
@@ -41,6 +43,7 @@ const createComment = async (id: number, text: string) => {
     answer_id: id,
     user_id: user.id,
     text,
+    reply_id: reply || null,
   };
 
   const { data, error } = await supabase.from("answ_comment").insert(payload);
@@ -52,4 +55,17 @@ const createComment = async (id: number, text: string) => {
   return data;
 };
 
-export { getComments, createComment };
+const deleteComment = async (commentId: number) => {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("answ_comment")
+    .delete()
+    .eq("id", commentId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+};
+
+export { getComments, createComment, deleteComment };

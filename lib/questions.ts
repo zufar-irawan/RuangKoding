@@ -65,7 +65,10 @@ type SupabaseResponse<T> = {
 
 type AnswerComment = Database["public"]["Tables"]["answ_comment"]["Row"];
 
-type AnswerCommentItem = Pick<AnswerComment, "id" | "text" | "created_at"> & {
+type AnswerCommentItem = Pick<
+  AnswerComment,
+  "id" | "text" | "created_at" | "reply_id"
+> & {
   profiles: ProfilePreview | ProfilePreview[] | null;
 };
 
