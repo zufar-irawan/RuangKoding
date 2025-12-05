@@ -23,7 +23,7 @@ type TagRelation = TagPreview | TagPreview[] | null;
 
 type AnswerPreview = Pick<
   AnswerRow,
-  "id" | "content" | "helpful" | "created_at"
+  "id" | "content" | "helpful" | "created_at" | "user_id"
 > & {
   profiles: AnswerProfile | AnswerProfile[] | null;
 };
@@ -139,6 +139,7 @@ const getQuestionFromID = async (
                 content,
                 helpful,
                 created_at,
+                user_id,
                 profiles (
                     id,
                     fullname,
