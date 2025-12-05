@@ -14,6 +14,7 @@ import UserProfilesQuestion from "@/components/Questions/profiles-question";
 import SharesNVote from "@/components/Questions/share-vote";
 import AnswersSection from "@/components/Answers/answers-section";
 import { parseLexicalBodyToHTML } from "@/lib/lexical/lexical-parser";
+import CommentForm from "@/components/Comments/comment-form";
 
 type Props = {
   params: {
@@ -133,6 +134,8 @@ export default async function QuestionDetailPage({ params }: Props) {
 
           <div className="flex flex-col w-full gap-8 mt-10">
             <SharesNVote votesCount={votesCount} />
+
+            <CommentForm question_id={question?.id} />
 
             <div className="flex border border-foreground/10 w-full"></div>
 

@@ -2,7 +2,7 @@
 
 import { Button } from "../ui/button";
 import { Trash2, ChevronDown, ChevronUp } from "lucide-react";
-import type { AnswerCommentItem } from "@/lib/questions";
+import type { AnswerCommentItem } from "@/lib/type";
 import { useState } from "react";
 import Image from "next/image";
 import { id } from "date-fns/locale";

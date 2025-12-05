@@ -75,7 +75,7 @@ export default function AnswersSection({ answers = [], questionId }: Props) {
         ) : (
           <div className="flex flex-col gap-4">
             {answers.map((answer, idx) => (
-              <article
+              <div
                 key={answer.id}
                 className="px-4 py-8 border-b border-foreground/10"
               >
@@ -132,7 +132,7 @@ export default function AnswersSection({ answers = [], questionId }: Props) {
                 })()}
 
                 <CommentForm answer={answer} />
-              </article>
+              </div>
             ))}
 
             {/*<div className="border border-foreground/10 w-full flex my-5"></div>*/}
