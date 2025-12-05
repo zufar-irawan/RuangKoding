@@ -210,11 +210,11 @@ export default function TagSelector({
           {selectedTags.map((tag) => (
             <span
               key={tag.id}
-              className="bg-primary flex items-center w-fit text-primary-foreground px-2 py-1 rounded-lg text-sm"
+              className="bg-secondary flex items-center w-fit text-secondary-foreground px-3 py-1.5 rounded-lg text-sm font-medium shadow-sm"
             >
               {tag.tag}
               <button
-                className="ml-2 text-xl hover:text-destructive disabled:opacity-50 disabled:cursor-not-allowed"
+                className="ml-2 text-xl hover:text-destructive disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 onClick={() => removeTag(tag.id)}
                 disabled={isCreatingTag}
                 type="button"

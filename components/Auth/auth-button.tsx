@@ -39,7 +39,6 @@ export async function AuthButton() {
     <div className="flex items-center gap-4">
       <Link href="/protected">
         {user.profile_pic ? (
-
           <Image
             src={user.profile_pic}
             alt="User Avatar"
@@ -47,9 +46,8 @@ export async function AuthButton() {
             height={32}
             className="rounded-full"
           />
-
         ) : (
-          <p className="flex h-10 w-10 items-center justify-center rounded-full bg-background border text-base font-semibold text-secondary-foreground">
+          <p className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/80 border-2 border-secondary text-base font-semibold text-secondary-foreground">
             {userProfileInitial}
           </p>
         )}

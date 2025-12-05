@@ -69,7 +69,7 @@ export default function PostCard({ question }: PostCardProps) {
           <div className="flex items-center justify-between">
             {userProfile ? (
               <div className="flex items-center gap-3">
-                <p className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-secondary-foreground">
+                <p className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary/80 text-sm font-semibold text-secondary-foreground">
                   {userProfile.fullname.charAt(0).toUpperCase()}
                 </p>
 
@@ -112,7 +112,7 @@ export default function PostCard({ question }: PostCardProps) {
                   <Link
                     href={"#"}
                     key={tag}
-                    className="px-2 py-1 bg-accent text-accent-foreground rounded-md text-sm"
+                    className="px-2 py-1 bg-tertiary text-tertiary-foreground rounded-md text-sm hover:bg-tertiary/70 transition-colors font-medium"
                   >
                     {tag}
                   </Link>
@@ -122,18 +122,18 @@ export default function PostCard({ question }: PostCardProps) {
 
             <div className="flex gap-8 text-sm">
               <span
-                className={`${answerCount > 0 ? "text-green-600" : "text-red-600"} items-center`}
+                className={`${answerCount > 0 ? "text-green-600 dark:text-green-500" : "text-red-600 dark:text-red-500"} items-center font-medium`}
               >
                 <CheckCircle className="inline mr-1" size={16} />
                 {answerCount} Jawaban
               </span>
 
-              <span className="text-muted-foreground">
+              <span className="text-muted-foreground items-center">
                 <Eye className="inline mr-1" size={16} />
                 {question.view} Dilihat
               </span>
 
-              <span className="text-muted-foreground">
+              <span className="text-muted-foreground items-center">
                 <ThumbsUp className="inline mr-1" size={16} />
                 {votesCount} Divote
               </span>
