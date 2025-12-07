@@ -60,6 +60,30 @@ export const updateProfile = async (
   return updatedProfile;
 };
 
+// ============ CONTACT INFO UPDATE ============
+export const updateContactInfo = async (
+  userId: string,
+  data: {
+    email: string;
+    phone: string | null;
+  },
+) => {
+  const supabase = createClient();
+
+  const { data: updatedContact, error } = await supabase
+    .from("profiles")
+    .update({
+      email: data.email,
+      phone: data.phone,
+    })
+    .eq("id", userId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return updatedContact;
+};
+
 // ============ PROFILE PICTURE ============
 export const uploadProfilePicture = async (
   userId: string,
