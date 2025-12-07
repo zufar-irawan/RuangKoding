@@ -79,6 +79,10 @@
     background-image: url("../public/blob-scene-haikei-dark.svg");
 }
 
+.steps {
+    background-image: url("../public/layered-steps-haikei-profiles.svg");
+}
+
 .haikei {
     aspect-ratio: 960/300;
     width: 100%;
