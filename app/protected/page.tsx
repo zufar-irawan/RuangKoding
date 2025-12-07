@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Edit, ExternalLink } from "lucide-react";
 import Link from "next/link";
-import { GetUserProps } from "@/utils/GetClientUser";
+import { GetUserProps } from "@/lib/profiles";
 
 export default async function ProtectedPage() {
   const supabase = await createClient();
