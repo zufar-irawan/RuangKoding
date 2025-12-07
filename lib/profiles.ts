@@ -60,6 +60,68 @@ export const updateProfile = async (
   return updatedProfile;
 };
 
+// ============ PROFILE PICTURE ============
+export const uploadProfilePicture = async (
+  userId: string,
+  file: File,
+  oldProfilePicUrl?: string,
+) => {
+  const supabase = createClient();
+
+  // Delete old profile picture from storage if exists
+  if (oldProfilePicUrl) {
+    try {
+      // Extract filename from URL
+      // URL format: https://[project].supabase.co/storage/v1/object/public/avatars/[filename]
+      const urlParts = oldProfilePicUrl.split("/");
+      const oldFileName = urlParts[urlParts.length - 1];
+
+      // Delete old file
+      await supabase.storage.from("avatars").remove([oldFileName]);
+    } catch (error) {
+      console.error("Error deleting old profile picture:", error);
+      // Continue with upload even if delete fails
+    }
+  }
+
+  // Generate unique filename
+  const fileExt = file.name.split(".").pop();
+  const fileName = `${userId}-${Date.now()}.${fileExt}`;
+
+  // Upload to storage
+  const { error: uploadError } = await supabase.storage
+    .from("avatars")
+    .upload(fileName, file, {
+      upsert: true,
+    });
+
+  if (uploadError) throw uploadError;
+
+  // Get public URL
+  const { data: publicUrlData } = supabase.storage
+    .from("avatars")
+    .getPublicUrl(fileName);
+
+  return publicUrlData.publicUrl;
+};
+
+export const updateProfilePicture = async (
+  userId: string,
+  profilePicUrl: string,
+) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({ profile_pic: profilePicUrl })
+    .eq("id", userId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
 // ============ USER SKILLS ============
 export const createUserSkill = async (
   userId: string,

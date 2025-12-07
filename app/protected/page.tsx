@@ -2,11 +2,11 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Edit, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { GetUserProps } from "@/lib/profiles";
+import UserAvatar from "@/components/UserAvatar";
 
 export default async function ProtectedPage() {
   const supabase = await createClient();
@@ -26,19 +26,11 @@ export default async function ProtectedPage() {
           <CardContent className="p-8 items-center w-full">
             <div className="flex items-start justify-between w-full">
               <div className="flex items-center gap-4">
-                {user?.profile_pic ? (
-                  <Image
-                    src={user.profile_pic}
-                    alt="Your Profile Picture"
-                    width={100}
-                    height={100}
-                    className="rounded-full"
-                  />
-                ) : (
-                  <p className="flex h-24 w-24 items-center justify-center rounded-full bg-secondary/80 text-4xl font-semibold text-secondary-foreground">
-                    {user?.fullname.charAt(0).toUpperCase()}
-                  </p>
-                )}
+                <UserAvatar
+                  profilePic={user?.profile_pic || undefined}
+                  fullname={user?.fullname || "User"}
+                  userId={data?.claims?.sub || ""}
+                />
 
                 <div className="flex flex-col gap-4">
                   <h2 className="text-xs text-muted-foreground flex flex-col font-semibold">
