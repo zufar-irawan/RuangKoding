@@ -1,21 +1,64 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import UserAvatar from "@/components/UserAvatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { GetUserProps } from "@/lib/profiles";
-import { User, Shield, Palette, Bell, ChevronRight } from "lucide-react";
+import {
+  User,
+  Shield,
+  Palette,
+  Bell,
+  ChevronRight,
+  Loader2,
+} from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
+import { Database } from "@/lib/supabase/types";
 
-export default async function SettingsPage() {
-  const supabase = await createClient();
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
-  const { data, error } = await supabase.auth.getClaims();
-  if (error || !data?.claims) {
-    redirect("/auth/login");
-  }
+export default function SettingsPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [user, setUser] = useState<Profile | null>(null);
+  const [userId, setUserId] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { userProfile } = await GetUserProps(data?.claims?.sub);
-  const user = userProfile.data;
+  useEffect(() => {
+    const loadUser = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.auth.getUser();
+
+      if (error || !data?.user) {
+        router.push("/auth/login");
+        return;
+      }
+
+      const { userProfile } = await GetUserProps(data.user.id);
+      setUser(userProfile.data);
+      setUserId(data.user.id);
+      setIsLoading(false);
+    };
+
+    loadUser();
+  }, [router]);
+
+  useEffect(() => {
+    const success = searchParams.get("success");
+
+    if (success === "email_updated") {
+      toast.success("Email Berhasil Diperbarui!", {
+        description:
+          "Email Anda telah berhasil diperbarui. Silakan cek inbox email baru Anda untuk konfirmasi.",
+        duration: 5000,
+      });
+
+      router.replace("/protected/settings", { scroll: false });
+    }
+  }, [searchParams, router]);
 
   const settingsMenu = [
     {
@@ -52,6 +95,14 @@ export default async function SettingsPage() {
     },
   ];
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col w-full min-h-screen bg-gradient-to-b from-background to-muted/20 mt-12">
       <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
@@ -73,7 +124,7 @@ export default async function SettingsPage() {
                 <UserAvatar
                   profilePic={user?.profile_pic || undefined}
                   fullname={user?.fullname || "User"}
-                  userId={data?.claims?.sub || ""}
+                  userId={userId || ""}
                 />
                 <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-4 border-background"></div>
               </div>

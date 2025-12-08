@@ -39,13 +39,11 @@ export default function EditEmailPage() {
   const supabase = createClient();
 
   useEffect(() => {
-    // Check if user is verified
     if (verified !== "true") {
       router.push("/protected/settings/account");
       return;
     }
 
-    // Get current user email
     const getCurrentUser = async () => {
       const {
         data: { user },
@@ -73,7 +71,6 @@ export default function EditEmailPage() {
     }
 
     try {
-      // Call server action
       const result = await updateUserEmail(newEmail);
 
       if (result.success) {
@@ -84,12 +81,10 @@ export default function EditEmailPage() {
             "Email berhasil diperbarui! Silakan cek inbox email baru Anda untuk konfirmasi.",
         });
 
-        // Redirect after 3 seconds
         setTimeout(() => {
-          router.push("/protected/settings/account");
-        }, 3000);
+          router.push("/protected/settings?success=email_updated");
+        }, 2000);
       } else {
-        // Check if it's a rate limit error
         if (result.error?.includes("tunggu")) {
           setMessage({
             type: "warning",

@@ -315,7 +315,6 @@ export type Database = {
           lastname: string | null;
           level: number | null;
           motto: string | null;
-          phone: string | null;
           profile_pic: string | null;
           updated_at: string | null;
           xp: number | null;
@@ -330,7 +329,6 @@ export type Database = {
           lastname?: string | null;
           level?: number | null;
           motto?: string | null;
-          phone?: string | null;
           profile_pic?: string | null;
           updated_at?: string | null;
           xp?: number | null;
@@ -345,7 +343,6 @@ export type Database = {
           lastname?: string | null;
           level?: number | null;
           motto?: string | null;
-          phone?: string | null;
           profile_pic?: string | null;
           updated_at?: string | null;
           xp?: number | null;

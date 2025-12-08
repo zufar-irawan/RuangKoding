@@ -65,7 +65,6 @@ export const updateContactInfo = async (
   userId: string,
   data: {
     email: string;
-    phone: string | null;
   },
 ) => {
   const supabase = createClient();
@@ -77,7 +76,6 @@ export const updateContactInfo = async (
       {
         id: userId,
         email: data.email,
-        phone: data.phone,
       },
       {
         onConflict: "id",

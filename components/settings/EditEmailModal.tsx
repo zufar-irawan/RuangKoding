@@ -13,18 +13,13 @@ import {
 } from "@/components/ui/dialog";
 import { Edit, Loader2, Mail, ShieldCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 type Props = {
   currentEmail: string;
-  SuccessAction: (message: string) => void;
-  ErrorAction: (message: string) => void;
 };
 
-export function EditEmailModal({
-  currentEmail,
-  SuccessAction,
-  ErrorAction,
-}: Props) {
+export function EditEmailModal({ currentEmail }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const supabase = createClient();
@@ -37,23 +32,28 @@ export function EditEmailModal({
       const { error } = await supabase.auth.signInWithOtp({
         email: currentEmail,
         options: {
-          // Redirect ke halaman edit email setelah verifikasi
           emailRedirectTo: `${window.location.origin}/protected/settings/account/edit-email?verified=true`,
           shouldCreateUser: false,
         },
       });
 
       if (error) {
-        ErrorAction(`Gagal mengirim verifikasi: ${error.message}`);
+        toast.error("Gagal Mengirim Verifikasi", {
+          description: error.message,
+        });
         return;
       }
 
-      SuccessAction(
-        "Tautan verifikasi telah dikirim ke email Anda. Silakan cek kotak masuk Anda.",
-      );
+      toast.success("Verifikasi Terkirim!", {
+        description:
+          "Tautan verifikasi telah dikirim ke email Anda. Silakan cek kotak masuk Anda.",
+      });
       setIsOpen(false);
     } catch (error: unknown) {
-      ErrorAction(error instanceof Error ? error.message : "Terjadi kesalahan");
+      toast.error("Terjadi Kesalahan", {
+        description:
+          error instanceof Error ? error.message : "Terjadi kesalahan",
+      });
     } finally {
       setIsLoading(false);
     }

@@ -6,7 +6,7 @@ import SearchBar from "./searchbar";
 
 export default function Navbar() {
   return (
-    <nav className="fixed top-0 left-0 w-full flex justify-center border-b border-b-foreground/10 h-16 bg-tertiary">
+    <nav className="fixed top-0 left-0 w-full flex justify-center border-b border-b-foreground/10 h-16 bg-tertiary z-40">
       <div className="flex w-full justify-between items-center py-3 px-10 text-sm">
         <div className="flex gap-5 font-semibold">
           <Link href={"/"}>

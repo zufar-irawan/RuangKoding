@@ -31,13 +31,11 @@ export default function UserAvatar({ profilePic, fullname, userId }: Props) {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith("image/")) {
         alert("File harus berupa gambar!");
         return;
       }
 
-      // Validate file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
         alert("Ukuran file maksimal 2MB!");
         return;
@@ -57,22 +55,20 @@ export default function UserAvatar({ profilePic, fullname, userId }: Props) {
 
     setIsUploading(true);
     try {
-      // Upload to storage and get public URL (will delete old file if exists)
+      // Upload gambar ke storage dan dapatkan URL publik (akan menghapus file lama jika ada)
       const publicUrl = await uploadProfilePicture(
         userId,
         selectedFile,
         profilePic,
       );
 
-      // Update profile with new picture URL
+      // Update profile dengan URL gambar baru
       await updateProfilePicture(userId, publicUrl);
 
-      // Reset state and close modal
       setSelectedFile(null);
       setPreviewUrl("");
       setIsOpen(false);
 
-      // Refresh the page to show new avatar
       router.refresh();
     } catch (error) {
       console.error("Error uploading profile picture:", error);

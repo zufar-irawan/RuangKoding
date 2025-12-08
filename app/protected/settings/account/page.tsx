@@ -24,7 +24,7 @@ export default async function AccountPage() {
   return (
     <div className="flex flex-col w-full min-h-screen bg-gradient-to-b from-background to-muted/20 mt-12">
       <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {/* Header Section */}
+        {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
             Pengaturan Akun
@@ -34,20 +34,17 @@ export default async function AccountPage() {
           </p>
         </div>
 
-        {/* Contact Information Card */}
+        {/* Informasi Kontak */}
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl">Informasi Kontak</CardTitle>
             <CardDescription>
-              Perbarui email dan nomor telepon kamu untuk keamanan akun
+              Perbarui email kamu untuk keamanan akun
             </CardDescription>
           </CardHeader>
 
           <CardContent>
-            <ContactInfoForm
-              currentEmail={user?.email || ""}
-              currentPhone={user?.phone}
-            />
+            <ContactInfoForm currentEmail={user?.email || ""} />
           </CardContent>
         </Card>
       </div>
