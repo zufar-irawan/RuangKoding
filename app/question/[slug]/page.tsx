@@ -1,10 +1,9 @@
 import Navbar from "@/components/ui/navigation-bar";
 import QuestionBody from "@/components/Questions/question-body";
-import Link from "next/link";
-import { Undo2, Eye, CheckCircle, ThumbsUp } from "lucide-react";
+import { Eye, CheckCircle, ThumbsUp } from "lucide-react";
 
 import { getQuestionFromID } from "@/lib/questions";
-import type { CountRelation, AnswerPreview } from "@/lib/questions";
+import type { CountRelation, AnswerPreview } from "@/lib/type";
 import { parseSlug } from "@/lib/utils";
 
 import { format } from "date-fns";
@@ -15,6 +14,7 @@ import SharesNVote from "@/components/Questions/share-vote";
 import AnswersSection from "@/components/Answers/answers-section";
 import { parseLexicalBodyToHTML } from "@/lib/lexical/lexical-parser";
 import CommentForm from "@/components/Comments/comment-form";
+import { BackButton } from "@/components/ui/back-button";
 
 type Props = {
   params: {
@@ -91,12 +91,9 @@ export default async function QuestionDetailPage({ params }: Props) {
         <Sidebar />
 
         <div className="flex flex-col justify-center max-w-4xl py-10 ml-[22rem]">
-          <Link
-            href="/"
-            className="hover:bg-foreground/10 w-fit p-2 rounded-lg"
-          >
-            <Undo2 className="text-primary" size={24} />
-          </Link>
+          <div>
+            <BackButton href="/" label="Kembali" />
+          </div>
 
           <div className="flex flex-col gap-4">
             <h1 className="text-4xl font-bold text-primary">

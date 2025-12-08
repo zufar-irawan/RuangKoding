@@ -139,20 +139,11 @@ export default function QuestionCreateForm() {
   };
 
   return (
-    <div className="px-10 py-3 flex flex-col flex-1 gap-8">
+    <div className="px-10 pb-4 flex flex-col flex-1 gap-8">
       <div className="flex flex-col gap-1">
-        <div className="flex gap-2 items-center">
-          <Link
-            href="/question"
-            className="hover:bg-foreground/10 p-2 rounded-lg"
-          >
-            <Undo2 className="text-primary" size={24} />
-          </Link>
-
-          <h1 className="text-2xl text-primary font-bold">
-            Tanyakan Pertanyaan!
-          </h1>
-        </div>
+        <h1 className="text-2xl text-primary font-bold">
+          Tanyakan Pertanyaan!
+        </h1>
 
         <p className="text-muted-foreground max-w-xl text-sm">
           Ajukan pertanyaan kepada para sepuh yang udah khatam kodingan! Dijamin

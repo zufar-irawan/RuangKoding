@@ -2,7 +2,7 @@
 
 import { Label } from "@/components/ui/label";
 import { Mail } from "lucide-react";
-import { EditEmailModal } from "./EditEmailModal";
+import { EditEmailModal } from "@/components/Settings/EditEmailModal";
 
 type Props = {
   currentEmail: string;

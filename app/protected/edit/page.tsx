@@ -20,10 +20,12 @@ export default async function EditProfile() {
   return (
     <div className="flex flex-col mt-16 p-8 items-center w-full">
       <div className="flex flex-col w-full max-w-xl">
-        <h1 className="text-2xl font-bold text-primary">Edit Profilmu</h1>
-        <p className="text-md text-muted-foreground">
-          Edit profil kamu agar tampak keren di depan programmer lain!
-        </p>
+        <div className="mt-4">
+          <h1 className="text-2xl font-bold text-primary">Edit Profilmu</h1>
+          <p className="text-md text-muted-foreground">
+            Edit profil kamu agar tampak keren di depan programmer lain!
+          </p>
+        </div>
       </div>
 
       <EditProfileForm
