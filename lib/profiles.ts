@@ -70,13 +70,19 @@ export const updateContactInfo = async (
 ) => {
   const supabase = createClient();
 
+  // Use upsert to handle both insert and update cases
   const { data: updatedContact, error } = await supabase
     .from("profiles")
-    .update({
-      email: data.email,
-      phone: data.phone,
-    })
-    .eq("id", userId)
+    .upsert(
+      {
+        id: userId,
+        email: data.email,
+        phone: data.phone,
+      },
+      {
+        onConflict: "id",
+      },
+    )
     .select()
     .single();
 

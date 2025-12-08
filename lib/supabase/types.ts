@@ -627,11 +627,30 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_auth_limit: {
+        Row: {
+          id: number;
+          last_auth_updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          id?: number;
+          last_auth_updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          id?: number;
+          last_auth_updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       user_experience: {
         Row: {
           created_at: string;
           description: string | null;
           end_date: string | null;
+          id: number;
           organization_name: string;
           role: string;
           start_date: string;
@@ -641,6 +660,7 @@ export type Database = {
           created_at?: string;
           description?: string | null;
           end_date?: string | null;
+          id?: number;
           organization_name: string;
           role: string;
           start_date: string;
@@ -650,6 +670,7 @@ export type Database = {
           created_at?: string;
           description?: string | null;
           end_date?: string | null;
+          id?: number;
           organization_name?: string;
           role?: string;
           start_date?: string;
@@ -659,7 +680,7 @@ export type Database = {
           {
             foreignKeyName: "user_experience_user_id_fkey";
             columns: ["user_id"];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
@@ -698,6 +719,7 @@ export type Database = {
         Row: {
           created_at: string;
           endorsed_count: number | null;
+          id: number;
           level: string;
           skill_name: string;
           user_id: string;
@@ -705,6 +727,7 @@ export type Database = {
         Insert: {
           created_at?: string;
           endorsed_count?: number | null;
+          id?: number;
           level?: string;
           skill_name: string;
           user_id?: string;
@@ -712,6 +735,7 @@ export type Database = {
         Update: {
           created_at?: string;
           endorsed_count?: number | null;
+          id?: number;
           level?: string;
           skill_name?: string;
           user_id?: string;
@@ -720,7 +744,7 @@ export type Database = {
           {
             foreignKeyName: "user_skills_user_id_fkey";
             columns: ["user_id"];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
