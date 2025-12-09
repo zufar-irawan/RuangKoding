@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Edit, ExternalLink } from "lucide-react";
+import { Edit, ExternalLink, Quote } from "lucide-react";
 import Link from "next/link";
 import UserAvatar from "@/components/UserAvatar";
 
@@ -59,18 +59,38 @@ export default function ProfileHeader({ user, userId, userLinks }: Props) {
             </Link>
           </div>
 
-          <div className="flex flex-col mt-4 gap-2">
-            <p className="text-md text-accent-foreground">
-              {user?.motto ||
-                (user?.bio && user.bio.length > 100
-                  ? user.bio.substring(0, 100) + "..."
-                  : user?.bio) ||
-                "Halo! Aku programmer junior disini. Salam kenal yah puh."}
-            </p>
+          <div className="flex flex-col mt-6 gap-4">
+            {/* Motto Section */}
+            <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 via-background to-primary/5 p-6 shadow-sm">
+              <div
+                aria-hidden="true"
+                className="absolute inset-y-0 right-0 w-1/2 bg-primary/10 blur-3xl"
+              />
+              <Quote
+                className="absolute -top-4 -left-2 h-16 w-16 text-primary/30"
+                strokeWidth={1.5}
+              />
+              <Quote
+                className="absolute -bottom-6 right-4 h-14 w-14 text-primary/20 rotate-180"
+                strokeWidth={1.5}
+              />
+              <blockquote className="relative z-10 pl-10">
+                <p className="text-lg font-semibold italic leading-relaxed text-foreground/90">
+                  {user?.motto ||
+                    (user?.bio && user.bio.length > 100
+                      ? user.bio.substring(0, 100) + "..."
+                      : user?.bio) ||
+                    "Where imagination never ends"}
+                </p>
+                <footer className="mt-4 text-sm font-medium text-foreground/70">
+                  — {user?.fullname || "Pengguna"}
+                </footer>
+              </blockquote>
+            </div>
 
             {userLinks && userLinks.length > 0 && (
               <>
-                <div className="w-full border border-foreground/10 my-2" />
+                <div className="w-full border border-foreground/10" />
 
                 <div className="flex gap-2">
                   {userLinks.map((link, index) => (

@@ -4,7 +4,7 @@ import { GetUserProps } from "@/lib/profiles";
 import ProfileHeader from "@/components/Profiles/ProfileHeader";
 import ProfileTabs from "@/components/Profiles/Tabs/ProfileTabs";
 
-export default async function AboutPage() {
+export default async function SavedPage() {
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.getClaims();
@@ -33,13 +33,13 @@ export default async function AboutPage() {
       {/*tabs*/}
       <ProfileTabs />
 
-      {/*body - About*/}
+      {/*body - Saved*/}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="bg-card border rounded-lg p-6 shadow-sm">
-            <h2 className="text-xl font-semibold mb-4">Tentang Kamu</h2>
+            <h2 className="text-xl font-semibold mb-4">Tersimpan</h2>
             <p className="text-muted-foreground">
-              Informasi tentang diri kamu akan muncul di sini.
+              Konten yang kamu simpan akan muncul di sini.
             </p>
           </div>
         </div>
