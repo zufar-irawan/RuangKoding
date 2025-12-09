@@ -437,16 +437,19 @@ export type Database = {
       quest_vote: {
         Row: {
           created_at: string;
+          id: number;
           question_id: number;
           user_id: string;
         };
         Insert: {
           created_at?: string;
+          id?: number;
           question_id: number;
           user_id?: string;
         };
         Update: {
           created_at?: string;
+          id?: number;
           question_id?: number;
           user_id?: string;
         };
@@ -454,7 +457,7 @@ export type Database = {
           {
             foreignKeyName: "quest_vote_question_id_fkey";
             columns: ["question_id"];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: "questions";
             referencedColumns: ["id"];
           },
@@ -606,6 +609,42 @@ export type Database = {
           },
         ];
       };
+      saved_quest: {
+        Row: {
+          created_at: string;
+          id: number;
+          question_id: number;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          question_id: number;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          question_id?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "saved_quest_question_id_fkey";
+            columns: ["question_id"];
+            isOneToOne: false;
+            referencedRelation: "questions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "saved_quest_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       tags: {
         Row: {
           created_at: string;
@@ -686,18 +725,21 @@ export type Database = {
       user_links: {
         Row: {
           created_at: string;
+          id: number;
           platform: string | null;
           url: string;
           user_id: string;
         };
         Insert: {
           created_at?: string;
+          id?: number;
           platform?: string | null;
           url: string;
           user_id: string;
         };
         Update: {
           created_at?: string;
+          id?: number;
           platform?: string | null;
           url?: string;
           user_id?: string;
@@ -706,7 +748,7 @@ export type Database = {
           {
             foreignKeyName: "user_links_user_id_fkey";
             columns: ["user_id"];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },

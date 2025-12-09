@@ -161,10 +161,73 @@ const deleteQuestionComment = async (commentId: number) => {
   }
 };
 
+const getSavedQuestions = async (userId: string) => {
+  const supabase = await createClient();
+
+  // Get saved question IDs
+  const { data: savedData, error: savedError } = await supabase
+    .from("saved_quest")
+    .select("question_id, created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (savedError) {
+    console.error("Error fetching saved questions:", savedError);
+    return [];
+  }
+
+  if (!savedData || savedData.length === 0) {
+    return [];
+  }
+
+  const questionIds = savedData.map((item) => item.question_id);
+
+  // Get full question data
+  const { data: questions, error: questionsError } = await supabase
+    .from("questions")
+    .select(
+      `
+      id,
+      title,
+      excerpt,
+      created_at,
+      profiles (
+          id,
+          fullname,
+          bio,
+          profile_pic
+      ),
+      quest_tags (
+          tags (
+              tag
+          )
+      ),
+      view,
+      slug,
+      votes:quest_vote_question_id_fkey ( count ),
+      answers:answers!answers_question_id_fkey ( count )
+    `,
+    )
+    .in("id", questionIds)
+    .order("created_at", { ascending: false });
+
+  if (questionsError) {
+    console.error("Error fetching questions:", questionsError);
+    return [];
+  }
+
+  if (!questions || questions.length === 0) {
+    return [];
+  }
+
+  return questions;
+};
+
 export {
   getQuestions,
   getQuestionFromID,
   getQuestionComments,
   createQuestionComment,
   deleteQuestionComment,
+  getSavedQuestions,
 };

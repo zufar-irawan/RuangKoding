@@ -130,7 +130,7 @@ export default async function QuestionDetailPage({ params }: Props) {
           </div>
 
           <div className="flex flex-col w-full gap-8 mt-10">
-            <SharesNVote votesCount={votesCount} />
+            <SharesNVote votesCount={votesCount} question_id={question?.id} />
 
             <CommentForm question_id={question?.id} />
 
