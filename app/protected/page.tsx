@@ -45,7 +45,7 @@ export default async function ProtectedPage() {
 
       <ProfileTabs />
 
-      {/*body - Dashboard*/}
+      {/*body */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Level Bar Section */}
@@ -82,7 +82,7 @@ export default async function ProtectedPage() {
             />
           </div>
 
-          {/* Monthly Answers Chart */}
+          {/* Diagram garis buat terjawab bulanan */}
           <AnswersChart data={dashboardStats.monthlyAnswers} />
         </div>
       </div>

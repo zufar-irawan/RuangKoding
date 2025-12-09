@@ -86,7 +86,6 @@ export const updateContactInfo = async (
 ) => {
   const supabase = createClient();
 
-  // Use upsert to handle both insert and update cases
   const { data: updatedContact, error } = await supabase
     .from("profiles")
     .upsert(
@@ -116,16 +115,14 @@ export const uploadProfilePicture = async (
   // Delete old profile picture from storage if exists
   if (oldProfilePicUrl) {
     try {
-      // Extract filename from URL
-      // URL format: https://[project].supabase.co/storage/v1/object/public/avatars/[filename]
+      // Extract nama file dari URL
       const urlParts = oldProfilePicUrl.split("/");
       const oldFileName = urlParts[urlParts.length - 1];
 
-      // Delete old file
+      // Delete file lama
       await supabase.storage.from("avatars").remove([oldFileName]);
     } catch (error) {
       console.error("Error deleting old profile picture:", error);
-      // Continue with upload even if delete fails
     }
   }
 

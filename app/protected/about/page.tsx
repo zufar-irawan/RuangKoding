@@ -38,10 +38,9 @@ export default async function AboutPage() {
         userLinks={userLink.data || []}
       />
 
-      {/*tabs*/}
       <ProfileTabs />
 
-      {/*body - About*/}
+      {/*body */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="flex justify-between items-center">

@@ -31,10 +31,9 @@ export default async function EditAboutPage() {
         userLinks={userLink.data || []}
       />
 
-      {/*tabs*/}
       <ProfileTabs />
 
-      {/*body - About Editor*/}
+      {/*body */}
       <AboutEditor
         userId={data?.claims?.sub || ""}
         initialBio={user?.bio || null}
