@@ -3,6 +3,13 @@ import { createClient } from "@/lib/supabase/server";
 import { GetUserProps } from "@/lib/profiles";
 import ProfileHeader from "@/components/Profiles/ProfileHeader";
 import ProfileTabs from "@/components/Profiles/Tabs/ProfileTabs";
+import BioViewer from "@/components/Profiles/BioViewer";
+import SkillsCard from "@/components/Profiles/SkillsCard";
+import ExperienceCard from "@/components/Profiles/ExperienceCard";
+import LinksCard from "@/components/Profiles/LinksCard";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Pencil } from "lucide-react";
 
 export default async function AboutPage() {
   const supabase = await createClient();
@@ -12,7 +19,8 @@ export default async function AboutPage() {
     redirect("/auth/login");
   }
 
-  const { userLink, userProfile } = await GetUserProps(data?.claims?.sub);
+  const { userLink, userProfile, userExperience, userSkills } =
+    await GetUserProps(data?.claims?.sub);
   const user = userProfile.data;
 
   return (
@@ -36,12 +44,23 @@ export default async function AboutPage() {
       {/*body - About*/}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto space-y-8">
-          <div className="bg-card border rounded-lg p-6 shadow-sm">
-            <h2 className="text-xl font-semibold mb-4">Tentang Kamu</h2>
-            <p className="text-muted-foreground">
-              Informasi tentang diri kamu akan muncul di sini.
-            </p>
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">Tentang</h1>
+            <Link href="/protected/about/edit">
+              <Button size="sm">
+                <Pencil className="h-4 w-4 mr-2" />
+                Edit Bio
+              </Button>
+            </Link>
           </div>
+
+          <BioViewer bioContent={user?.bio || null} />
+
+          <SkillsCard skills={userSkills.data || null} />
+
+          <ExperienceCard experiences={userExperience.data || null} />
+
+          <LinksCard links={userLink.data || null} />
         </div>
       </div>
     </div>

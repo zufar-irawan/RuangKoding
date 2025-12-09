@@ -26,7 +26,6 @@ export default async function ProtectedPage() {
   const { userLink, userProfile } = await GetUserProps(data?.claims?.sub);
   const user = userProfile.data;
 
-  // Fetch dashboard statistics
   const dashboardStats = await getDashboardStats(data?.claims?.sub || "");
 
   return (
@@ -44,7 +43,6 @@ export default async function ProtectedPage() {
         userLinks={userLink.data || []}
       />
 
-      {/*tabs*/}
       <ProfileTabs />
 
       {/*body - Dashboard*/}

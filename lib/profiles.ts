@@ -60,6 +60,23 @@ export const updateProfile = async (
   return updatedProfile;
 };
 
+// ============ BIO UPDATE ============
+export const updateBio = async (userId: string, bio: string) => {
+  const supabase = createClient();
+
+  const { data: updatedProfile, error } = await supabase
+    .from("profiles")
+    .update({
+      bio: bio,
+    })
+    .eq("id", userId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return updatedProfile;
+};
+
 // ============ CONTACT INFO UPDATE ============
 export const updateContactInfo = async (
   userId: string,
