@@ -340,3 +340,66 @@ export const deleteUserLink = async (createdAt: string) => {
 
   if (error) throw error;
 };
+
+// ============ NOTIFICATION SETTINGS ============
+export const getNotificationSettings = async (userId: string) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("notification_settings")
+    .select("*")
+    .eq("user_id", userId)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") {
+      return null;
+    }
+    throw error;
+  }
+
+  return data;
+};
+
+export const createNotificationSettings = async (userId: string) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("notification_settings")
+    .insert({
+      user_id: userId,
+      vote: true,
+      quest_comment: true,
+      answ_comment: true,
+      helpful: true,
+      new_answer: true,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updateNotificationSettings = async (
+  userId: string,
+  settings: {
+    vote?: boolean;
+    quest_comment?: boolean;
+    answ_comment?: boolean;
+    helpful?: boolean;
+    new_answer?: boolean;
+  },
+) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("notification_settings")
+    .update(settings)
+    .eq("user_id", userId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};

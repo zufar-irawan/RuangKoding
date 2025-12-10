@@ -304,6 +304,47 @@ export type Database = {
           },
         ];
       };
+      notification_settings: {
+        Row: {
+          answ_comment: boolean | null;
+          created_at: string;
+          helpful: boolean | null;
+          id: number;
+          new_answer: boolean | null;
+          quest_comment: boolean | null;
+          user_id: string;
+          vote: boolean | null;
+        };
+        Insert: {
+          answ_comment?: boolean | null;
+          created_at?: string;
+          helpful?: boolean | null;
+          id?: number;
+          new_answer?: boolean | null;
+          quest_comment?: boolean | null;
+          user_id: string;
+          vote?: boolean | null;
+        };
+        Update: {
+          answ_comment?: boolean | null;
+          created_at?: string;
+          helpful?: boolean | null;
+          id?: number;
+          new_answer?: boolean | null;
+          quest_comment?: boolean | null;
+          user_id?: string;
+          vote?: boolean | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notification_settings_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       notifications: {
         Row: {
           answer_id: number | null;

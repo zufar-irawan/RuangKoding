@@ -11,6 +11,7 @@ import {
   SettingsSidebar,
   SettingsSection,
   AccountSection,
+  NotificationSection,
 } from "@/components/Settings";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
@@ -191,6 +192,9 @@ export default function SettingsPage() {
           <main className="flex-1 space-y-8">
             {/* Account Section */}
             <AccountSection email={user?.email || ""} />
+
+            {/* Notification Section */}
+            <NotificationSection userId={userId} />
           </main>
         </div>
       </div>
