@@ -154,7 +154,7 @@ export async function updateUserEmail(newEmail: string) {
       email: newEmail,
     });
 
-    revalidatePath("/protected/settings/account");
+    revalidatePath("/protected/settings");
 
     return {
       success: true,
