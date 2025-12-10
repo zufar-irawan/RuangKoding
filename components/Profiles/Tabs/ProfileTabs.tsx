@@ -19,6 +19,11 @@ export default function ProfileTabs() {
       active: pathname === "/protected/about",
     },
     {
+      name: "Pertanyaan Kamu",
+      href: "/protected/questions",
+      active: pathname === "/protected/questions",
+    },
+    {
       name: "Tersimpan",
       href: "/protected/saved",
       active: pathname === "/protected/saved",

@@ -223,6 +223,49 @@ const getSavedQuestions = async (userId: string) => {
   return questions;
 };
 
+const getQuestionsFromUserID = async (user_id: string) => {
+  const supabase = await createClient();
+
+  const { data: questions, error: questionsError } = await supabase
+    .from("questions")
+    .select(
+      `
+      id,
+      title,
+      excerpt,
+      created_at,
+      profiles (
+          id,
+          fullname,
+          bio,
+          profile_pic
+      ),
+      quest_tags (
+          tags (
+              tag
+          )
+      ),
+      view,
+      slug,
+      votes:quest_vote_question_id_fkey ( count ),
+      answers:answers!answers_question_id_fkey ( count )
+    `,
+    )
+    .eq("user_id", user_id)
+    .order("created_at", { ascending: false });
+
+  if (questionsError) {
+    console.error("Error fetching questions:", questionsError);
+    return [];
+  }
+
+  if (!questions || questions.length === 0) {
+    return [];
+  }
+
+  return questions;
+};
+
 export {
   getQuestions,
   getQuestionFromID,
@@ -230,4 +273,5 @@ export {
   createQuestionComment,
   deleteQuestionComment,
   getSavedQuestions,
+  getQuestionsFromUserID,
 };
