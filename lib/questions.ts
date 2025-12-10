@@ -266,6 +266,29 @@ const getQuestionsFromUserID = async (user_id: string) => {
   return questions;
 };
 
+const incrementQuestionView = async (questionId: number) => {
+  const supabase = await createClient();
+
+  // Get current view count
+  const { data: currentData } = await supabase
+    .from("questions")
+    .select("view")
+    .eq("id", questionId)
+    .single();
+
+  const currentView = currentData?.view ?? 0;
+
+  // Update with incremented value
+  const { error } = await supabase
+    .from("questions")
+    .update({ view: currentView + 1 })
+    .eq("id", questionId);
+
+  if (error) {
+    console.error("Error incrementing question view:", error);
+  }
+};
+
 export {
   getQuestions,
   getQuestionFromID,
@@ -274,4 +297,5 @@ export {
   deleteQuestionComment,
   getSavedQuestions,
   getQuestionsFromUserID,
+  incrementQuestionView,
 };
