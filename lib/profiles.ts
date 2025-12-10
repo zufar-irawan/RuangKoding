@@ -34,7 +34,6 @@ export const updateProfile = async (
     firstname: string;
     lastname: string | null;
     motto: string | null;
-    bio: string | null;
   },
 ) => {
   const supabase = createClient();
@@ -50,7 +49,6 @@ export const updateProfile = async (
       lastname: data.lastname,
       fullname: fullname,
       motto: data.motto,
-      bio: data.bio,
     })
     .eq("id", userId)
     .select()

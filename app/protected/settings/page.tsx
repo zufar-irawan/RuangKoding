@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { GetUserProps } from "@/lib/profiles";
-import { User, Shield, Palette, Bell, Loader2 } from "lucide-react";
+import { User, Shield, Bell, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Database } from "@/lib/supabase/types";
 import {
@@ -120,28 +120,20 @@ export default function SettingsPage() {
       bgColor: "bg-blue-500/10",
     },
     {
-      id: "security",
-      title: "Keamanan",
-      description: "Password, autentikasi, dan pengaturan keamanan",
-      icon: Shield,
-      color: "text-green-500",
-      bgColor: "bg-green-500/10",
-    },
-    {
-      id: "appearance",
-      title: "Tampilan",
-      description: "Personalisasi tema dan tampilan aplikasi",
-      icon: Palette,
-      color: "text-purple-500",
-      bgColor: "bg-purple-500/10",
-    },
-    {
       id: "notifications",
       title: "Notifikasi",
       description: "Atur preferensi notifikasi dan pemberitahuan",
       icon: Bell,
       color: "text-orange-500",
       bgColor: "bg-orange-500/10",
+    },
+    {
+      id: "security",
+      title: "Keamanan",
+      description: "Password, autentikasi, dan pengaturan keamanan",
+      icon: Shield,
+      color: "text-green-500",
+      bgColor: "bg-green-500/10",
     },
   ];
 

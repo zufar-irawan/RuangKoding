@@ -86,14 +86,12 @@ export default function EditProfileForm({
       const firstname = formData.get("firstname") as string;
       const lastname = formData.get("lastname") as string;
       const motto = formData.get("motto") as string;
-      const bio = formData.get("bio") as string;
 
       // Update basic profile
       await updateProfile(userId, {
         firstname,
         lastname: lastname || null,
         motto: motto || null,
-        bio: bio || null,
       });
 
       // Detect deleted skills
@@ -267,26 +265,6 @@ export default function EditProfileForm({
           defaultValue={basicProfile?.motto ?? ""}
           id="motto"
           name="motto"
-        />
-      </div>
-
-      <div className="flex flex-col">
-        <div className="flex flex-col mb-2">
-          <label htmlFor="bio" className="flex flex-col">
-            Bio diri
-            <span className="text-sm text-muted-foreground">
-              Tuliskan seputar tentang dirimu!
-            </span>
-          </label>
-        </div>
-
-        <textarea
-          placeholder="Masukkan Bio kamu disini"
-          defaultValue={basicProfile?.bio ?? ""}
-          id="bio"
-          name="bio"
-          rows={5}
-          className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
         />
       </div>
 

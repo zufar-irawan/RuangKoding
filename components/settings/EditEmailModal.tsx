@@ -32,7 +32,7 @@ export function EditEmailModal({ currentEmail }: Props) {
       const { error } = await supabase.auth.signInWithOtp({
         email: currentEmail,
         options: {
-          emailRedirectTo: `${window.location.origin}/protected/settings/account/edit-email?verified=true`,
+          emailRedirectTo: `${window.location.origin}/protected/edit/email?verified=true`,
           shouldCreateUser: false,
         },
       });
