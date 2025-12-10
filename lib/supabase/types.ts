@@ -304,6 +304,68 @@ export type Database = {
           },
         ];
       };
+      notifications: {
+        Row: {
+          answer_id: number | null;
+          content: string;
+          created_at: string;
+          id: number;
+          question_id: number | null;
+          read: boolean | null;
+          receiver_id: string;
+          sender_id: string;
+        };
+        Insert: {
+          answer_id?: number | null;
+          content: string;
+          created_at?: string;
+          id?: number;
+          question_id?: number | null;
+          read?: boolean | null;
+          receiver_id: string;
+          sender_id: string;
+        };
+        Update: {
+          answer_id?: number | null;
+          content?: string;
+          created_at?: string;
+          id?: number;
+          question_id?: number | null;
+          read?: boolean | null;
+          receiver_id?: string;
+          sender_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notifications_answer_id_fkey";
+            columns: ["answer_id"];
+            isOneToOne: false;
+            referencedRelation: "answers";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "notifications_question_id_fkey";
+            columns: ["question_id"];
+            isOneToOne: false;
+            referencedRelation: "questions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "notifications_receiver_id_fkey";
+            columns: ["receiver_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "notifications_sender_id_fkey";
+            columns: ["sender_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       profiles: {
         Row: {
           bio: string | null;
@@ -440,18 +502,21 @@ export type Database = {
           id: number;
           question_id: number;
           user_id: string;
+          vote: boolean;
         };
         Insert: {
           created_at?: string;
           id?: number;
           question_id: number;
           user_id?: string;
+          vote: boolean;
         };
         Update: {
           created_at?: string;
           id?: number;
           question_id?: number;
           user_id?: string;
+          vote?: boolean;
         };
         Relationships: [
           {

@@ -2,10 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/client";
-import { getClientUser } from "@/utils/GetClientUser";
 import { Share, Link2, ChevronUp, ChevronDown, Bookmark } from "lucide-react";
 import { toast } from "sonner";
+import { checkUserVote, handleQuestionVote } from "@/utils/questionVote";
+import {
+  checkBookmarkStatus,
+  toggleQuestionBookmark,
+} from "@/utils/questionBookmark";
 
 type Props = {
   votesCount?: number;
@@ -15,82 +18,63 @@ type Props = {
 export default function SharesNVote({ votesCount, question_id }: Props) {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [userVote, setUserVote] = useState<boolean | null>(null);
+  const [currentVoteCount, setCurrentVoteCount] = useState(votesCount || 0);
 
   useEffect(() => {
-    checkBookmarkStatus();
+    loadInitialData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question_id]);
 
-  const checkBookmarkStatus = async () => {
-    try {
-      const supabase = createClient();
-      const user = await getClientUser();
+  const loadInitialData = async () => {
+    // Load bookmark status
+    const bookmarkStatus = await checkBookmarkStatus(question_id);
+    setIsBookmarked(bookmarkStatus);
 
-      if (!user?.id || !question_id) return;
-
-      const { data } = await supabase
-        .from("saved_quest")
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("question_id", question_id);
-
-      setIsBookmarked(!!(data && data.length > 0));
-    } catch (error) {
-      console.error("Error checking bookmark status:", error);
-    }
+    // Load user vote
+    const voteStatus = await checkUserVote(question_id);
+    setUserVote(voteStatus);
   };
 
   const handleBookmark = async () => {
     if (isLoading) return;
 
     setIsLoading(true);
-    const supabase = createClient();
 
     try {
-      const user = await getClientUser();
+      const result = await toggleQuestionBookmark(question_id, isBookmarked);
 
-      if (!user?.id) {
-        toast.error("Silakan login terlebih dahulu");
-        return;
-      }
-
-      if (!question_id) {
-        toast.error("ID pertanyaan tidak valid");
-        return;
-      }
-
-      if (isBookmarked) {
-        const { error } = await supabase
-          .from("saved_quest")
-          .delete()
-          .eq("user_id", user.id)
-          .eq("question_id", question_id);
-
-        if (error) throw error;
-
-        setIsBookmarked(false);
-        toast.success("Bookmark dihapus");
+      if (result.success) {
+        setIsBookmarked(result.isBookmarked);
+        toast.success(result.message);
       } else {
-        const payload = {
-          user_id: user.id,
-          question_id: question_id,
-        };
-
-        const { error } = await supabase.from("saved_quest").insert(payload);
-
-        if (error) {
-          if (error.code === "23505") {
-            toast.info("Pertanyaan sudah tersimpan");
-          } else {
-            throw error;
-          }
-        } else {
-          setIsBookmarked(true);
-          toast.success("Berhasil menyimpan pertanyaan");
-        }
+        toast.error(result.message);
       }
     } catch (error) {
       console.error("Error handling bookmark:", error);
+      toast.error("Terjadi kesalahan, silakan coba lagi");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVote = async (voteType: boolean) => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+
+    try {
+      const result = await handleQuestionVote(question_id, voteType);
+
+      if (result.success) {
+        setUserVote(result.newVoteState);
+        setCurrentVoteCount((prev) => prev + result.voteCountChange);
+        toast.success(result.message);
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error("Error handling vote:", error);
       toast.error("Terjadi kesalahan, silakan coba lagi");
     } finally {
       setIsLoading(false);
@@ -111,7 +95,12 @@ export default function SharesNVote({ votesCount, question_id }: Props) {
             <Share size={18} className="mr-2" />
             Bagikan
           </Button>
-          <Button variant={"outline"} size="lg" className="h-11 w-11 p-0">
+          <Button
+            variant={"outline"}
+            size="lg"
+            className="h-11 w-11 p-0"
+            disabled={isLoading}
+          >
             <Link2 size={20} />
           </Button>
           <Button
@@ -136,13 +125,25 @@ export default function SharesNVote({ votesCount, question_id }: Props) {
           </span>
         </div>
         <div className="flex items-center gap-4 border border-foreground/10 rounded-xl bg-background px-5 py-3">
-          <Button variant={"ghost"} size="lg" className="h-11 w-11 p-0">
+          <Button
+            onClick={() => handleVote(true)}
+            variant={userVote === true ? "default" : "ghost"}
+            size="lg"
+            className="h-11 w-11 p-0"
+            disabled={isLoading}
+          >
             <ChevronUp size={26} />
           </Button>
           <span className="text-3xl font-bold min-w-[3ch] text-center">
-            {votesCount}
+            {currentVoteCount}
           </span>
-          <Button variant={"ghost"} size="lg" className="h-11 w-11 p-0">
+          <Button
+            onClick={() => handleVote(false)}
+            variant={userVote === false ? "default" : "ghost"}
+            size="lg"
+            className="h-11 w-11 p-0"
+            disabled={isLoading}
+          >
             <ChevronDown size={26} />
           </Button>
         </div>
