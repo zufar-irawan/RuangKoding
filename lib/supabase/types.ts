@@ -108,23 +108,26 @@ export type Database = {
         Row: {
           answer_id: number;
           created_at: string;
+          id: number;
           user_id: string;
         };
         Insert: {
           answer_id?: number;
           created_at?: string;
+          id?: number;
           user_id?: string;
         };
         Update: {
           answer_id?: number;
           created_at?: string;
+          id?: number;
           user_id?: string;
         };
         Relationships: [
           {
             foreignKeyName: "answ_vote_answer_id_fkey";
             columns: ["answer_id"];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: "answers";
             referencedColumns: ["id"];
           },
@@ -625,7 +628,7 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "questions_user_id_fkey1";
+            foreignKeyName: "questions_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
@@ -685,16 +688,19 @@ export type Database = {
       review_verified: {
         Row: {
           created_at: string;
+          id: number;
           reviews_id: number;
           user_id: string | null;
         };
         Insert: {
           created_at?: string;
+          id?: number;
           reviews_id?: number;
           user_id?: string | null;
         };
         Update: {
           created_at?: string;
+          id?: number;
           reviews_id?: number;
           user_id?: string | null;
         };
@@ -702,7 +708,7 @@ export type Database = {
           {
             foreignKeyName: "review_verified_reviews_id_fkey";
             columns: ["reviews_id"];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: "ai_review";
             referencedColumns: ["id"];
           },

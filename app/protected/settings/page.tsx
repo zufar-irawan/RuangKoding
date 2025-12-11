@@ -194,11 +194,11 @@ export default function SettingsPage() {
             {/* Account Section */}
             <AccountSection email={user?.email || ""} />
 
-            {/* Security Section */}
-            <SecuritySection />
-
             {/* Notification Section */}
             <NotificationSection userId={userId} />
+
+            {/* Security Section */}
+            <SecuritySection />
           </main>
         </div>
       </div>

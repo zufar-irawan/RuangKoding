@@ -11,15 +11,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Edit, Loader2, Mail, ShieldCheck } from "lucide-react";
+import {
+  Trash2,
+  Loader2,
+  Mail,
+  AlertTriangle,
+  ShieldAlert,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
-type Props = {
-  currentEmail: string;
-};
-
-export function EditEmailModal({ currentEmail }: Props) {
+export function DeleteAccountModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const supabase = createClient();
@@ -28,10 +30,20 @@ export function EditEmailModal({ currentEmail }: Props) {
     setIsLoading(true);
 
     try {
+      const { data: userData, error: userError } =
+        await supabase.auth.getUser();
+
+      if (userError || !userData?.user?.email) {
+        toast.error("Gagal Mendapatkan Informasi User", {
+          description: "Silakan coba lagi nanti.",
+        });
+        return;
+      }
+
       const { error } = await supabase.auth.signInWithOtp({
-        email: currentEmail,
+        email: userData.user.email,
         options: {
-          emailRedirectTo: `${window.location.origin}/protected/edit/email?verified=true`,
+          emailRedirectTo: `${window.location.origin}/protected/edit/delete`,
           shouldCreateUser: false,
         },
       });
@@ -44,7 +56,7 @@ export function EditEmailModal({ currentEmail }: Props) {
       }
 
       toast.success("Verifikasi Terkirim!", {
-        description: `Tautan verifikasi telah dikirim ke ${currentEmail}. Silakan cek kotak masuk Anda.`,
+        description: `Tautan verifikasi telah dikirim ke ${userData.user.email}. Silakan cek kotak masuk Anda.`,
         duration: 5000,
       });
       setIsOpen(false);
@@ -61,29 +73,40 @@ export function EditEmailModal({ currentEmail }: Props) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="flex items-center gap-2">
-          <Edit size={16} />
-          Ubah Email
+        <Button
+          variant="destructive"
+          size="sm"
+          className="flex items-center gap-2 shrink-0"
+        >
+          <Trash2 size={16} />
+          Hapus Akun
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5" />
-            Verifikasi Identitas
+          <DialogTitle className="flex items-center gap-2 text-destructive">
+            <ShieldAlert className="w-5 h-5" />
+            Verifikasi Penghapusan Akun
           </DialogTitle>
           <DialogDescription>
-            Untuk keamanan akun Anda, kami perlu memverifikasi identitas Anda
-            sebelum mengubah email.
+            Untuk keamanan, kami perlu memverifikasi identitas Anda sebelum
+            menghapus akun secara permanen.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <div className="p-4 bg-muted rounded-lg">
-            <p className="text-sm text-muted-foreground mb-2">
-              Email saat ini:
-            </p>
-            <p className="font-medium">{currentEmail}</p>
+          <div className="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/30 rounded-lg">
+            <AlertTriangle className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-destructive">
+                Peringatan: Tindakan Permanen
+              </p>
+              <p className="text-xs text-destructive/80">
+                Menghapus akun akan menghapus semua data Anda secara permanen,
+                termasuk profil, pertanyaan, jawaban, komentar, dan riwayat
+                aktivitas. Tindakan ini tidak dapat dibatalkan.
+              </p>
+            </div>
           </div>
 
           <div className="flex items-start gap-3 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
@@ -94,20 +117,7 @@ export function EditEmailModal({ currentEmail }: Props) {
               </p>
               <p className="text-xs text-blue-700 dark:text-blue-300">
                 Kami akan mengirimkan tautan verifikasi ke email Anda. Klik
-                tautan tersebut untuk melanjutkan proses perubahan email.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-            <ShieldCheck className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
-                Perhatian
-              </p>
-              <p className="text-xs text-amber-700 dark:text-amber-300">
-                Pastikan email baru Anda valid dan dapat diakses. Anda akan
-                menerima email konfirmasi di alamat email baru Anda.
+                tautan tersebut untuk melanjutkan proses penghapusan akun.
               </p>
             </div>
           </div>
@@ -122,7 +132,11 @@ export function EditEmailModal({ currentEmail }: Props) {
           >
             Batal
           </Button>
-          <Button onClick={handleVerifyEmail} disabled={isLoading}>
+          <Button
+            variant="destructive"
+            onClick={handleVerifyEmail}
+            disabled={isLoading}
+          >
             {isLoading ? (
               <>
                 <Loader2 size={16} className="animate-spin mr-2" />
