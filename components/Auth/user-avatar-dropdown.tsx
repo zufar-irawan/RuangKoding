@@ -8,9 +8,12 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import { Settings, LogOut, User } from "lucide-react";
+import { Settings, LogOut, User, Moon, Sun } from "lucide-react";
 import { LogoutButton } from "./logout-button";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 type Props = {
   profilePic?: string | null;
@@ -18,6 +21,13 @@ type Props = {
 };
 
 export function UserAvatarDropdown({ profilePic, userInitial }: Props) {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -38,7 +48,7 @@ export function UserAvatarDropdown({ profilePic, userInitial }: Props) {
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuItem asChild>
           <Link
             href="/protected"
@@ -60,6 +70,31 @@ export function UserAvatarDropdown({ profilePic, userInitial }: Props) {
             <span>Setelan</span>
           </Link>
         </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">
+          Tema
+        </DropdownMenuLabel>
+
+        {mounted && (
+          <DropdownMenuItem
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="flex items-center gap-2 cursor-pointer"
+          >
+            {theme === "dark" ? (
+              <>
+                <Sun size={16} />
+                <span>Mode Terang</span>
+              </>
+            ) : (
+              <>
+                <Moon size={16} />
+                <span>Mode Gelap</span>
+              </>
+            )}
+          </DropdownMenuItem>
+        )}
 
         <DropdownMenuSeparator />
 
