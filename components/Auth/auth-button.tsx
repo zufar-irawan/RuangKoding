@@ -24,12 +24,18 @@ export async function AuthButton() {
     );
   }
 
+  const { data: userProfile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.sub)
+    .single();
+
   const getInitial = (value?: string | null) =>
     value?.trim()?.charAt(0)?.toUpperCase();
 
   const userProfileInitial =
-    getInitial(user.firstname) ||
-    getInitial(user.fullname) ||
+    getInitial(userProfile?.firstname) ||
+    getInitial(userProfile?.fullname) ||
     getInitial(user.email) ||
     "?";
 

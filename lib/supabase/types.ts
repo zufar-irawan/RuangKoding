@@ -773,16 +773,19 @@ export type Database = {
         Row: {
           id: number;
           last_auth_updated_at: string;
+          type: string | null;
           user_id: string;
         };
         Insert: {
           id?: number;
           last_auth_updated_at?: string;
+          type?: string | null;
           user_id?: string;
         };
         Update: {
           id?: number;
           last_auth_updated_at?: string;
+          type?: string | null;
           user_id?: string;
         };
         Relationships: [];
