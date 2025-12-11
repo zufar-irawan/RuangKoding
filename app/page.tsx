@@ -1,11 +1,10 @@
-import Navbar from "@/components/navigation-bar";
-import Footer from "@/components/footer";
-import PostCard from "@/components/post-card";
-import Sidebar from "@/components/sidebar";
+import Navbar from "@/components/ui/navigation-bar";
+import Footer from "@/components/ui/footer";
+import Sidebar from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import Questions from "@/components/questions";
+import Questions from "@/components/Questions/questions";
 
 export default function Home() {
 
@@ -15,10 +14,10 @@ export default function Home() {
 
         <Navbar />
 
-        <div className="flex flex-1 ">
+        <div className="flex flex-1 w-full mt-16">
           <Sidebar />
 
-          <div className="flex flex-col gap-2 py-3 px-5">
+          <div className="flex flex-col flex-1 gap-2 py-3 pr-5 ml-[22rem]">
 
             <div className="w-full justify-end flex">
               <Link href="/question/create">

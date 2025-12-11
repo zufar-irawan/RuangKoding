@@ -1,8 +1,19 @@
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
-import { InfoIcon } from "lucide-react";
-import { FetchDataSteps } from "@/components/tutorial/fetch-data-steps";
+import { GetUserProps } from "@/lib/profiles";
+import { getDashboardStats } from "@/lib/dashboard";
+import ProfileHeader from "@/components/Profiles/ProfileHeader";
+import ProfileTabs from "@/components/Profiles/Tabs/ProfileTabs";
+import LevelBar from "@/components/Profiles/LevelBar";
+import StatsCard from "@/components/Dashboard/StatsCard";
+import AnswersChart from "@/components/Dashboard/AnswersChart";
+import {
+  MessageSquare,
+  CheckCircle,
+  TrendingUp,
+  HelpCircle,
+} from "lucide-react";
 
 export default async function ProtectedPage() {
   const supabase = await createClient();
@@ -12,24 +23,68 @@ export default async function ProtectedPage() {
     redirect("/auth/login");
   }
 
+  const { userLink, userProfile } = await GetUserProps(data?.claims?.sub);
+  const user = userProfile.data;
+
+  const dashboardStats = await getDashboardStats(data?.claims?.sub || "");
+
   return (
-    <div className="flex-1 w-full flex flex-col gap-12">
-      <div className="w-full">
-        <div className="bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
-          <InfoIcon size="16" strokeWidth={2} />
-          This is a protected page that you can only see as an authenticated
-          user
+    <div className="flex flex-col mt-16">
+      {/*header*/}
+      <ProfileHeader
+        user={{
+          profile_pic: user?.profile_pic || null,
+          fullname: user?.fullname || "User",
+          email: user?.email || "",
+          motto: user?.motto || null,
+          bio: user?.bio || null,
+        }}
+        userId={data?.claims?.sub || ""}
+        userLinks={userLink.data || []}
+      />
+
+      <ProfileTabs />
+
+      {/*body */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto space-y-8">
+          {/* Level Bar Section */}
+          <div className="bg-card border rounded-lg p-6 shadow-sm">
+            <h2 className="text-xl font-semibold mb-4">Progress Kamu</h2>
+            <LevelBar level={user?.level || 1} xp={user?.xp || 0} />
+          </div>
+
+          {/* Statistics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatsCard
+              title="Total Jawaban"
+              value={dashboardStats.totalAnswers}
+              icon={MessageSquare}
+              description="Jawaban yang kamu berikan"
+            />
+            <StatsCard
+              title="Jawaban Helpful"
+              value={dashboardStats.totalHelpfulAnswers}
+              icon={CheckCircle}
+              description="Ditandai sebagai helpful"
+            />
+            <StatsCard
+              title="Upvote Pertanyaan"
+              value={dashboardStats.totalQuestionUpvotes}
+              icon={TrendingUp}
+              description="Total upvote yang diterima"
+            />
+            <StatsCard
+              title="Pertanyaan Dibuat"
+              value={dashboardStats.totalQuestionsAsked}
+              icon={HelpCircle}
+              description="Pertanyaan yang kamu buat"
+            />
+          </div>
+
+          {/* Diagram garis buat terjawab bulanan */}
+          <AnswersChart data={dashboardStats.monthlyAnswers} />
         </div>
-      </div>
-      <div className="flex flex-col gap-2 items-start">
-        <h2 className="font-bold text-2xl mb-4">Your user details</h2>
-        <pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
-          {JSON.stringify(data.claims, null, 2)}
-        </pre>
-      </div>
-      <div>
-        <h2 className="font-bold text-2xl mb-4">Next steps</h2>
-        <FetchDataSteps />
       </div>
     </div>
   );
