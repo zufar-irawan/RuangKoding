@@ -1,0 +1,405 @@
+import { createClient } from "./supabase/client";
+
+export const GetUserProps = async (id: string) => {
+  const supabase = createClient();
+
+  const userProfile = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  const userLink = await supabase
+    .from("user_links")
+    .select("*")
+    .eq("user_id", id);
+
+  const userExperience = await supabase
+    .from("user_experience")
+    .select("*")
+    .eq("user_id", id);
+
+  const userSkills = await supabase
+    .from("user_skills")
+    .select("*")
+    .eq("user_id", id);
+
+  return { userLink, userExperience, userSkills, userProfile };
+};
+
+// ============ PROFILE UPDATE ============
+export const updateProfile = async (
+  userId: string,
+  data: {
+    firstname: string;
+    lastname: string | null;
+    motto: string | null;
+  },
+) => {
+  const supabase = createClient();
+
+  const fullname = data.lastname
+    ? `${data.firstname} ${data.lastname}`
+    : data.firstname;
+
+  const { data: updatedProfile, error } = await supabase
+    .from("profiles")
+    .update({
+      firstname: data.firstname,
+      lastname: data.lastname,
+      fullname: fullname,
+      motto: data.motto,
+    })
+    .eq("id", userId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return updatedProfile;
+};
+
+// ============ BIO UPDATE ============
+export const updateBio = async (userId: string, bio: string) => {
+  const supabase = createClient();
+
+  const { data: updatedProfile, error } = await supabase
+    .from("profiles")
+    .update({
+      bio: bio,
+    })
+    .eq("id", userId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return updatedProfile;
+};
+
+// ============ CONTACT INFO UPDATE ============
+export const updateContactInfo = async (
+  userId: string,
+  data: {
+    email: string;
+  },
+) => {
+  const supabase = createClient();
+
+  const { data: updatedContact, error } = await supabase
+    .from("profiles")
+    .upsert(
+      {
+        id: userId,
+        email: data.email,
+      },
+      {
+        onConflict: "id",
+      },
+    )
+    .select()
+    .single();
+
+  if (error) throw error;
+  return updatedContact;
+};
+
+// ============ PROFILE PICTURE ============
+export const uploadProfilePicture = async (
+  userId: string,
+  file: File,
+  oldProfilePicUrl?: string,
+) => {
+  const supabase = createClient();
+
+  // Delete old profile picture from storage if exists
+  if (oldProfilePicUrl) {
+    try {
+      // Extract nama file dari URL
+      const urlParts = oldProfilePicUrl.split("/");
+      const oldFileName = urlParts[urlParts.length - 1];
+
+      // Delete file lama
+      await supabase.storage.from("avatars").remove([oldFileName]);
+    } catch (error) {
+      console.error("Error deleting old profile picture:", error);
+    }
+  }
+
+  // Generate unique filename
+  const fileExt = file.name.split(".").pop();
+  const fileName = `${userId}-${Date.now()}.${fileExt}`;
+
+  // Upload to storage
+  const { error: uploadError } = await supabase.storage
+    .from("avatars")
+    .upload(fileName, file, {
+      upsert: true,
+    });
+
+  if (uploadError) throw uploadError;
+
+  // Get public URL
+  const { data: publicUrlData } = supabase.storage
+    .from("avatars")
+    .getPublicUrl(fileName);
+
+  return publicUrlData.publicUrl;
+};
+
+export const updateProfilePicture = async (
+  userId: string,
+  profilePicUrl: string,
+) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({ profile_pic: profilePicUrl })
+    .eq("id", userId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+// ============ USER SKILLS ============
+export const createUserSkill = async (
+  userId: string,
+  skillName: string,
+  level: string,
+) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("user_skills")
+    .insert({
+      user_id: userId,
+      skill_name: skillName,
+      level: level,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updateUserSkill = async (
+  userId: string,
+  oldSkillName: string,
+  newSkillName: string,
+  level: string,
+) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("user_skills")
+    .update({
+      skill_name: newSkillName,
+      level: level,
+    })
+    .eq("user_id", userId)
+    .eq("skill_name", oldSkillName)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const deleteUserSkill = async (userId: string, skillName: string) => {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("user_skills")
+    .delete()
+    .eq("user_id", userId)
+    .eq("skill_name", skillName);
+
+  if (error) throw error;
+};
+
+// ============ USER EXPERIENCE ============
+export const createUserExperience = async (data: {
+  userId: string;
+  organizationName: string;
+  role: string;
+  startDate: string;
+  endDate: string | null;
+  description: string | null;
+}) => {
+  const supabase = createClient();
+
+  const { data: newExperience, error } = await supabase
+    .from("user_experience")
+    .insert({
+      user_id: data.userId,
+      organization_name: data.organizationName,
+      role: data.role,
+      start_date: data.startDate,
+      end_date: data.endDate,
+      description: data.description,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return newExperience;
+};
+
+export const updateUserExperience = async (
+  createdAt: string,
+  data: {
+    organizationName: string;
+    role: string;
+    startDate: string;
+    endDate: string | null;
+    description: string | null;
+  },
+) => {
+  const supabase = createClient();
+
+  const { data: updatedExperience, error } = await supabase
+    .from("user_experience")
+    .update({
+      organization_name: data.organizationName,
+      role: data.role,
+      start_date: data.startDate,
+      end_date: data.endDate,
+      description: data.description,
+    })
+    .eq("created_at", createdAt)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return updatedExperience;
+};
+
+export const deleteUserExperience = async (createdAt: string) => {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("user_experience")
+    .delete()
+    .eq("created_at", createdAt);
+
+  if (error) throw error;
+};
+
+// ============ USER LINKS ============
+export const createUserLink = async (
+  userId: string,
+  platform: string | null,
+  url: string,
+) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("user_links")
+    .insert({
+      user_id: userId,
+      platform: platform,
+      url: url,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updateUserLink = async (
+  createdAt: string,
+  platform: string | null,
+  url: string,
+) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("user_links")
+    .update({
+      platform: platform,
+      url: url,
+    })
+    .eq("created_at", createdAt)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const deleteUserLink = async (createdAt: string) => {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("user_links")
+    .delete()
+    .eq("created_at", createdAt);
+
+  if (error) throw error;
+};
+
+// ============ NOTIFICATION SETTINGS ============
+export const getNotificationSettings = async (userId: string) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("notification_settings")
+    .select("*")
+    .eq("user_id", userId)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") {
+      return null;
+    }
+    throw error;
+  }
+
+  return data;
+};
+
+export const createNotificationSettings = async (userId: string) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("notification_settings")
+    .insert({
+      user_id: userId,
+      vote: true,
+      quest_comment: true,
+      answ_comment: true,
+      helpful: true,
+      new_answer: true,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const updateNotificationSettings = async (
+  userId: string,
+  settings: {
+    vote?: boolean;
+    quest_comment?: boolean;
+    answ_comment?: boolean;
+    helpful?: boolean;
+    new_answer?: boolean;
+  },
+) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("notification_settings")
+    .update(settings)
+    .eq("user_id", userId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};

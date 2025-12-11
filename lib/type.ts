@@ -1,5 +1,6 @@
 import type { Database } from "@/lib/supabase/types";
 import type { PostgrestError } from "@supabase/supabase-js";
+import { Timestamp } from "next/dist/server/lib/cache-handlers/types";
 
 type QuestionRow = Database["public"]["Tables"]["questions"]["Row"];
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
@@ -68,6 +69,12 @@ type AnswerCommentItem = Pick<
   profiles: ProfilePreview | ProfilePreview[] | null;
 };
 
+type TagsType = {
+  id: number;
+  tag: string;
+  created_at: Timestamp;
+};
+
 export type {
   QuestionListItem,
   QuestionDetailItem,
@@ -78,4 +85,5 @@ export type {
   AnswerCommentItem,
   ProfilePreview,
   SupabaseResponse,
+  TagsType,
 };

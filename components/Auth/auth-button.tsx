@@ -1,13 +1,11 @@
-import Link from "next/link";
-import Image from "next/image";
 import { Button } from "../ui/button";
 import { createClient } from "@/lib/supabase/server";
-import { LogoutButton } from "../Auth/logout-button";
+import { UserAvatarDropdown } from "./user-avatar-dropdown";
+import Link from "next/link";
 
 export async function AuthButton() {
   const supabase = await createClient();
 
-  // You can also use getUser() which will be slower.
   const { data } = await supabase.auth.getClaims();
 
   const user = data?.claims;
@@ -26,36 +24,25 @@ export async function AuthButton() {
     );
   }
 
+  const { data: userProfile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.sub)
+    .single();
+
   const getInitial = (value?: string | null) =>
     value?.trim()?.charAt(0)?.toUpperCase();
 
   const userProfileInitial =
-    getInitial(user.firstname) ||
-    getInitial(user.fullname) ||
+    getInitial(userProfile?.firstname) ||
+    getInitial(userProfile?.fullname) ||
     getInitial(user.email) ||
     "?";
 
   return (
-    <div className="flex items-center gap-4">
-      <Link href="/protected">
-        {user.profile_pic ? (
-
-          <Image
-            src={user.profile_pic}
-            alt="User Avatar"
-            width={32}
-            height={32}
-            className="rounded-full"
-          />
-
-        ) : (
-          <p className="flex h-10 w-10 items-center justify-center rounded-full bg-background border text-base font-semibold text-secondary-foreground">
-            {userProfileInitial}
-          </p>
-        )}
-      </Link>
-
-      <LogoutButton />
-    </div>
+    <UserAvatarDropdown
+      profilePic={user.profile_pic}
+      userInitial={userProfileInitial}
+    />
   );
 }
