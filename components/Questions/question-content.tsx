@@ -41,13 +41,13 @@ type QuestionContentProps = {
 export default async function QuestionContent({
   questionId,
 }: QuestionContentProps) {
-  incrementQuestionView(questionId).catch((err) =>
-    console.error("Failed to increment view:", err),
-  );
-
   // Fetch question data
   const questions = await getQuestionFromID(questionId);
   const question = questions.data ? questions.data[0] : null;
+
+  incrementQuestionView(questionId).catch((err) =>
+    console.error("Failed to increment view:", err),
+  );
 
   if (!question) {
     return (

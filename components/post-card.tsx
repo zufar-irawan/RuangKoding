@@ -1,9 +1,7 @@
 import Link from "next/link";
-import { Card, CardContent, CardHeader } from "./ui/card";
-
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
-import { CheckCircle, Eye, ThumbsUp } from "lucide-react";
+import { CheckCircle, Eye, MessageSquare } from "lucide-react";
 
 import type { QuestionListItem, CountRelation } from "@/lib/type";
 
@@ -63,84 +61,82 @@ export default function PostCard({ question }: PostCardProps) {
   const votesCount = getCountValue(question.votes);
 
   return (
-    <Card className="flex-1">
-      <CardHeader>
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center justify-between">
-            {userProfile ? (
-              <div className="flex items-center gap-3">
-                <p className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary/80 text-sm font-semibold text-secondary-foreground">
-                  {userProfile.fullname.charAt(0).toUpperCase()}
-                </p>
-
-                <p className="text-md ">{userProfile.fullname}</p>
-              </div>
-            ) : (
-              <span className="text-sm text-muted-foreground">
-                Pengguna tidak diketahui
+    <div className="border-b border-border last:border-b-0 py-4 hover:bg-accent/5 transition-colors">
+      <div className="flex flex-col gap-3">
+        {/* User Profile - Top */}
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          {userProfile ? (
+            <>
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-secondary/80 text-xs font-semibold text-secondary-foreground">
+                {userProfile.fullname.charAt(0).toUpperCase()}
               </span>
-            )}
-
-            <p className="text-muted-foreground text-sm flex justify-end">
-              {createdAtLabel}
-            </p>
-          </div>
-
-          <div className="flex justify-between">
-            <Link
-              href={`/question/${slug}-${questionId}`}
-              className="text-2xl font-bold text-primary hover:underline"
-            >
-              {question.title}
-            </Link>
-          </div>
+              <span className="font-medium text-foreground">
+                {userProfile.fullname}
+              </span>
+            </>
+          ) : (
+            <span>Pengguna tidak diketahui</span>
+          )}
+          <span>ditanya {createdAtLabel}</span>
         </div>
-      </CardHeader>
 
-      <CardContent>
-        <div className="flex flex-col gap-5">
-          <p>{question.excerpt}</p>
+        {/* Question Title */}
+        <Link
+          href={`/question/${slug}-${questionId}`}
+          className="text-lg font-semibold text-primary hover:text-primary/80 transition-colors leading-snug"
+        >
+          {question.title}
+        </Link>
 
-          <div className="flex flex-col gap-3">
-            <div className="flex gap-2 items-center">
-              {flattenedTags.length === 0 ? (
-                <span className="text-xs text-muted-foreground">
-                  Belum ada tag
-                </span>
-              ) : (
-                flattenedTags.map((tag) => (
-                  <Link
-                    href={"#"}
-                    key={tag}
-                    className="px-2 py-1 bg-tertiary text-tertiary-foreground rounded-md text-sm hover:bg-tertiary/70 transition-colors font-medium"
-                  >
-                    {tag}
-                  </Link>
-                ))
-              )}
-            </div>
+        {/* Question Excerpt */}
+        <p className="text-sm text-foreground/80 line-clamp-2 leading-relaxed">
+          {question.excerpt}
+        </p>
 
-            <div className="flex gap-8 text-sm">
-              <span
-                className={`${answerCount > 0 ? "text-green-600 dark:text-green-500" : "text-red-600 dark:text-red-500"} items-center font-medium`}
+        {/* Tags */}
+        <div className="flex gap-2 items-center flex-wrap">
+          {flattenedTags.length === 0 ? (
+            <span className="text-xs text-muted-foreground">Belum ada tag</span>
+          ) : (
+            flattenedTags.map((tag) => (
+              <Link
+                href={"#"}
+                key={tag}
+                className="px-2 py-1 bg-accent text-accent-foreground rounded text-xs hover:bg-accent/80 transition-colors"
               >
-                <CheckCircle className="inline mr-1" size={16} />
-                {answerCount} Jawaban
-              </span>
+                {tag}
+              </Link>
+            ))
+          )}
+        </div>
 
-              <span className="text-muted-foreground items-center">
-                <Eye className="inline mr-1" size={16} />
-                {question.view} Dilihat
-              </span>
+        {/* Stats - Bottom */}
+        <div className="flex gap-6 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <CheckCircle
+              size={14}
+              className={
+                answerCount > 0 ? "text-green-600" : "text-muted-foreground"
+              }
+            />
+            <span
+              className={answerCount > 0 ? "text-green-600 font-medium" : ""}
+            >
+              {answerCount} Answers
+            </span>
+          </div>
 
-              <span className="text-muted-foreground items-center">
-                <ThumbsUp className="inline mr-1" size={16} />
-                {votesCount} Divote
-              </span>
-            </div>
+          <div className="flex items-center gap-1">
+            <MessageSquare size={14} />
+            <span>{votesCount} Votes</span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <Eye size={14} />
+            <span>{question.view} Views</span>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
