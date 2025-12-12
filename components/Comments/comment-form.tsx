@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
-import type { AnswerCommentItem, AnswerWithHTML } from "@/lib/questions";
+import type { AnswerCommentItem, AnswerWithHTML } from "@/lib/type";
 import { createComment, getComments, deleteComment } from "@/lib/answers";
 import { Button } from "../ui/button";
 import { getClientUser } from "@/utils/GetClientUser";
@@ -19,12 +19,18 @@ import CommentReplies from "./comment-replies";
 import CommentTextarea from "./comment-textarea";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
+import {
+  createQuestionComment,
+  deleteQuestionComment,
+  getQuestionComments,
+} from "@/lib/questions";
 
 type Props = {
-  answer: AnswerWithHTML;
+  question_id?: number;
+  answer?: AnswerWithHTML;
 };
 
-export default function CommentForm({ answer }: Props) {
+export default function CommentForm({ question_id, answer }: Props) {
   const [isComment, setIsComment] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
@@ -36,20 +42,28 @@ export default function CommentForm({ answer }: Props) {
   const [commentText, setCommentText] = useState("");
   const [replyText, setReplyText] = useState("");
 
-  const fetchComments = async (id: number) => {
+  const fetchComments = async (id: number, question: boolean) => {
     setIsLoadingFetch(true);
 
     try {
-      const result = await getComments(id);
-
-      setComments(result ?? []);
+      if (question) {
+        const result = await getQuestionComments(id);
+        setComments(result ?? []);
+      } else {
+        const result = await getComments(id);
+        setComments(result ?? []);
+      }
     } finally {
       setIsLoadingFetch(false);
     }
   };
 
   useEffect(() => {
-    fetchComments(answer.id);
+    if (question_id) {
+      fetchComments(question_id, true);
+    } else if (answer?.id) {
+      fetchComments(answer.id, false);
+    }
 
     const fetchUser = async () => {
       const user = await getClientUser();
@@ -57,7 +71,7 @@ export default function CommentForm({ answer }: Props) {
     };
 
     fetchUser();
-  }, [answer.id]);
+  }, [answer?.id, question_id]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -65,9 +79,17 @@ export default function CommentForm({ answer }: Props) {
     setIsLoadingCreate(true);
 
     try {
-      await createComment(answer.id, commentText);
+      if (answer?.id) {
+        await createComment(answer.id, commentText);
+      } else if (question_id) {
+        await createQuestionComment(question_id, commentText);
+      }
 
-      await fetchComments(answer.id);
+      if (question_id) {
+        fetchComments(question_id, true);
+      } else if (answer?.id) {
+        fetchComments(answer.id, false);
+      }
 
       setCommentText("");
       setIsOpen(false);
@@ -87,9 +109,17 @@ export default function CommentForm({ answer }: Props) {
     setIsLoadingCreate(true);
 
     try {
-      await createComment(answer.id, replyText, commentId);
+      if (answer?.id) {
+        await createComment(answer.id, replyText, commentId);
+      } else if (question_id) {
+        await createQuestionComment(question_id, replyText, commentId);
+      }
 
-      await fetchComments(answer.id);
+      if (question_id) {
+        fetchComments(question_id, true);
+      } else if (answer?.id) {
+        fetchComments(answer.id, false);
+      }
 
       setReplyText("");
       setReplyingTo(null);
@@ -102,9 +132,13 @@ export default function CommentForm({ answer }: Props) {
 
   const handleDelete = async (commentId: number) => {
     try {
-      await deleteComment(commentId);
-
-      await fetchComments(answer.id);
+      if (question_id) {
+        await deleteQuestionComment(commentId);
+        fetchComments(question_id, true);
+      } else if (answer?.id) {
+        await deleteComment(commentId);
+        fetchComments(answer.id, false);
+      }
     } catch (error) {
       console.error("Gagal menghapus komentar:", error);
     }
