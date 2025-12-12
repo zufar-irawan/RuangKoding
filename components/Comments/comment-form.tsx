@@ -14,7 +14,6 @@ import Image from "next/image";
 import type { AnswerCommentItem, AnswerWithHTML } from "@/lib/type";
 import { createComment, getComments, deleteComment } from "@/lib/answers";
 import { Button } from "../ui/button";
-import { getClientUser } from "@/utils/GetClientUser";
 import CommentReplies from "./comment-replies";
 import CommentTextarea from "./comment-textarea";
 import { formatDistanceToNow } from "date-fns";
@@ -28,16 +27,20 @@ import {
 type Props = {
   question_id?: number;
   answer?: AnswerWithHTML;
+  currentUser?: { id: string } | null;
 };
 
-export default function CommentForm({ question_id, answer }: Props) {
+export default function CommentForm({
+  question_id,
+  answer,
+  currentUser,
+}: Props) {
   const [isComment, setIsComment] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [comments, setComments] = useState<AnswerCommentItem[]>([]);
   const [isLoadingFetch, setIsLoadingFetch] = useState(false);
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
-  const [currentUser, setCurrentUser] = useState<{ id: string } | null>(null);
 
   const [commentText, setCommentText] = useState("");
   const [replyText, setReplyText] = useState("");
@@ -64,13 +67,6 @@ export default function CommentForm({ question_id, answer }: Props) {
     } else if (answer?.id) {
       fetchComments(answer.id, false);
     }
-
-    const fetchUser = async () => {
-      const user = await getClientUser();
-      setCurrentUser(user);
-    };
-
-    fetchUser();
   }, [answer?.id, question_id]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

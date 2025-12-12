@@ -1,6 +1,22 @@
 import { createClient } from "./supabase/client";
 import { getClientUser } from "@/utils/GetClientUser";
 
+const deleteAnswer = async (answerId: number) => {
+  const supabase = await createClient();
+
+  // const user = await getClientUser();
+
+  // if (!user?.id) {
+  //   throw new Error("Pengguna harus login sebelum menghapus jawaban.");
+  // }
+
+  const { error } = await supabase.from("answers").delete().eq("id", answerId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+};
+
 const getComments = async (id: number) => {
   const supabase = await createClient();
 
@@ -68,4 +84,4 @@ const deleteComment = async (commentId: number) => {
   }
 };
 
-export { getComments, createComment, deleteComment };
+export { getComments, createComment, deleteComment, deleteAnswer };

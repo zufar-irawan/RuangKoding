@@ -10,7 +10,7 @@ import { formatDistanceToNow } from "date-fns";
 
 type Props = {
   replies: AnswerCommentItem[];
-  currentUser: { id: string } | null;
+  currentUser?: { id: string } | null;
   onDeleteAction: (commentId: number) => Promise<void>;
 };
 

@@ -122,7 +122,11 @@ export default async function QuestionContent({
 
         <div className="flex border border-foreground/10 w-full"></div>
 
-        <AnswersSection answers={answersWithHTML} questionId={question?.id} />
+        <AnswersSection
+          answers={answersWithHTML}
+          questionId={question?.id}
+          questionSlug={question?.slug}
+        />
       </div>
     </div>
   );

@@ -10,9 +10,10 @@ import { useState } from "react";
 
 type Props = {
   questionId?: number;
+  questionSlug: string | null;
 };
 
-export default function AnswerForm({ questionId }: Props) {
+export default function AnswerForm({ questionId, questionSlug }: Props) {
   const [bodyJson, setBodyJson] = useState("");
   const router = useRouter();
 
@@ -45,7 +46,7 @@ export default function AnswerForm({ questionId }: Props) {
       console.log("Answer submitted successfully", data);
 
       setBodyJson("");
-      router.push(`/question/${data.question_id}`);
+      router.push(`/question/${questionSlug}-${questionId}`);
       router.refresh();
     }
   };

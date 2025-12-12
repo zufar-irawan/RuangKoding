@@ -1,6 +1,6 @@
 "use client";
 
-import type { AnswerWithHTML } from "@/lib/questions";
+import type { AnswerWithHTML } from "@/lib/type";
 import AnswerForm from "./answer-form";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
@@ -8,16 +8,39 @@ import CommentForm from "../Comments/comment-form";
 import styles from "@/styles/BlogContent.module.css";
 import { getClientUser } from "@/utils/GetClientUser";
 import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
+import { Trash2 } from "lucide-react";
+import { deleteAnswer } from "@/lib/answers";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
+import { useRouter } from "next/navigation";
 
 type Props = {
   answers?: AnswerWithHTML[];
   questionId?: number;
+  questionSlug: string | null;
 };
 
-export default function AnswersSection({ answers = [], questionId }: Props) {
+export default function AnswersSection({
+  answers = [],
+  questionId,
+  questionSlug,
+}: Props) {
+  const router = useRouter();
   const answerCount = answers.length;
   const [hasAnswered, setHasAnswered] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<{ id: string } | null>(null);
 
   const createdAtLabel = answers.map((answer) =>
     answer.created_at
@@ -27,6 +50,18 @@ export default function AnswersSection({ answers = [], questionId }: Props) {
         })
       : "",
   );
+
+  const handleDelete = async (answerId: number) => {
+    try {
+      await deleteAnswer(answerId);
+
+      toast.success("Answer deleted successfully");
+      router.push(`/question/${questionSlug}-${questionId}`);
+      router.refresh();
+    } catch (error) {
+      console.error("Error deleting answer:", error);
+    }
+  };
 
   useEffect(() => {
     async function checkIfUserHasAnswered() {
@@ -46,6 +81,7 @@ export default function AnswersSection({ answers = [], questionId }: Props) {
 
       setHasAnswered(userHasAnswered);
       setIsLoading(false);
+      setCurrentUser(user);
     }
 
     checkIfUserHasAnswered();
@@ -69,7 +105,10 @@ export default function AnswersSection({ answers = [], questionId }: Props) {
                   Kamu sudah memberikan jawaban untuk pertanyaan ini.
                 </p>
               ) : (
-                <AnswerForm questionId={questionId} />
+                <AnswerForm
+                  questionSlug={questionSlug}
+                  questionId={questionId}
+                />
               ))}
           </>
         ) : (
@@ -103,9 +142,51 @@ export default function AnswersSection({ answers = [], questionId }: Props) {
                           {profile?.fullname ?? "Pengguna"}
                         </div>
 
-                        <p className="text-muted-foreground">
-                          {createdAtLabel[idx]}
-                        </p>
+                        <div className="flex items-center gap-3">
+                          <p className="text-muted-foreground">
+                            {createdAtLabel[idx]}
+                          </p>
+
+                          {currentUser &&
+                            answer?.user_id === currentUser.id && (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    type="button"
+                                    variant={"destructive"}
+                                    className="h-10 w-10 flex justify-start p-0 hover:w-40 transition-[width] duration-300 ease-in-out group overflow-hidden"
+                                  >
+                                    <div className="flex items-center space-x-2 px-3">
+                                      <Trash2 size={20} className="shrink-0" />
+                                      <span className="translate-x-1 opacity-0 transition-all duration-300 ease-in-out whitespace-nowrap group-hover:translate-x-0 group-hover:opacity-100">
+                                        Hapus jawaban
+                                      </span>
+                                    </div>
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                      Kamu yakin ga nih?
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Kalau kamu hapus jawaban ini, kamu tidak
+                                      bisa mengembalikannya lagi loh. Pastikan
+                                      kamu udah mikir sebelum menghapusnya.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Batal</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDelete(answer.id)}
+                                    >
+                                      Ya, Hapus!
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
+                        </div>
                       </div>
                     );
                   })()}
@@ -125,13 +206,13 @@ export default function AnswersSection({ answers = [], questionId }: Props) {
 
                   return (
                     <article
-                      className={`w-full mx-auto py-4 ${styles["blog-content"]}`}
+                      className={`w-full mx-auto pt-4 ${styles["blog-content"]}`}
                       dangerouslySetInnerHTML={{ __html: html }}
                     />
                   );
                 })()}
 
-                <CommentForm answer={answer} />
+                <CommentForm answer={answer} currentUser={currentUser} />
               </div>
             ))}
 
@@ -146,7 +227,10 @@ export default function AnswersSection({ answers = [], questionId }: Props) {
                     Tahu jawaban lainnya? Tambahkan jawabanmu di bawah!
                   </h1>
 
-                  <AnswerForm questionId={questionId} />
+                  <AnswerForm
+                    questionSlug={questionSlug}
+                    questionId={questionId}
+                  />
                 </div>
               ))}
           </div>
