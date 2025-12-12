@@ -269,7 +269,7 @@ const getQuestionsFromUserID = async (user_id: string) => {
 const incrementQuestionView = async (questionId: number) => {
   const supabase = await createClient();
 
-  console.log("Question ID: ", questionId);
+  // console.log("Question ID: ", questionId);
 
   // Get current view count
   const { data: currentData } = await supabase
@@ -278,7 +278,7 @@ const incrementQuestionView = async (questionId: number) => {
     .eq("id", questionId)
     .single();
 
-  console.log("Current view count:", currentData?.view);
+  // console.log("Current view count:", currentData?.view);
 
   const currentView = currentData?.view ?? 0;
 
