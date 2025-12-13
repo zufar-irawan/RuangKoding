@@ -126,6 +126,7 @@ export default async function QuestionContent({
           answers={answersWithHTML}
           questionId={question?.id}
           questionSlug={question?.slug}
+          user_question_id={question?.user_id}
         />
       </div>
     </div>

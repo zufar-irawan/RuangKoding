@@ -4,9 +4,11 @@ interface LevelBarProps {
 }
 
 export default function LevelBar({ level, xp }: LevelBarProps) {
-  // Calculate the current XP progress within the current level (0-100)
-  const currentLevelXP = xp % 100;
-  const progressPercentage = currentLevelXP;
+  // Hitung Total XP yang dibutuhkan untuk naik dari level saat ini ke selanjutnya.
+  const xpRequired = 100 + (level - 1) * 50;
+
+  // Hitung persentase progress
+  const progressPercentage = Math.min((xp / xpRequired) * 100, 100);
 
   return (
     <div className="w-full space-y-1">
@@ -16,7 +18,7 @@ export default function LevelBar({ level, xp }: LevelBarProps) {
             Level {level}
           </span>
           <span className="text-xs text-muted-foreground">
-            {currentLevelXP}/100 XP
+            {Math.floor(xp)}/{xpRequired} XP
           </span>
         </div>
       </div>

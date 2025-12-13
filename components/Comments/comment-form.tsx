@@ -23,6 +23,8 @@ import {
   deleteQuestionComment,
   getQuestionComments,
 } from "@/lib/questions";
+import { showXPAlert } from "@/utils/xpAlert";
+import Swal from "sweetalert2";
 
 type Props = {
   question_id?: number;
@@ -72,6 +74,16 @@ export default function CommentForm({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!commentText.trim()) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Komentar tidak boleh kosong",
+        confirmButtonColor: "#667eea",
+      });
+      return;
+    }
+
     setIsLoadingCreate(true);
 
     try {
@@ -87,10 +99,23 @@ export default function CommentForm({
         fetchComments(answer.id, false);
       }
 
+      // Show XP Alert
+      showXPAlert({
+        xp: 5,
+        title: "Komentar Berhasil Ditambahkan!",
+        message: "Terimakasih sudah berkontribusi!",
+      });
+
       setCommentText("");
       setIsOpen(false);
     } catch (error) {
       console.error("Gagal membuat komentar:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Gagal!",
+        text: "Gagal menambahkan komentar. Silakan coba lagi.",
+        confirmButtonColor: "#667eea",
+      });
     } finally {
       setIsLoadingCreate(false);
     }
@@ -101,6 +126,16 @@ export default function CommentForm({
     commentId: number,
   ) => {
     e.preventDefault();
+
+    if (!replyText.trim()) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Balasan tidak boleh kosong",
+        confirmButtonColor: "#667eea",
+      });
+      return;
+    }
 
     setIsLoadingCreate(true);
 
@@ -117,16 +152,44 @@ export default function CommentForm({
         fetchComments(answer.id, false);
       }
 
+      // Show XP Alert
+      showXPAlert({
+        xp: 5,
+        title: "Balasan Berhasil Ditambahkan!",
+        message: "Terimakasih sudah berkontribusi!",
+      });
+
       setReplyText("");
       setReplyingTo(null);
     } catch (error) {
       console.error("Gagal membuat reply:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Gagal!",
+        text: "Gagal menambahkan balasan. Silakan coba lagi.",
+        confirmButtonColor: "#667eea",
+      });
     } finally {
       setIsLoadingCreate(false);
     }
   };
 
   const handleDelete = async (commentId: number) => {
+    const result = await Swal.fire({
+      title: "Hapus Komentar?",
+      text: "Komentar yang dihapus tidak dapat dikembalikan!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#667eea",
+      confirmButtonText: "Ya, Hapus!",
+      cancelButtonText: "Batal",
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
     try {
       if (question_id) {
         await deleteQuestionComment(commentId);
@@ -135,8 +198,22 @@ export default function CommentForm({
         await deleteComment(commentId);
         fetchComments(answer.id, false);
       }
+
+      Swal.fire({
+        title: "Terhapus!",
+        text: "Komentar berhasil dihapus.",
+        icon: "success",
+        confirmButtonColor: "#667eea",
+        timer: 2000,
+      });
     } catch (error) {
       console.error("Gagal menghapus komentar:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Gagal!",
+        text: "Gagal menghapus komentar. Silakan coba lagi.",
+        confirmButtonColor: "#667eea",
+      });
     }
   };
 

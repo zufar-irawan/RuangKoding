@@ -4,12 +4,6 @@ import { getClientUser } from "@/utils/GetClientUser";
 const deleteAnswer = async (answerId: number) => {
   const supabase = await createClient();
 
-  // const user = await getClientUser();
-
-  // if (!user?.id) {
-  //   throw new Error("Pengguna harus login sebelum menghapus jawaban.");
-  // }
-
   const { error } = await supabase.from("answers").delete().eq("id", answerId);
 
   if (error) {

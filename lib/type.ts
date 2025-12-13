@@ -38,7 +38,7 @@ type QuestionListFields = Pick<
 
 type QuestionDetailFields = Pick<
   QuestionRow,
-  "id" | "title" | "body" | "created_at" | "view" | "slug"
+  "id" | "user_id" | "title" | "body" | "created_at" | "view" | "slug"
 >;
 
 type QuestionListItem = QuestionListFields & {

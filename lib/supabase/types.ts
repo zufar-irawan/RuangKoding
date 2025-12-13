@@ -110,18 +110,21 @@ export type Database = {
           created_at: string;
           id: number;
           user_id: string;
+          vote: boolean | null;
         };
         Insert: {
           answer_id?: number;
           created_at?: string;
           id?: number;
           user_id?: string;
+          vote?: boolean | null;
         };
         Update: {
           answer_id?: number;
           created_at?: string;
           id?: number;
           user_id?: string;
+          vote?: boolean | null;
         };
         Relationships: [
           {
@@ -904,12 +907,58 @@ export type Database = {
           },
         ];
       };
+      xp_events: {
+        Row: {
+          amount: number;
+          created_at: string;
+          id: number;
+          metadata: Json | null;
+          reason: string;
+          reference: number;
+          status: string | null;
+          type: string;
+          user_id: string;
+        };
+        Insert: {
+          amount: number;
+          created_at?: string;
+          id?: number;
+          metadata?: Json | null;
+          reason: string;
+          reference: number;
+          status?: string | null;
+          type: string;
+          user_id?: string;
+        };
+        Update: {
+          amount?: number;
+          created_at?: string;
+          id?: number;
+          metadata?: Json | null;
+          reason?: string;
+          reference?: number;
+          status?: string | null;
+          type?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "xp_events_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      apply_xp_event: { Args: { _event_id: string }; Returns: undefined };
+      calculate_level: { Args: { total_xp: number }; Returns: number };
+      reject_xp_event: { Args: { _event_id: string }; Returns: undefined };
     };
     Enums: {
       [_ in never]: never;

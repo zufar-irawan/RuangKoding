@@ -54,6 +54,7 @@ const getQuestionFromID = async (
       `
             id,
             title,
+            user_id,
             body,
             created_at,
             profiles (
