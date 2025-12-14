@@ -25,6 +25,7 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 import { useRouter } from "next/navigation";
+import { acceptAnswer } from "@/lib/servers/AnswerAction";
 
 type Props = {
   answers?: AnswerWithHTML[];
@@ -90,9 +91,27 @@ export default function AnswersSection({
     checkIfUserHasAnswered();
   }, [answers]);
 
-  const handleAcceptAnswer = () => {
-    // TODO: Implement accept answer logic
-    toast.success("Jawaban ditandai sebagai membantu!");
+  const handleAcceptAnswer = async (
+    answer_id: number,
+    answer_user_id: string,
+    question_user_id: string,
+  ) => {
+    try {
+      const message = await acceptAnswer(
+        answer_id,
+        answer_user_id,
+        question_user_id,
+      );
+
+      if (message === "Jawaban ditandai sebagai membantu!") {
+        toast.success(message);
+      } else {
+        toast.error(message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Terjadi kesalahan saat menandai jawaban sebagai membantu!");
+    }
   };
 
   return (
@@ -252,7 +271,13 @@ export default function AnswersSection({
                             Apakah jawaban ini membantu untukmu?
                           </p>
                           <Button
-                            onClick={() => handleAcceptAnswer()}
+                            onClick={() =>
+                              handleAcceptAnswer(
+                                answer.id,
+                                answer.user_id,
+                                user_question_id,
+                              )
+                            }
                             variant="default"
                             size="sm"
                           >
