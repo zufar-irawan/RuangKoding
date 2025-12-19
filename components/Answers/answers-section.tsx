@@ -9,7 +9,7 @@ import styles from "@/styles/BlogContent.module.css";
 import { getClientUser } from "@/utils/GetClientUser";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { Trash2 } from "lucide-react";
+import { CheckCircle, Trash2 } from "lucide-react";
 import { deleteAnswer } from "@/lib/answers";
 import AnswerVote from "../ui/answer-vote";
 import { toast } from "sonner";
@@ -97,6 +97,11 @@ export default function AnswersSection({
     question_user_id: string,
   ) => {
     try {
+      if (!questionId) {
+        toast.error("Pertanyaan tidak ditemukan!");
+        return;
+      }
+
       const message = await acceptAnswer(
         answer_id,
         answer_user_id,
@@ -105,6 +110,7 @@ export default function AnswersSection({
 
       if (message === "Jawaban ditandai sebagai membantu!") {
         toast.success(message);
+        router.refresh();
       } else {
         toast.error(message);
       }
@@ -113,6 +119,9 @@ export default function AnswersSection({
       toast.error("Terjadi kesalahan saat menandai jawaban sebagai membantu!");
     }
   };
+
+  // Check if any answer is already marked as helpful
+  const hasHelpfulAnswer = answers.some((answer) => answer.helpful);
 
   return (
     <div className="w-full flex flex-col gap-2">
@@ -265,7 +274,8 @@ export default function AnswersSection({
                     {currentUser &&
                       user_question_id === currentUser.id &&
                       answer.user_id !== currentUser.id &&
-                      !answer.helpful && (
+                      !answer.helpful &&
+                      !hasHelpfulAnswer && (
                         <div className="flex items-center gap-3 mt-6 p-4 bg-secondary/30 rounded-lg border border-foreground/10">
                           <p className="text-sm text-foreground">
                             Apakah jawaban ini membantu untukmu?
@@ -288,25 +298,14 @@ export default function AnswersSection({
 
                     {answer.helpful && (
                       <div className="flex items-center gap-2 mt-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-green-600"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
+                        <CheckCircle className="text-green-500" />
                         <p className="text-sm text-green-700 dark:text-green-400 font-medium">
                           Jawaban diterima sebagai solusi
                         </p>
                       </div>
                     )}
 
-                    <CommentForm answer={answer} currentUser={currentUser} />
+                    <CommentForm answer={answer} />
                   </div>
                 </div>
               </div>

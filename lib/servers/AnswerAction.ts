@@ -215,16 +215,6 @@ export async function acceptAnswer(
 ) {
   const supabase = await createClient();
 
-  // Cek apakah jawaban sudah ditandai membantu
-  const { data: acceptedAlready } = await supabase
-    .from("answers")
-    .select("helpful")
-    .eq("id", answer_id);
-
-  if (acceptedAlready && acceptedAlready[0].helpful) {
-    return "Pertanyaan sudah dijawab";
-  }
-
   // Cek apakah yang login sekarang adalah pemilik jawaban
   const user = await getUser();
 
@@ -237,6 +227,40 @@ export async function acceptAnswer(
     return "Kamu tidak memiliki izin untuk menandai jawaban sebagai membantu!";
   }
 
+  // Dapatkan question_id dari answer yang dipilih
+  const { data: answerData } = await supabase
+    .from("answers")
+    .select("question_id, helpful")
+    .eq("id", answer_id)
+    .single();
+
+  if (!answerData) {
+    return "Jawaban tidak ditemukan!";
+  }
+
+  // Cek apakah jawaban ini sudah ditandai membantu
+  if (answerData.helpful) {
+    return "Jawaban ini sudah ditandai sebagai membantu!";
+  }
+
+  // Cek apakah pertanyaan tidak ditemukan
+  if (!answerData.question_id) {
+    return "Pertanyaan tidak ditemukan!";
+  }
+
+  // Cek apakah sudah ada jawaban lain yang ditandai membantu untuk pertanyaan ini
+  const { data: existingHelpfulAnswer } = await supabase
+    .from("answers")
+    .select("id")
+    .eq("question_id", answerData.question_id)
+    .eq("helpful", true)
+    .limit(1);
+
+  if (existingHelpfulAnswer && existingHelpfulAnswer.length > 0) {
+    return "Pertanyaan ini sudah memiliki jawaban yang ditandai sebagai membantu!";
+  }
+
+  // Update jawaban menjadi helpful
   const { error } = await supabase
     .from("answers")
     .update({
@@ -252,6 +276,7 @@ export async function acceptAnswer(
     user_id: answer_user_id,
     xp: 40,
     reference: answer_id,
+    source_user_id: user?.sub,
   });
 
   return "Jawaban ditandai sebagai membantu!";

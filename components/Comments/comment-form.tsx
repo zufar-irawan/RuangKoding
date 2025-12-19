@@ -25,27 +25,48 @@ import {
 } from "@/lib/questions";
 import { showXPAlert } from "@/utils/xpAlert";
 import Swal from "sweetalert2";
+import { toast } from "sonner";
+import { getClientUser } from "@/utils/GetClientUser";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
 
 type Props = {
   question_id?: number;
   answer?: AnswerWithHTML;
-  currentUser?: { id: string } | null;
 };
 
-export default function CommentForm({
-  question_id,
-  answer,
-  currentUser,
-}: Props) {
+export default function CommentForm({ question_id, answer }: Props) {
   const [isComment, setIsComment] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [comments, setComments] = useState<AnswerCommentItem[]>([]);
   const [isLoadingFetch, setIsLoadingFetch] = useState(false);
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
+  const [currentUser, setCurrentUser] = useState<string | undefined>(undefined);
 
   const [commentText, setCommentText] = useState("");
   const [replyText, setReplyText] = useState("");
+
+  // Fetch current user
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await getClientUser();
+      if (user) {
+        setCurrentUser(user.id);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const fetchComments = async (id: number, question: boolean) => {
     setIsLoadingFetch(true);
@@ -99,12 +120,7 @@ export default function CommentForm({
         fetchComments(answer.id, false);
       }
 
-      // Show XP Alert
-      showXPAlert({
-        xp: 5,
-        title: "Komentar Berhasil Ditambahkan!",
-        message: "Terimakasih sudah berkontribusi!",
-      });
+      toast.success("Komentar Berhasil Ditambahkan!");
 
       setCommentText("");
       setIsOpen(false);
@@ -175,21 +191,6 @@ export default function CommentForm({
   };
 
   const handleDelete = async (commentId: number) => {
-    const result = await Swal.fire({
-      title: "Hapus Komentar?",
-      text: "Komentar yang dihapus tidak dapat dikembalikan!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#667eea",
-      confirmButtonText: "Ya, Hapus!",
-      cancelButtonText: "Batal",
-    });
-
-    if (!result.isConfirmed) {
-      return;
-    }
-
     try {
       if (question_id) {
         await deleteQuestionComment(commentId);
@@ -199,21 +200,10 @@ export default function CommentForm({
         fetchComments(answer.id, false);
       }
 
-      Swal.fire({
-        title: "Terhapus!",
-        text: "Komentar berhasil dihapus.",
-        icon: "success",
-        confirmButtonColor: "#667eea",
-        timer: 2000,
-      });
+      toast.success("Komentar berhasil dihapus.");
     } catch (error) {
       console.error("Gagal menghapus komentar:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Gagal!",
-        text: "Gagal menghapus komentar. Silakan coba lagi.",
-        confirmButtonColor: "#667eea",
-      });
+      toast.error("Gagal menghapus komentar. Silakan coba lagi.");
     }
   };
 
@@ -310,26 +300,58 @@ export default function CommentForm({
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       {/* Header */}
-                      <div className="flex items-center gap-2 flex-wrap">
+                      <div className="flex items-center justify-between">
                         <span className="font-semibold text-sm">
                           {profile?.fullname ?? "Pengguna"}
                         </span>
-                        <span className="text-muted-foreground text-xs">
-                          {formatDistanceToNow(new Date(comment.created_at), {
-                            addSuffix: true,
-                            locale: id,
-                          })}
-                        </span>
-                        {currentUser && profile?.id === currentUser.id && (
-                          <Button
-                            type="button"
-                            variant={"ghost"}
-                            onClick={() => handleDelete(comment.id)}
-                            className="h-6 w-6 p-0 ml-auto"
-                          >
-                            <Trash2 size={14} />
-                          </Button>
-                        )}
+
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground text-xs">
+                            {formatDistanceToNow(new Date(comment.created_at), {
+                              addSuffix: true,
+                              locale: id,
+                            })}
+                          </span>
+
+                          {currentUser && profile?.id === currentUser && (
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  type="button"
+                                  variant={"destructive"}
+                                  className="h-10 w-10 flex justify-start p-0 hover:w-40 transition-[width] duration-300 ease-in-out group overflow-hidden"
+                                >
+                                  <div className="flex items-center space-x-2 px-3">
+                                    <Trash2 size={20} className="shrink-0" />
+                                    <span className="translate-x-1 opacity-0 transition-all duration-300 ease-in-out whitespace-nowrap group-hover:translate-x-0 group-hover:opacity-100">
+                                      Hapus komentar
+                                    </span>
+                                  </div>
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Kamu yakin ga nih?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Kalau kamu hapus jawaban ini, kamu tidak
+                                    bisa mengembalikannya lagi loh. Pastikan
+                                    kamu udah mikir sebelum menghapusnya.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Batal</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDelete(comment.id)}
+                                  >
+                                    Ya, Hapus!
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          )}
+                        </div>
                       </div>
 
                       {/* Comment Text */}

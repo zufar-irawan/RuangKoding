@@ -9,7 +9,12 @@ type props = {
   source_user_id?: string;
 };
 
-async function acceptedAnswerXP({ user_id, xp, reference }: props) {
+async function acceptedAnswerXP({
+  user_id,
+  xp,
+  reference,
+  source_user_id,
+}: props) {
   const supabase = await createClient();
 
   const { error: xpError } = await supabase.from("xp_events").insert({
@@ -19,6 +24,7 @@ async function acceptedAnswerXP({ user_id, xp, reference }: props) {
     type: "answer",
     reference,
     status: "pending",
+    source_user_id,
   });
 
   if (xpError) throw new Error(xpError.message);
