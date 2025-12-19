@@ -17,7 +17,7 @@ export default async function Questions() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col">
       {data.map((question) => (
         <PostCard key={question.id} question={question} />
       ))}

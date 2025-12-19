@@ -11,6 +11,8 @@ import QuestionBody from "@/components/Questions/question-body";
 import SharesNVote from "@/components/Questions/share-vote";
 import CommentForm from "@/components/Comments/comment-form";
 import AnswersSection from "@/components/Answers/answers-section";
+import { getClientUser } from "@/utils/GetClientUser";
+import { getUser } from "@/utils/GetUser";
 
 function getCountValue(relation?: CountRelation | null): number {
   if (!relation) {
@@ -41,13 +43,13 @@ type QuestionContentProps = {
 export default async function QuestionContent({
   questionId,
 }: QuestionContentProps) {
-  incrementQuestionView(questionId).catch((err) =>
-    console.error("Failed to increment view:", err),
-  );
-
   // Fetch question data
   const questions = await getQuestionFromID(questionId);
   const question = questions.data ? questions.data[0] : null;
+
+  incrementQuestionView(questionId).catch((err) =>
+    console.error("Failed to increment view:", err),
+  );
 
   if (!question) {
     return (
@@ -122,7 +124,12 @@ export default async function QuestionContent({
 
         <div className="flex border border-foreground/10 w-full"></div>
 
-        <AnswersSection answers={answersWithHTML} questionId={question?.id} />
+        <AnswersSection
+          answers={answersWithHTML}
+          questionId={question?.id}
+          questionSlug={question?.slug}
+          user_question_id={question?.user_id}
+        />
       </div>
     </div>
   );
