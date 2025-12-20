@@ -24,7 +24,7 @@ export default async function QuestionPage() {
       <Navbar />
 
       <div className="flex flex-1 w-full mt-16">
-        <Sidebar />
+        <Sidebar tabs="questions" />
 
         <div className="flex flex-col flex-1 gap-6 py-6 px-8 ml-[22rem]">
           {/* Header */}

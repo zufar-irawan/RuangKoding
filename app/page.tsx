@@ -12,7 +12,7 @@ export default async function Home() {
       <Navbar />
 
       <div className="flex flex-1 w-full mt-16">
-        <Sidebar />
+        <Sidebar tabs="home" />
 
         <HomePageContent initialTrendingData={initialTrendingData} />
       </div>
