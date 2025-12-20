@@ -59,12 +59,22 @@ export default function Sidebar() {
               </Link>
 
               <Link
-                href="/blogs"
+                href="/lautan-feedback"
                 className="ps-5 rounded-e-xl h-11 items-center flex justify-between gap-3 hover:bg-tertiary/30 transition-colors"
               >
                 <div className="flex gap-4 items-center text-sm text-muted-foreground hover:text-foreground transition-colors">
                   <BookOpen strokeWidth={2} size={18} />
-                  Blogs
+                  Lautan Feedback
+                </div>
+              </Link>
+
+              <Link
+                href="/blogs"
+                className="ps-5 rounded-e-xl h-11 items-center flex justify-between gap-3 hover:bg-tertiary/30 transition-colors"
+              >
+                <div className="flex gap-4 items-center text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <Code strokeWidth={2} size={18} />
+                  Explain your code
                 </div>
               </Link>
             </div>
@@ -72,7 +82,7 @@ export default function Sidebar() {
         </div>
 
         {/* Code Review */}
-        <Link
+        {/*<Link
           href="/code-review"
           className="ps-5 rounded-e-xl h-12 items-center flex justify-between gap-3 hover:bg-tertiary/30 transition-colors"
         >
@@ -80,7 +90,7 @@ export default function Sidebar() {
             <Code strokeWidth={2} className="text-primary" size={20} />
             Code Review
           </div>
-        </Link>
+        </Link>*/}
       </div>
     </aside>
   );
