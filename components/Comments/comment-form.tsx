@@ -8,6 +8,7 @@ import {
   Reply,
   ChevronDown,
   ChevronUp,
+  ThumbsUp,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -38,6 +39,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import {
+  toggleCommentLike,
+  getCommentsLikesData,
+} from "@/lib/servers/commentLikeAction";
 
 type Props = {
   question_id?: number;
@@ -56,6 +61,12 @@ export default function CommentForm({ question_id, answer }: Props) {
   const [commentText, setCommentText] = useState("");
   const [replyText, setReplyText] = useState("");
 
+  // Like state management
+  const [likesData, setLikesData] = useState<
+    Map<number, { liked: boolean; likesCount: number }>
+  >(new Map());
+  const [likingComments, setLikingComments] = useState<Set<number>>(new Set());
+
   // Fetch current user
   useEffect(() => {
     const fetchUser = async () => {
@@ -72,12 +83,24 @@ export default function CommentForm({ question_id, answer }: Props) {
     setIsLoadingFetch(true);
 
     try {
+      let fetchedComments: AnswerCommentItem[] = [];
+
       if (question) {
         const result = await getQuestionComments(id);
-        setComments(result ?? []);
+        fetchedComments = result ?? [];
       } else {
         const result = await getComments(id);
-        setComments(result ?? []);
+        fetchedComments = result ?? [];
+      }
+
+      setComments(fetchedComments);
+
+      // Fetch likes data for all comments
+      if (fetchedComments.length > 0) {
+        const commentIds = fetchedComments.map((c) => c.id);
+        const commentType = question ? "quest_comment" : "answ_comment";
+        const likesMap = await getCommentsLikesData(commentIds, commentType);
+        setLikesData(likesMap);
       }
     } finally {
       setIsLoadingFetch(false);
@@ -213,6 +236,78 @@ export default function CommentForm({ question_id, answer }: Props) {
       setReplyText("");
     } else {
       setReplyingTo(commentId);
+    }
+  };
+
+  const toggleLike = async (commentId: number) => {
+    if (!currentUser) {
+      toast.error("Anda harus login untuk menyukai komentar");
+      return;
+    }
+
+    // Prevent double-clicking
+    if (likingComments.has(commentId)) {
+      return;
+    }
+
+    // Add to liking set
+    setLikingComments((prev) => new Set(prev).add(commentId));
+
+    // Optimistic update
+    const currentData = likesData.get(commentId) || {
+      liked: false,
+      likesCount: 0,
+    };
+    const newLiked = !currentData.liked;
+    const newCount = newLiked
+      ? currentData.likesCount + 1
+      : Math.max(0, currentData.likesCount - 1);
+
+    setLikesData((prev) => {
+      const newMap = new Map(prev);
+      newMap.set(commentId, { liked: newLiked, likesCount: newCount });
+      return newMap;
+    });
+
+    try {
+      const commentType = question_id ? "quest_comment" : "answ_comment";
+      const result = await toggleCommentLike(commentId, commentType);
+
+      if (result.success) {
+        // Update with actual server data
+        setLikesData((prev) => {
+          const newMap = new Map(prev);
+          newMap.set(commentId, {
+            liked: result.liked,
+            likesCount: result.likesCount,
+          });
+          return newMap;
+        });
+      } else {
+        // Revert on error
+        setLikesData((prev) => {
+          const newMap = new Map(prev);
+          newMap.set(commentId, currentData);
+          return newMap;
+        });
+        toast.error(result.error || "Gagal menyukai komentar");
+      }
+    } catch (error) {
+      // Revert on error
+      setLikesData((prev) => {
+        const newMap = new Map(prev);
+        newMap.set(commentId, currentData);
+        return newMap;
+      });
+      console.error("Error toggling like:", error);
+      toast.error("Terjadi kesalahan saat menyukai komentar");
+    } finally {
+      // Remove from liking set
+      setLikingComments((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(commentId);
+        return newSet;
+      });
     }
   };
 
@@ -360,16 +455,49 @@ export default function CommentForm({ question_id, answer }: Props) {
                       </p>
 
                       {/* Actions */}
-                      <div className="mt-2">
+                      <div className="mt-2 flex justify-between">
                         <Button
                           type="button"
                           variant={"ghost"}
                           onClick={() => toggleReply(comment.id)}
-                          className="flex items-center font-semibold hover:bg-muted"
+                          className="flex items-center gap-1 font-semibold hover:bg-muted"
                         >
                           <Reply size={12} />
                           {replyingTo === comment.id ? "Batal" : "Balas"}
                         </Button>
+
+                        <button
+                          type="button"
+                          onClick={() => toggleLike(comment.id)}
+                          disabled={likingComments.has(comment.id)}
+                          className={`
+                            group relative flex items-center gap-2 px-4 py-2.5 rounded-xl
+                            font-semibold transition-all duration-300 ease-out
+                            ${
+                              likesData.get(comment.id)?.liked
+                                ? "bg-primary/10 hover:bg-primary/20 text-primary"
+                                : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
+                            }
+                            ${likingComments.has(comment.id) ? "opacity-50 cursor-not-allowed" : "hover:scale-105 active:scale-95"}
+                            disabled:pointer-events-none
+                          `}
+                        >
+                          <ThumbsUp
+                            size={20}
+                            className={`
+                              transition-all duration-300 ease-out
+                              ${
+                                likesData.get(comment.id)?.liked
+                                  ? "fill-primary stroke-primary scale-110"
+                                  : "group-hover:scale-110"
+                              }
+                              ${likingComments.has(comment.id) ? "animate-pulse" : ""}
+                            `}
+                          />
+                          <span className="text-sm font-bold min-w-[20px] text-center">
+                            {likesData.get(comment.id)?.likesCount ?? 0}
+                          </span>
+                        </button>
                       </div>
 
                       {/* Reply Form */}
@@ -395,6 +523,9 @@ export default function CommentForm({ question_id, answer }: Props) {
                     replies={replies}
                     currentUser={currentUser}
                     onDeleteAction={handleDelete}
+                    likesData={likesData}
+                    onToggleLikeAction={toggleLike}
+                    likingComments={likingComments}
                   />
                 </div>
               );

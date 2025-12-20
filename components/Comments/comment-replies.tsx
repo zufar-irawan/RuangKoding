@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "../ui/button";
-import { Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, ThumbsUp } from "lucide-react";
 import type { AnswerCommentItem } from "@/lib/type";
 import { useState } from "react";
 import Image from "next/image";
@@ -23,12 +23,18 @@ type Props = {
   replies: AnswerCommentItem[];
   currentUser?: string;
   onDeleteAction: (commentId: number) => Promise<void>;
+  likesData: Map<number, { liked: boolean; likesCount: number }>;
+  onToggleLikeAction: (commentId: number) => void;
+  likingComments: Set<number>;
 };
 
 export default function CommentReplies({
   replies,
   currentUser,
   onDeleteAction,
+  likesData,
+  onToggleLikeAction,
+  likingComments,
 }: Props) {
   const [isCommentExpanded, setIsCommentExpanded] = useState(false);
 
@@ -137,6 +143,42 @@ export default function CommentReplies({
                   <p className="mt-1 text-sm text-foreground leading-relaxed">
                     {reply.text}
                   </p>
+
+                  {/* Like Button */}
+                  <div className="mt-2">
+                    <button
+                      type="button"
+                      onClick={() => onToggleLikeAction(reply.id)}
+                      disabled={likingComments.has(reply.id)}
+                      className={`
+                        group relative flex items-center gap-2 px-3 py-2 rounded-xl
+                        font-semibold transition-all duration-300 ease-out
+                        ${
+                          likesData.get(reply.id)?.liked
+                            ? "bg-primary/10 hover:bg-primary/20 text-primary"
+                            : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
+                        }
+                        ${likingComments.has(reply.id) ? "opacity-50 cursor-not-allowed" : "hover:scale-105 active:scale-95"}
+                        disabled:pointer-events-none
+                      `}
+                    >
+                      <ThumbsUp
+                        size={16}
+                        className={`
+                          transition-all duration-300 ease-out
+                          ${
+                            likesData.get(reply.id)?.liked
+                              ? "fill-primary stroke-primary scale-110"
+                              : "group-hover:scale-110"
+                          }
+                          ${likingComments.has(reply.id) ? "animate-pulse" : ""}
+                        `}
+                      />
+                      <span className="text-sm font-bold min-w-[16px] text-center">
+                        {likesData.get(reply.id)?.likesCount ?? 0}
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </div>
             );

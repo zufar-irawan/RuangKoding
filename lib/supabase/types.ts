@@ -60,7 +60,6 @@ export type Database = {
           answer_id: number;
           created_at: string;
           id: number;
-          likes: number | null;
           reply_id: number | null;
           text: string;
           user_id: string;
@@ -69,7 +68,6 @@ export type Database = {
           answer_id: number;
           created_at?: string;
           id?: number;
-          likes?: number | null;
           reply_id?: number | null;
           text: string;
           user_id?: string;
@@ -78,7 +76,6 @@ export type Database = {
           answer_id?: number;
           created_at?: string;
           id?: number;
-          likes?: number | null;
           reply_id?: number | null;
           text?: string;
           user_id?: string;
@@ -237,7 +234,6 @@ export type Database = {
           blog_id: number;
           created_at: string;
           id: number;
-          likes: number | null;
           reply_id: number | null;
           text: string;
           user_id: string;
@@ -246,7 +242,6 @@ export type Database = {
           blog_id: number;
           created_at?: string;
           id?: number;
-          likes?: number | null;
           reply_id?: number | null;
           text: string;
           user_id?: string;
@@ -255,7 +250,6 @@ export type Database = {
           blog_id?: number;
           created_at?: string;
           id?: number;
-          likes?: number | null;
           reply_id?: number | null;
           text?: string;
           user_id?: string;
@@ -309,6 +303,38 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "code_submission_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      comment_likes: {
+        Row: {
+          created_at: string;
+          id: number;
+          reference_id: number;
+          type: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          reference_id: number;
+          type: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          reference_id?: number;
+          type?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "comment_likes_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
@@ -451,7 +477,6 @@ export type Database = {
         Row: {
           created_at: string;
           id: number;
-          likes: number | null;
           question_id: number;
           reply_id: number | null;
           text: string;
@@ -460,7 +485,6 @@ export type Database = {
         Insert: {
           created_at?: string;
           id?: number;
-          likes?: number | null;
           question_id: number;
           reply_id?: number | null;
           text: string;
@@ -469,7 +493,6 @@ export type Database = {
         Update: {
           created_at?: string;
           id?: number;
-          likes?: number | null;
           question_id?: number;
           reply_id?: number | null;
           text?: string;
@@ -635,7 +658,6 @@ export type Database = {
         Row: {
           created_at: string;
           id: number;
-          likes: number | null;
           reply_id: number | null;
           review_id: number;
           text: string;
@@ -644,7 +666,6 @@ export type Database = {
         Insert: {
           created_at?: string;
           id: number;
-          likes?: number | null;
           reply_id?: number | null;
           review_id: number;
           text: string;
@@ -653,7 +674,6 @@ export type Database = {
         Update: {
           created_at?: string;
           id?: number;
-          likes?: number | null;
           reply_id?: number | null;
           review_id?: number;
           text?: string;
