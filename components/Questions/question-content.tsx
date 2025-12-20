@@ -11,8 +11,6 @@ import QuestionBody from "@/components/Questions/question-body";
 import SharesNVote from "@/components/Questions/share-vote";
 import CommentForm from "@/components/Comments/comment-form";
 import AnswersSection from "@/components/Answers/answers-section";
-import { getClientUser } from "@/utils/GetClientUser";
-import { getUser } from "@/utils/GetUser";
 
 function getCountValue(relation?: CountRelation | null): number {
   if (!relation) {

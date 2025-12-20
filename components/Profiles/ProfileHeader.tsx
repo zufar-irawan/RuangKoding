@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Edit, ExternalLink, Quote } from "lucide-react";
 import Link from "next/link";
-import UserAvatar from "@/components/UserAvatar";
+import UserAvatar from "../ui/UserAvatar";
 
 type UserLink = {
   platform: string | null;

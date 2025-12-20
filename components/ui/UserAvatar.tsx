@@ -8,8 +8,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
+} from "./dialog";
+import { Button } from "./button";
 import { Upload, X } from "lucide-react";
 import { uploadProfilePicture, updateProfilePicture } from "@/lib/profiles";
 import { useRouter } from "next/navigation";

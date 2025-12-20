@@ -60,6 +60,7 @@ export type Database = {
           answer_id: number;
           created_at: string;
           id: number;
+          likes: number | null;
           reply_id: number | null;
           text: string;
           user_id: string;
@@ -68,6 +69,7 @@ export type Database = {
           answer_id: number;
           created_at?: string;
           id?: number;
+          likes?: number | null;
           reply_id?: number | null;
           text: string;
           user_id?: string;
@@ -76,6 +78,7 @@ export type Database = {
           answer_id?: number;
           created_at?: string;
           id?: number;
+          likes?: number | null;
           reply_id?: number | null;
           text?: string;
           user_id?: string;
@@ -234,6 +237,7 @@ export type Database = {
           blog_id: number;
           created_at: string;
           id: number;
+          likes: number | null;
           reply_id: number | null;
           text: string;
           user_id: string;
@@ -242,6 +246,7 @@ export type Database = {
           blog_id: number;
           created_at?: string;
           id?: number;
+          likes?: number | null;
           reply_id?: number | null;
           text: string;
           user_id?: string;
@@ -250,6 +255,7 @@ export type Database = {
           blog_id?: number;
           created_at?: string;
           id?: number;
+          likes?: number | null;
           reply_id?: number | null;
           text?: string;
           user_id?: string;
@@ -353,50 +359,33 @@ export type Database = {
       };
       notifications: {
         Row: {
-          answer_id: number | null;
           content: string;
           created_at: string;
           id: number;
-          question_id: number | null;
           read: boolean | null;
           receiver_id: string;
+          reference_id: number | null;
           sender_id: string;
         };
         Insert: {
-          answer_id?: number | null;
           content: string;
           created_at?: string;
           id?: number;
-          question_id?: number | null;
           read?: boolean | null;
           receiver_id: string;
+          reference_id?: number | null;
           sender_id: string;
         };
         Update: {
-          answer_id?: number | null;
           content?: string;
           created_at?: string;
           id?: number;
-          question_id?: number | null;
           read?: boolean | null;
           receiver_id?: string;
+          reference_id?: number | null;
           sender_id?: string;
         };
         Relationships: [
-          {
-            foreignKeyName: "notifications_answer_id_fkey";
-            columns: ["answer_id"];
-            isOneToOne: false;
-            referencedRelation: "answers";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "notifications_question_id_fkey";
-            columns: ["question_id"];
-            isOneToOne: false;
-            referencedRelation: "questions";
-            referencedColumns: ["id"];
-          },
           {
             foreignKeyName: "notifications_receiver_id_fkey";
             columns: ["receiver_id"];
@@ -462,6 +451,7 @@ export type Database = {
         Row: {
           created_at: string;
           id: number;
+          likes: number | null;
           question_id: number;
           reply_id: number | null;
           text: string;
@@ -470,6 +460,7 @@ export type Database = {
         Insert: {
           created_at?: string;
           id?: number;
+          likes?: number | null;
           question_id: number;
           reply_id?: number | null;
           text: string;
@@ -478,6 +469,7 @@ export type Database = {
         Update: {
           created_at?: string;
           id?: number;
+          likes?: number | null;
           question_id?: number;
           reply_id?: number | null;
           text?: string;
@@ -643,6 +635,7 @@ export type Database = {
         Row: {
           created_at: string;
           id: number;
+          likes: number | null;
           reply_id: number | null;
           review_id: number;
           text: string;
@@ -651,6 +644,7 @@ export type Database = {
         Insert: {
           created_at?: string;
           id: number;
+          likes?: number | null;
           reply_id?: number | null;
           review_id: number;
           text: string;
@@ -659,6 +653,7 @@ export type Database = {
         Update: {
           created_at?: string;
           id?: number;
+          likes?: number | null;
           reply_id?: number | null;
           review_id?: number;
           text?: string;
@@ -911,10 +906,11 @@ export type Database = {
         Row: {
           amount: number;
           created_at: string;
-          id: number;
+          id: string;
           metadata: Json | null;
           reason: string;
           reference: number;
+          source_user_id: string;
           status: string | null;
           type: string;
           user_id: string;
@@ -922,10 +918,11 @@ export type Database = {
         Insert: {
           amount: number;
           created_at?: string;
-          id?: number;
+          id?: string;
           metadata?: Json | null;
           reason: string;
           reference: number;
+          source_user_id: string;
           status?: string | null;
           type: string;
           user_id?: string;
@@ -933,15 +930,23 @@ export type Database = {
         Update: {
           amount?: number;
           created_at?: string;
-          id?: number;
+          id?: string;
           metadata?: Json | null;
           reason?: string;
           reference?: number;
+          source_user_id?: string;
           status?: string | null;
           type?: string;
           user_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "xp_events_source_user_id_fkey";
+            columns: ["source_user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "xp_events_user_id_fkey";
             columns: ["user_id"];
@@ -956,8 +961,43 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      apply_xp_event: { Args: { _event_id: string }; Returns: undefined };
+      apply_xp_event:
+        | {
+            Args: { _event_id: number };
+            Returns: {
+              error: true;
+            } & "Could not choose the best candidate function between: public.apply_xp_event(_event_id => int4), public.apply_xp_event(_event_id => uuid). Try renaming the parameters or the function itself in the database so function overloading can be resolved";
+          }
+        | {
+            Args: { _event_id: string };
+            Returns: {
+              error: true;
+            } & "Could not choose the best candidate function between: public.apply_xp_event(_event_id => int4), public.apply_xp_event(_event_id => uuid). Try renaming the parameters or the function itself in the database so function overloading can be resolved";
+          };
       calculate_level: { Args: { total_xp: number }; Returns: number };
+      handle_comment_notification:
+        | {
+            Args: {
+              p_comment_id: number;
+              p_comment_table: string;
+              p_comment_text: string;
+              p_comment_user: number;
+              p_parent_id: number;
+              p_reply_id: number;
+            };
+            Returns: undefined;
+          }
+        | {
+            Args: {
+              p_comment_id: number;
+              p_comment_table: string;
+              p_comment_text: string;
+              p_comment_user: string;
+              p_parent_id: number;
+              p_reply_id: number;
+            };
+            Returns: undefined;
+          };
       reject_xp_event: { Args: { _event_id: string }; Returns: undefined };
     };
     Enums: {
