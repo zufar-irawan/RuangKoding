@@ -45,15 +45,7 @@ export type Database = {
           overall_perform?: number;
           submission_id?: number;
         };
-        Relationships: [
-          {
-            foreignKeyName: "ai_review_submission_id_fkey";
-            columns: ["submission_id"];
-            isOneToOne: false;
-            referencedRelation: "code_submission";
-            referencedColumns: ["id"];
-          },
-        ];
+        Relationships: [];
       };
       answ_comment: {
         Row: {
@@ -188,128 +180,6 @@ export type Database = {
           },
         ];
       };
-      blogs: {
-        Row: {
-          body: Json;
-          cover_url: string | null;
-          created_at: string;
-          id: number;
-          reads_count: number | null;
-          title: string;
-          user_id: string;
-          views: number | null;
-        };
-        Insert: {
-          body: Json;
-          cover_url?: string | null;
-          created_at?: string;
-          id?: number;
-          reads_count?: number | null;
-          title: string;
-          user_id?: string;
-          views?: number | null;
-        };
-        Update: {
-          body?: Json;
-          cover_url?: string | null;
-          created_at?: string;
-          id?: number;
-          reads_count?: number | null;
-          title?: string;
-          user_id?: string;
-          views?: number | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "blogs_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
-      blogs_comment: {
-        Row: {
-          blog_id: number;
-          created_at: string;
-          id: number;
-          reply_id: number | null;
-          text: string;
-          user_id: string;
-        };
-        Insert: {
-          blog_id: number;
-          created_at?: string;
-          id?: number;
-          reply_id?: number | null;
-          text: string;
-          user_id?: string;
-        };
-        Update: {
-          blog_id?: number;
-          created_at?: string;
-          id?: number;
-          reply_id?: number | null;
-          text?: string;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "blogs_comment_blog_id_fkey";
-            columns: ["blog_id"];
-            isOneToOne: false;
-            referencedRelation: "blogs";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "blogs_comment_reply_id_fkey";
-            columns: ["reply_id"];
-            isOneToOne: false;
-            referencedRelation: "blogs_comment";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "blogs_comment_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
-      code_submission: {
-        Row: {
-          code: string;
-          created_at: string;
-          id: number;
-          language: string;
-          user_id: string;
-        };
-        Insert: {
-          code: string;
-          created_at?: string;
-          id?: number;
-          language: string;
-          user_id?: string;
-        };
-        Update: {
-          code?: string;
-          created_at?: string;
-          id?: number;
-          language?: string;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "code_submission_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
       comment_likes: {
         Row: {
           created_at: string;
@@ -335,6 +205,133 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "comment_likes_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      feedback: {
+        Row: {
+          created_at: string;
+          feedback: Json;
+          id: number;
+          request_id: number;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          feedback: Json;
+          id?: number;
+          request_id: number;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          feedback?: Json;
+          id?: number;
+          request_id?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "feedback_request_id_fkey";
+            columns: ["request_id"];
+            isOneToOne: false;
+            referencedRelation: "request_feedback";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "feedback_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      feedback_comment: {
+        Row: {
+          created_at: string;
+          feedback_id: number;
+          id: number;
+          reply_id: number | null;
+          text: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          feedback_id: number;
+          id?: number;
+          reply_id?: number | null;
+          text: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          feedback_id?: number;
+          id?: number;
+          reply_id?: number | null;
+          text?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "feedback_comment_feedback_id_fkey";
+            columns: ["feedback_id"];
+            isOneToOne: false;
+            referencedRelation: "feedback";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "feedback_comment_reply_id_fkey";
+            columns: ["reply_id"];
+            isOneToOne: false;
+            referencedRelation: "feedback_comment";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "feedback_comment_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      feedback_vote: {
+        Row: {
+          created_at: string;
+          feedback_id: number;
+          id: number;
+          user_id: string;
+          vote: boolean;
+        };
+        Insert: {
+          created_at?: string;
+          feedback_id: number;
+          id?: number;
+          user_id: string;
+          vote?: boolean;
+        };
+        Update: {
+          created_at?: string;
+          feedback_id?: number;
+          id?: number;
+          user_id?: string;
+          vote?: boolean;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "feedback_vote_feedback_id_fkey";
+            columns: ["feedback_id"];
+            isOneToOne: false;
+            referencedRelation: "feedback";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "feedback_vote_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
@@ -654,48 +651,34 @@ export type Database = {
           },
         ];
       };
-      review_comment: {
+      request_feedback: {
         Row: {
           created_at: string;
+          description: Json | null;
           id: number;
-          reply_id: number | null;
-          review_id: number;
-          text: string;
+          project_url: string;
+          title: string;
           user_id: string;
         };
         Insert: {
           created_at?: string;
-          id: number;
-          reply_id?: number | null;
-          review_id: number;
-          text: string;
+          description?: Json | null;
+          id?: number;
+          project_url: string;
+          title: string;
           user_id: string;
         };
         Update: {
           created_at?: string;
+          description?: Json | null;
           id?: number;
-          reply_id?: number | null;
-          review_id?: number;
-          text?: string;
+          project_url?: string;
+          title?: string;
           user_id?: string;
         };
         Relationships: [
           {
-            foreignKeyName: "review_comment_reply_id_fkey";
-            columns: ["reply_id"];
-            isOneToOne: false;
-            referencedRelation: "review_comment";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "review_comment_review_id_fkey";
-            columns: ["review_id"];
-            isOneToOne: false;
-            referencedRelation: "ai_review";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "review_comment_user_id_fkey";
+            foreignKeyName: "request_feedback_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
@@ -703,35 +686,74 @@ export type Database = {
           },
         ];
       };
-      review_verified: {
+      request_tags: {
         Row: {
           created_at: string;
           id: number;
-          reviews_id: number;
-          user_id: string | null;
+          request_id: number;
+          tag_id: number;
         };
         Insert: {
           created_at?: string;
           id?: number;
-          reviews_id?: number;
-          user_id?: string | null;
+          request_id: number;
+          tag_id: number;
         };
         Update: {
           created_at?: string;
           id?: number;
-          reviews_id?: number;
-          user_id?: string | null;
+          request_id?: number;
+          tag_id?: number;
         };
         Relationships: [
           {
-            foreignKeyName: "review_verified_reviews_id_fkey";
-            columns: ["reviews_id"];
+            foreignKeyName: "request_tags_request_id_fkey";
+            columns: ["request_id"];
             isOneToOne: false;
-            referencedRelation: "ai_review";
+            referencedRelation: "request_feedback";
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "review_verified_user_id_fkey";
+            foreignKeyName: "request_tags_tag_id_fkey";
+            columns: ["tag_id"];
+            isOneToOne: false;
+            referencedRelation: "tags";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      request_vote: {
+        Row: {
+          created_at: string;
+          id: number;
+          request_id: number;
+          user_id: string;
+          vote: boolean;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          request_id: number;
+          user_id: string;
+          vote?: boolean;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          request_id?: number;
+          user_id?: string;
+          vote?: boolean;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "request_vote_request_id_fkey";
+            columns: ["request_id"];
+            isOneToOne: false;
+            referencedRelation: "request_feedback";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "request_vote_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
             referencedRelation: "profiles";

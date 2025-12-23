@@ -103,13 +103,7 @@ export default function TrendingQuestions({
       {/* Scrollable Container with Limited Height */}
       <div className="border border-border rounded-lg overflow-hidden">
         <div className="relative">
-          <div
-            className="overflow-y-auto"
-            style={{
-              maxHeight: "600px",
-              minHeight: "400px",
-            }}
-          >
+          <div className="overflow-y-auto max-h-[600px] min-h-[400px]">
             {isLoading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>

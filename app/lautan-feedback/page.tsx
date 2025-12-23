@@ -12,7 +12,7 @@ export default function LautanFeedbackPage() {
       <Navbar />
 
       <div className="flex flex-1 w-full mt-16">
-        <Sidebar />
+        <Sidebar tabs="lautan-feedback" />
 
         <div className="flex flex-col flex-1 gap-4 py-6 px-8 ml-[22rem]">
           <div className="flex items-center justify-between">
@@ -20,10 +20,10 @@ export default function LautanFeedbackPage() {
               Top questions
             </h1>
 
-            <Link href="/question/create">
+            <Link href="/lautan-feedback/create">
               <Button>
                 <Plus className="mr-2" size={16} />
-                Buat pertanyaan baru
+                Buat permintaan feedback baru
               </Button>
             </Link>
           </div>

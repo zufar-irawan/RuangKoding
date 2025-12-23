@@ -12,6 +12,7 @@ import type { TagsType } from "@/lib/type";
 import { getClientUser } from "@/utils/GetClientUser";
 import { showXPAlert } from "@/utils/xpAlert";
 import Swal from "sweetalert2";
+import { toast } from "sonner";
 
 export default function QuestionCreateForm() {
   const [title, setTitle] = useState("");
@@ -29,6 +30,9 @@ export default function QuestionCreateForm() {
       return;
     }
 
+    let errorCount = 0;
+    let successCount = 0;
+
     for (const tag of selectedTags) {
       // Validasi tag memiliki id yang valid
       if (!tag.id || typeof tag.id !== "number") {
@@ -42,12 +46,15 @@ export default function QuestionCreateForm() {
       });
 
       if (error) {
+        errorCount++;
         console.error("Failed to associate tag:", {
           tag: tag.tag,
           tagId: tag.id,
           questionId,
           error,
         });
+      } else {
+        successCount++;
       }
     }
 
