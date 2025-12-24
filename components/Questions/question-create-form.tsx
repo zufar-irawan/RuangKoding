@@ -1,8 +1,6 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import Link from "next/link";
-import { Undo2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { Editor } from "@/components/Editor/editor";
@@ -12,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
 import type { TagsType } from "@/lib/type";
 import { getClientUser } from "@/utils/GetClientUser";
+import { showXPAlert } from "@/utils/xpAlert";
+import Swal from "sweetalert2";
 import { toast } from "sonner";
 
 export default function QuestionCreateForm() {
@@ -30,14 +30,13 @@ export default function QuestionCreateForm() {
       return;
     }
 
-    let successCount = 0;
     let errorCount = 0;
+    let successCount = 0;
 
     for (const tag of selectedTags) {
       // Validasi tag memiliki id yang valid
       if (!tag.id || typeof tag.id !== "number") {
         console.error("Invalid tag structure:", tag);
-        errorCount++;
         continue;
       }
 
@@ -47,13 +46,13 @@ export default function QuestionCreateForm() {
       });
 
       if (error) {
+        errorCount++;
         console.error("Failed to associate tag:", {
           tag: tag.tag,
           tagId: tag.id,
           questionId,
           error,
         });
-        errorCount++;
       } else {
         successCount++;
       }
@@ -76,12 +75,22 @@ export default function QuestionCreateForm() {
 
     // Validasi form
     if (!title.trim()) {
-      toast.error("Judul pertanyaan tidak boleh kosong");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Judul pertanyaan tidak boleh kosong",
+        confirmButtonColor: "#667eea",
+      });
       return;
     }
 
     if (!bodyJson.trim()) {
-      toast.error("Isi pertanyaan tidak boleh kosong");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Isi pertanyaan tidak boleh kosong",
+        confirmButtonColor: "#667eea",
+      });
       return;
     }
 
@@ -90,7 +99,12 @@ export default function QuestionCreateForm() {
     try {
       const user = await getClientUser();
       if (!user?.id) {
-        toast.error("Anda harus login terlebih dahulu");
+        Swal.fire({
+          icon: "warning",
+          title: "Login Diperlukan",
+          text: "Anda harus login terlebih dahulu",
+          confirmButtonColor: "#667eea",
+        });
         router.push("/auth/login");
         return;
       }
@@ -119,20 +133,36 @@ export default function QuestionCreateForm() {
 
       if (error) {
         console.error("Failed to submit question", error);
-        toast.error("Gagal membuat pertanyaan. Silakan coba lagi.");
+        Swal.fire({
+          icon: "error",
+          title: "Gagal!",
+          text: "Gagal membuat pertanyaan. Silakan coba lagi.",
+          confirmButtonColor: "#667eea",
+        });
         return;
       }
 
-      toast.success("Pertanyaan berhasil dibuat!");
-
       // Associate tags
       await handleTagSubmit(data.id);
+
+      // Show XP Alert
+      showXPAlert({
+        xp: 15,
+        title: "Pertanyaan Berhasil Dibuat!",
+        message:
+          "Pertanyaanmu sudah dipublikasikan. Tunggu jawaban dari para sepuh!",
+      });
 
       router.push("/");
       router.refresh();
     } catch (error) {
       console.error("Unexpected error:", error);
-      toast.error("Terjadi kesalahan. Silakan coba lagi.");
+      Swal.fire({
+        icon: "error",
+        title: "Terjadi Kesalahan",
+        text: "Terjadi kesalahan. Silakan coba lagi.",
+        confirmButtonColor: "#667eea",
+      });
     } finally {
       setIsSubmitting(false);
     }

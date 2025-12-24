@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
-export default function Sidebar() {
+export default function Sidebar({ tabs }: { tabs: string }) {
   const [isPublicOpen, setIsPublicOpen] = useState(true);
 
   return (
@@ -20,7 +20,9 @@ export default function Sidebar() {
         {/* Home */}
         <Link
           href="/"
-          className="ps-5 rounded-e-xl h-12 items-center flex justify-between gap-3 hover:bg-tertiary/30 transition-colors"
+          className={`ps-5 h-12 items-center
+            flex justify-between gap-3 hover:bg-tertiary/30 transition-colors
+            ${tabs === "home" ? "bg-tertiary" : ""}`}
         >
           <div className="flex gap-4 items-center font-medium text-foreground">
             <Home strokeWidth={2} className="text-primary" size={20} />
@@ -32,7 +34,7 @@ export default function Sidebar() {
         <div className="flex flex-col">
           <button
             onClick={() => setIsPublicOpen(!isPublicOpen)}
-            className="ps-5 rounded-e-xl h-12 items-center flex justify-between gap-3 hover:bg-tertiary/30 transition-colors w-full"
+            className="ps-5 h-12 items-center flex justify-between gap-3 hover:bg-tertiary/30 transition-colors w-full"
           >
             <div className="flex gap-4 items-center font-medium text-foreground">
               <Globe strokeWidth={2} className="text-primary" size={20} />
@@ -50,7 +52,9 @@ export default function Sidebar() {
             <div className="flex flex-col ml-4">
               <Link
                 href="/question"
-                className="ps-5 rounded-e-xl h-11 items-center flex justify-between gap-3 hover:bg-tertiary/30 transition-colors"
+                className={`ps-5 h-11 items-center flex justify-between
+                  gap-3 hover:bg-tertiary/30 transition-colors
+                  ${tabs === "questions" ? "bg-tertiary" : ""}`}
               >
                 <div className="flex gap-4 items-center text-sm text-muted-foreground hover:text-foreground transition-colors">
                   <MessageCircleQuestionMark strokeWidth={2} size={18} />
@@ -59,12 +63,24 @@ export default function Sidebar() {
               </Link>
 
               <Link
-                href="/blogs"
-                className="ps-5 rounded-e-xl h-11 items-center flex justify-between gap-3 hover:bg-tertiary/30 transition-colors"
+                href="/lautan-feedback"
+                className={`ps-5 h-11 items-center flex justify-between gap-3 hover:bg-tertiary/30 transition-colors
+                  ${tabs === "lautan-feedback" ? "bg-tertiary" : ""}`}
               >
                 <div className="flex gap-4 items-center text-sm text-muted-foreground hover:text-foreground transition-colors">
                   <BookOpen strokeWidth={2} size={18} />
-                  Blogs
+                  Lautan Feedback
+                </div>
+              </Link>
+
+              <Link
+                href="/blogs"
+                className={`ps-5 h-11 items-center flex justify-between gap-3 hover:bg-tertiary/30 transition-colors
+                  ${tabs === "blogs" ? "bg-tertiary" : ""}`}
+              >
+                <div className="flex gap-4 items-center text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <Code strokeWidth={2} size={18} />
+                  Explain your code
                 </div>
               </Link>
             </div>
@@ -72,7 +88,7 @@ export default function Sidebar() {
         </div>
 
         {/* Code Review */}
-        <Link
+        {/*<Link
           href="/code-review"
           className="ps-5 rounded-e-xl h-12 items-center flex justify-between gap-3 hover:bg-tertiary/30 transition-colors"
         >
@@ -80,7 +96,7 @@ export default function Sidebar() {
             <Code strokeWidth={2} className="text-primary" size={20} />
             Code Review
           </div>
-        </Link>
+        </Link>*/}
       </div>
     </aside>
   );

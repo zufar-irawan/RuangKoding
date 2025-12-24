@@ -4,8 +4,7 @@ import { AuthButton } from "@/components/Auth/auth-button";
 import SearchBar from "./searchbar";
 import { createClient } from "@/lib/supabase/server";
 import LevelBar from "@/components/Profiles/LevelBar";
-import { Bell } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { NotificationDropdown } from "@/components/ui/notification-dropdown";
 
 export default async function Navbar() {
   const supabase = await createClient();
@@ -53,10 +52,7 @@ export default async function Navbar() {
                 <LevelBar level={userLevel} xp={userXP} />
               </div>
 
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell size={20} />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
-              </Button>
+              <NotificationDropdown />
             </>
           )}
 

@@ -8,13 +8,13 @@ import {
   Reply,
   ChevronDown,
   ChevronUp,
+  ThumbsUp,
 } from "lucide-react";
 import Image from "next/image";
 
 import type { AnswerCommentItem, AnswerWithHTML } from "@/lib/type";
 import { createComment, getComments, deleteComment } from "@/lib/answers";
 import { Button } from "../ui/button";
-import { getClientUser } from "@/utils/GetClientUser";
 import CommentReplies from "./comment-replies";
 import CommentTextarea from "./comment-textarea";
 import { formatDistanceToNow } from "date-fns";
@@ -24,6 +24,25 @@ import {
   deleteQuestionComment,
   getQuestionComments,
 } from "@/lib/questions";
+import { showXPAlert } from "@/utils/xpAlert";
+import Swal from "sweetalert2";
+import { toast } from "sonner";
+import { getClientUser } from "@/utils/GetClientUser";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
+import {
+  toggleCommentLike,
+  getCommentsLikesData,
+} from "@/lib/servers/commentLikeAction";
 
 type Props = {
   question_id?: number;
@@ -37,21 +56,51 @@ export default function CommentForm({ question_id, answer }: Props) {
   const [comments, setComments] = useState<AnswerCommentItem[]>([]);
   const [isLoadingFetch, setIsLoadingFetch] = useState(false);
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
-  const [currentUser, setCurrentUser] = useState<{ id: string } | null>(null);
+  const [currentUser, setCurrentUser] = useState<string | undefined>(undefined);
 
   const [commentText, setCommentText] = useState("");
   const [replyText, setReplyText] = useState("");
+
+  // Like state management
+  const [likesData, setLikesData] = useState<
+    Map<number, { liked: boolean; likesCount: number }>
+  >(new Map());
+  const [likingComments, setLikingComments] = useState<Set<number>>(new Set());
+
+  // Fetch current user
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await getClientUser();
+      if (user) {
+        setCurrentUser(user.id);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const fetchComments = async (id: number, question: boolean) => {
     setIsLoadingFetch(true);
 
     try {
+      let fetchedComments: AnswerCommentItem[] = [];
+
       if (question) {
         const result = await getQuestionComments(id);
-        setComments(result ?? []);
+        fetchedComments = result ?? [];
       } else {
         const result = await getComments(id);
-        setComments(result ?? []);
+        fetchedComments = result ?? [];
+      }
+
+      setComments(fetchedComments);
+
+      // Fetch likes data for all comments
+      if (fetchedComments.length > 0) {
+        const commentIds = fetchedComments.map((c) => c.id);
+        const commentType = question ? "quest_comment" : "answ_comment";
+        const likesMap = await getCommentsLikesData(commentIds, commentType);
+        setLikesData(likesMap);
       }
     } finally {
       setIsLoadingFetch(false);
@@ -64,17 +113,20 @@ export default function CommentForm({ question_id, answer }: Props) {
     } else if (answer?.id) {
       fetchComments(answer.id, false);
     }
-
-    const fetchUser = async () => {
-      const user = await getClientUser();
-      setCurrentUser(user);
-    };
-
-    fetchUser();
   }, [answer?.id, question_id]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!commentText.trim()) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Komentar tidak boleh kosong",
+        confirmButtonColor: "#667eea",
+      });
+      return;
+    }
 
     setIsLoadingCreate(true);
 
@@ -91,10 +143,18 @@ export default function CommentForm({ question_id, answer }: Props) {
         fetchComments(answer.id, false);
       }
 
+      toast.success("Komentar Berhasil Ditambahkan!");
+
       setCommentText("");
       setIsOpen(false);
     } catch (error) {
       console.error("Gagal membuat komentar:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Gagal!",
+        text: "Gagal menambahkan komentar. Silakan coba lagi.",
+        confirmButtonColor: "#667eea",
+      });
     } finally {
       setIsLoadingCreate(false);
     }
@@ -105,6 +165,16 @@ export default function CommentForm({ question_id, answer }: Props) {
     commentId: number,
   ) => {
     e.preventDefault();
+
+    if (!replyText.trim()) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Balasan tidak boleh kosong",
+        confirmButtonColor: "#667eea",
+      });
+      return;
+    }
 
     setIsLoadingCreate(true);
 
@@ -121,10 +191,23 @@ export default function CommentForm({ question_id, answer }: Props) {
         fetchComments(answer.id, false);
       }
 
+      // Show XP Alert
+      showXPAlert({
+        xp: 5,
+        title: "Balasan Berhasil Ditambahkan!",
+        message: "Terimakasih sudah berkontribusi!",
+      });
+
       setReplyText("");
       setReplyingTo(null);
     } catch (error) {
       console.error("Gagal membuat reply:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Gagal!",
+        text: "Gagal menambahkan balasan. Silakan coba lagi.",
+        confirmButtonColor: "#667eea",
+      });
     } finally {
       setIsLoadingCreate(false);
     }
@@ -139,8 +222,11 @@ export default function CommentForm({ question_id, answer }: Props) {
         await deleteComment(commentId);
         fetchComments(answer.id, false);
       }
+
+      toast.success("Komentar berhasil dihapus.");
     } catch (error) {
       console.error("Gagal menghapus komentar:", error);
+      toast.error("Gagal menghapus komentar. Silakan coba lagi.");
     }
   };
 
@@ -150,6 +236,78 @@ export default function CommentForm({ question_id, answer }: Props) {
       setReplyText("");
     } else {
       setReplyingTo(commentId);
+    }
+  };
+
+  const toggleLike = async (commentId: number) => {
+    if (!currentUser) {
+      toast.error("Anda harus login untuk menyukai komentar");
+      return;
+    }
+
+    // Prevent double-clicking
+    if (likingComments.has(commentId)) {
+      return;
+    }
+
+    // Add to liking set
+    setLikingComments((prev) => new Set(prev).add(commentId));
+
+    // Optimistic update
+    const currentData = likesData.get(commentId) || {
+      liked: false,
+      likesCount: 0,
+    };
+    const newLiked = !currentData.liked;
+    const newCount = newLiked
+      ? currentData.likesCount + 1
+      : Math.max(0, currentData.likesCount - 1);
+
+    setLikesData((prev) => {
+      const newMap = new Map(prev);
+      newMap.set(commentId, { liked: newLiked, likesCount: newCount });
+      return newMap;
+    });
+
+    try {
+      const commentType = question_id ? "quest_comment" : "answ_comment";
+      const result = await toggleCommentLike(commentId, commentType);
+
+      if (result.success) {
+        // Update with actual server data
+        setLikesData((prev) => {
+          const newMap = new Map(prev);
+          newMap.set(commentId, {
+            liked: result.liked,
+            likesCount: result.likesCount,
+          });
+          return newMap;
+        });
+      } else {
+        // Revert on error
+        setLikesData((prev) => {
+          const newMap = new Map(prev);
+          newMap.set(commentId, currentData);
+          return newMap;
+        });
+        toast.error(result.error || "Gagal menyukai komentar");
+      }
+    } catch (error) {
+      // Revert on error
+      setLikesData((prev) => {
+        const newMap = new Map(prev);
+        newMap.set(commentId, currentData);
+        return newMap;
+      });
+      console.error("Error toggling like:", error);
+      toast.error("Terjadi kesalahan saat menyukai komentar");
+    } finally {
+      // Remove from liking set
+      setLikingComments((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(commentId);
+        return newSet;
+      });
     }
   };
 
@@ -237,26 +395,58 @@ export default function CommentForm({ question_id, answer }: Props) {
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       {/* Header */}
-                      <div className="flex items-center gap-2 flex-wrap">
+                      <div className="flex items-center justify-between">
                         <span className="font-semibold text-sm">
                           {profile?.fullname ?? "Pengguna"}
                         </span>
-                        <span className="text-muted-foreground text-xs">
-                          {formatDistanceToNow(new Date(comment.created_at), {
-                            addSuffix: true,
-                            locale: id,
-                          })}
-                        </span>
-                        {currentUser && profile?.id === currentUser.id && (
-                          <Button
-                            type="button"
-                            variant={"ghost"}
-                            onClick={() => handleDelete(comment.id)}
-                            className="h-6 w-6 p-0 ml-auto"
-                          >
-                            <Trash2 size={14} />
-                          </Button>
-                        )}
+
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground text-xs">
+                            {formatDistanceToNow(new Date(comment.created_at), {
+                              addSuffix: true,
+                              locale: id,
+                            })}
+                          </span>
+
+                          {currentUser && profile?.id === currentUser && (
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  type="button"
+                                  variant={"destructive"}
+                                  className="h-10 w-10 flex justify-start p-0 hover:w-40 transition-[width] duration-300 ease-in-out group overflow-hidden"
+                                >
+                                  <div className="flex items-center space-x-2 px-3">
+                                    <Trash2 size={20} className="shrink-0" />
+                                    <span className="translate-x-1 opacity-0 transition-all duration-300 ease-in-out whitespace-nowrap group-hover:translate-x-0 group-hover:opacity-100">
+                                      Hapus komentar
+                                    </span>
+                                  </div>
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Kamu yakin ga nih?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Kalau kamu hapus jawaban ini, kamu tidak
+                                    bisa mengembalikannya lagi loh. Pastikan
+                                    kamu udah mikir sebelum menghapusnya.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Batal</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDelete(comment.id)}
+                                  >
+                                    Ya, Hapus!
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          )}
+                        </div>
                       </div>
 
                       {/* Comment Text */}
@@ -265,16 +455,49 @@ export default function CommentForm({ question_id, answer }: Props) {
                       </p>
 
                       {/* Actions */}
-                      <div className="mt-2">
+                      <div className="mt-2 flex justify-between">
                         <Button
                           type="button"
                           variant={"ghost"}
                           onClick={() => toggleReply(comment.id)}
-                          className="flex items-center font-semibold hover:bg-muted"
+                          className="flex items-center gap-1 font-semibold hover:bg-muted"
                         >
                           <Reply size={12} />
                           {replyingTo === comment.id ? "Batal" : "Balas"}
                         </Button>
+
+                        <button
+                          type="button"
+                          onClick={() => toggleLike(comment.id)}
+                          disabled={likingComments.has(comment.id)}
+                          className={`
+                            group relative flex items-center gap-2 px-4 py-2.5 rounded-xl
+                            font-semibold transition-all duration-300 ease-out
+                            ${
+                              likesData.get(comment.id)?.liked
+                                ? "bg-primary/10 hover:bg-primary/20 text-primary"
+                                : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
+                            }
+                            ${likingComments.has(comment.id) ? "opacity-50 cursor-not-allowed" : "hover:scale-105 active:scale-95"}
+                            disabled:pointer-events-none
+                          `}
+                        >
+                          <ThumbsUp
+                            size={20}
+                            className={`
+                              transition-all duration-300 ease-out
+                              ${
+                                likesData.get(comment.id)?.liked
+                                  ? "fill-primary stroke-primary scale-110"
+                                  : "group-hover:scale-110"
+                              }
+                              ${likingComments.has(comment.id) ? "animate-pulse" : ""}
+                            `}
+                          />
+                          <span className="text-sm font-bold min-w-[20px] text-center">
+                            {likesData.get(comment.id)?.likesCount ?? 0}
+                          </span>
+                        </button>
                       </div>
 
                       {/* Reply Form */}
@@ -300,6 +523,9 @@ export default function CommentForm({ question_id, answer }: Props) {
                     replies={replies}
                     currentUser={currentUser}
                     onDeleteAction={handleDelete}
+                    likesData={likesData}
+                    onToggleLikeAction={toggleLike}
+                    likingComments={likingComments}
                   />
                 </div>
               );
