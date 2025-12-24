@@ -9,3 +9,21 @@ export {
   associateRequestTags,
   uploadProjectIcon,
 } from "./FeedbackRequestAction";
+
+export {
+  getRequestById,
+  getFeedbacksByRequestId,
+  createFeedback,
+  getFeedbackComments,
+  createFeedbackComment,
+  deleteFeedbackComment,
+  deleteFeedback,
+  checkUserFeedbackVote,
+  handleFeedbackVote,
+  getFeedbackVoteCount,
+  checkUserRequestVote,
+  handleRequestVote,
+  getRequestVoteCount,
+} from "./FeedbackAction";
+
+export type { FeedbackDetailItem, RequestDetailItem } from "./FeedbackAction";
