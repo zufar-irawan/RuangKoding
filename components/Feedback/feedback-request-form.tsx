@@ -1,18 +1,21 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 import { Editor } from "@/components/Editor/editor";
 import TagSelector from "@/components/ui/tag-selector";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import type { TagsType } from "@/lib/type";
 import { getClientUser } from "@/utils/GetClientUser";
 import { toast } from "sonner";
 import {
   createFeedbackRequest,
   associateRequestTags,
+  uploadProjectIcon,
 } from "@/lib/servers/FeedbackRequestAction";
 
 export default function FeedbackRequestForm() {
@@ -20,8 +23,47 @@ export default function FeedbackRequestForm() {
   const [description, setDescription] = useState("");
   const [projectUrl, setProjectUrl] = useState("");
   const [selectedTags, setSelectedTags] = useState<TagsType[]>([]);
+  const [projectIcon, setProjectIcon] = useState<File | null>(null);
+  const [iconPreview, setIconPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+
+  const handleIconChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validasi tipe file
+    const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error(
+        "Format file tidak valid. Hanya PNG, JPG, dan JPEG yang diperbolehkan.",
+      );
+      e.target.value = "";
+      return;
+    }
+
+    // Validasi ukuran file (5MB)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.error("Ukuran file terlalu besar. Maksimal 5MB.");
+      e.target.value = "";
+      return;
+    }
+
+    setProjectIcon(file);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setIconPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveIcon = () => {
+    setProjectIcon(null);
+    setIconPreview(null);
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -62,6 +104,17 @@ export default function FeedbackRequestForm() {
         return;
       }
 
+      // Upload project icon if provided
+      let iconUrl: string | null = null;
+      if (projectIcon) {
+        const uploadResult = await uploadProjectIcon(projectIcon, user.id);
+        if (!uploadResult.success) {
+          toast.error(uploadResult.message);
+          return;
+        }
+        iconUrl = uploadResult.url || null;
+      }
+
       // Parse description as JSON
       let descriptionJson;
       try {
@@ -76,6 +129,7 @@ export default function FeedbackRequestForm() {
         description: descriptionJson,
         project_url: projectUrl,
         user_id: user.id,
+        icon_url: iconUrl,
       });
 
       if (!result.success) {
@@ -159,6 +213,66 @@ export default function FeedbackRequestForm() {
             onChange={(e) => setProjectUrl(e.target.value)}
             type="url"
           />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <div className="text-xl font-bold space-y-2">
+            Project Icon (Opsional)
+            <p className="text-muted-foreground text-sm font-normal">
+              Upload icon atau logo untuk projectmu. Format: PNG, JPG, JPEG.
+              Maksimal 5MB.
+            </p>
+          </div>
+
+          <div className="flex items-start gap-4">
+            <div className="flex-1">
+              <Label
+                htmlFor="project-icon"
+                className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+              >
+                {projectIcon ? "Ganti Icon" : "Pilih Icon"}
+              </Label>
+              <Input
+                id="project-icon"
+                type="file"
+                accept="image/png,image/jpeg,image/jpg"
+                onChange={handleIconChange}
+                className="hidden"
+                disabled={isSubmitting}
+              />
+            </div>
+
+            {iconPreview && (
+              <div className="relative">
+                <div className="w-20 h-20 rounded-md border border-border overflow-hidden bg-muted">
+                  <Image
+                    src={iconPreview}
+                    alt="Preview"
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
+                  onClick={handleRemoveIcon}
+                  disabled={isSubmitting}
+                >
+                  ×
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {projectIcon && (
+            <p className="text-xs text-muted-foreground">
+              {projectIcon.name} ({(projectIcon.size / 1024 / 1024).toFixed(2)}{" "}
+              MB)
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col justify-start">

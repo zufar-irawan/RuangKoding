@@ -1,12 +1,27 @@
-import { Plus, Filter } from "lucide-react";
+import { Plus, Filter, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/ui/navigation-bar";
 import Sidebar from "@/components/ui/sidebar";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Footer from "@/components/ui/footer";
+import FeedbackRequestCard from "@/components/feedback-request-card";
+import Pagination from "@/components/pagination";
+import { getFeedbackRequests } from "@/lib/servers/FeedbackRequestAction";
 
-export default function LautanFeedbackPage() {
+interface PageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function LautanFeedbackPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const currentPage = Number(params.page) || 1;
+
+  const result = await getFeedbackRequests({
+    page: currentPage,
+    limit: 30,
+  });
+
   return (
     <main className="min-h-screen flex flex-col bg-background">
       <Navbar />
@@ -17,7 +32,7 @@ export default function LautanFeedbackPage() {
         <div className="flex flex-col flex-1 gap-4 py-6 px-8 ml-[22rem]">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-foreground">
-              Top questions
+              Lautan Feedback
             </h1>
 
             <Link href="/lautan-feedback/create">
@@ -94,6 +109,48 @@ export default function LautanFeedbackPage() {
               </div>
             </Tabs>
           </div>
+
+          {/* Feedback Request List */}
+          {!result.success || !result.data || result.data.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 px-4">
+              <AlertCircle size={48} className="text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                {!result.success ? "Gagal Mengambil Data" : "Belum Ada Data"}
+              </h3>
+              <p className="text-sm text-muted-foreground text-center max-w-md">
+                {!result.success
+                  ? result.message
+                  : "Belum ada permintaan feedback yang tersedia. Jadilah yang pertama untuk membuat permintaan feedback!"}
+              </p>
+              {result.success && (
+                <Link href="/lautan-feedback/create" className="mt-4">
+                  <Button>
+                    <Plus className="mr-2" size={16} />
+                    Buat Permintaan Feedback
+                  </Button>
+                </Link>
+              )}
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {result.data.map((request) => (
+                  <FeedbackRequestCard key={request.id} request={request} />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {result.totalPages && result.totalPages > 1 && (
+                <div className="mt-8 mb-4">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={result.totalPages}
+                    baseUrl="/lautan-feedback"
+                  />
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
 

@@ -7,4 +7,5 @@ export type { DeleteAccountResult } from "./AccountActions";
 export {
   createFeedbackRequest,
   associateRequestTags,
+  uploadProjectIcon,
 } from "./FeedbackRequestAction";
