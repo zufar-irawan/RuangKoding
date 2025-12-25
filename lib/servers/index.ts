@@ -24,6 +24,8 @@ export {
   checkUserRequestVote,
   handleRequestVote,
   getRequestVoteCount,
+  checkRequestBookmarkStatus,
+  toggleRequestBookmark,
 } from "./FeedbackAction";
 
 export type { FeedbackDetailItem, RequestDetailItem } from "./FeedbackAction";

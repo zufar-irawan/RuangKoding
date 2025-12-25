@@ -55,7 +55,7 @@ export async function getRequestById(requestId: number) {
         bio,
         profile_pic
       )
-    `
+    `,
     )
     .eq("id", requestId)
     .single();
@@ -87,7 +87,7 @@ export async function getFeedbacksByRequestId(requestId: number) {
         bio,
         profile_pic
       )
-    `
+    `,
     )
     .eq("request_id", requestId)
     .order("created_at", { ascending: false });
@@ -146,7 +146,7 @@ export async function getFeedbackComments(feedbackId: number) {
         bio,
         profile_pic
       )
-    `
+    `,
     )
     .eq("feedback_id", feedbackId)
     .order("created_at", { ascending: true });
@@ -163,7 +163,7 @@ export async function getFeedbackComments(feedbackId: number) {
 export async function createFeedbackComment(
   feedbackId: number,
   text: string,
-  replyId?: number
+  replyId?: number,
 ) {
   const supabase = await createClient();
   const user = await getUser();
@@ -279,7 +279,10 @@ export async function checkUserFeedbackVote(feedbackId: number) {
 }
 
 // Handle feedback vote
-export async function handleFeedbackVote(feedbackId: number, voteType: boolean) {
+export async function handleFeedbackVote(
+  feedbackId: number,
+  voteType: boolean,
+) {
   const supabase = await createClient();
   const user = await getUser();
 
@@ -461,4 +464,75 @@ export async function getRequestVoteCount(requestId: number) {
   const downvoteCount = downvotes?.length || 0;
 
   return upvoteCount - downvoteCount;
+}
+
+// Check if user has saved/bookmarked a request
+export async function checkRequestBookmarkStatus(requestId: number) {
+  const supabase = await createClient();
+  const user = await getUser();
+
+  if (!user?.sub) {
+    return false;
+  }
+
+  const { data, error } = await supabase
+    .from("saved_req")
+    .select("id")
+    .eq("request_id", requestId)
+    .eq("user_id", user.sub)
+    .single();
+
+  if (error) {
+    return false;
+  }
+
+  return !!data;
+}
+
+// Toggle request bookmark (save/unsave)
+export async function toggleRequestBookmark(
+  requestId: number,
+  currentlySaved: boolean,
+) {
+  const supabase = await createClient();
+  const user = await getUser();
+
+  if (!user?.sub) {
+    throw new Error("Pengguna harus login untuk menyimpan request.");
+  }
+
+  if (currentlySaved) {
+    // Remove bookmark
+    const { error } = await supabase
+      .from("saved_req")
+      .delete()
+      .eq("request_id", requestId)
+      .eq("user_id", user.sub);
+
+    if (error) {
+      throw new Error("Gagal menghapus bookmark.");
+    }
+
+    return {
+      success: true,
+      isSaved: false,
+      message: "Request berhasil dihapus dari tersimpan",
+    };
+  } else {
+    // Add bookmark
+    const { error } = await supabase.from("saved_req").insert({
+      request_id: requestId,
+      user_id: user.sub,
+    });
+
+    if (error) {
+      throw new Error("Gagal menyimpan request.");
+    }
+
+    return {
+      success: true,
+      isSaved: true,
+      message: "Request berhasil disimpan",
+    };
+  }
 }

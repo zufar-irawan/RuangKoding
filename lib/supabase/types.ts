@@ -800,6 +800,42 @@ export type Database = {
           },
         ];
       };
+      saved_req: {
+        Row: {
+          created_at: string;
+          id: number;
+          request_id: number;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          request_id: number;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          request_id?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "saved_req_request_id_fkey";
+            columns: ["request_id"];
+            isOneToOne: false;
+            referencedRelation: "request_feedback";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "saved_req_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       tags: {
         Row: {
           created_at: string;

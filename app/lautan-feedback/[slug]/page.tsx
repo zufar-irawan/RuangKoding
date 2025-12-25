@@ -36,9 +36,9 @@ export default async function FeedbackDetailPage({ params }: Props) {
       <Navbar />
 
       <div className="flex w-full gap-4 mt-16">
-        <Sidebar />
+        <Sidebar tabs="lautan-feedback" />
 
-        <div className="flex flex-col justify-center max-w-4xl py-10 ml-[22rem]">
+        <div className="flex flex-col flex-1 py-10 ml-[22rem] mr-8">
           <div>
             <BackButton href="/lautan-feedback" label="Kembali" />
           </div>

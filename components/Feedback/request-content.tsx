@@ -1,4 +1,4 @@
-import { Eye, ThumbsUp, MessageSquare } from "lucide-react";
+import { ThumbsUp, MessageSquare } from "lucide-react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import Image from "next/image";
@@ -10,7 +10,6 @@ import {
 } from "@/lib/servers/FeedbackAction";
 import { parseLexicalBodyToHTML } from "@/lib/lexical/lexical-parser";
 
-import FeedbackBody from "@/components/Feedback/feedback-body";
 import RequestVote from "@/components/Feedback/request-vote";
 import FeedbackSection from "@/components/Feedback/feedback-section";
 
@@ -46,7 +45,7 @@ export default async function RequestContent({
       typeof feedback.feedback === "string" ||
         typeof feedback.feedback === "object"
         ? (feedback.feedback as string | Record<string, unknown>)
-        : null
+        : null,
     ),
   }));
 
@@ -54,7 +53,7 @@ export default async function RequestContent({
     typeof request.description === "string" ||
       typeof request.description === "object"
       ? (request.description as string | Record<string, unknown>)
-      : null
+      : null,
   );
 
   return (
@@ -118,7 +117,12 @@ export default async function RequestContent({
       )}
 
       <div className="flex flex-col w-full gap-8 mt-10">
-        <RequestVote requestId={request.id} initialVoteCount={voteCount} />
+        <RequestVote
+          requestId={request.id}
+          initialVoteCount={voteCount}
+          requestTitle={request.title}
+          requestSlug={`${request.id}`}
+        />
 
         <div className="flex border border-foreground/10 w-full"></div>
 
