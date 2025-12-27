@@ -180,6 +180,41 @@ export type Database = {
           },
         ];
       };
+      code_explain_request: {
+        Row: {
+          code: string;
+          created_at: string;
+          firstname: string;
+          id: number;
+          language: string;
+          user_id: string;
+        };
+        Insert: {
+          code: string;
+          created_at?: string;
+          firstname: string;
+          id?: number;
+          language: string;
+          user_id: string;
+        };
+        Update: {
+          code?: string;
+          created_at?: string;
+          firstname?: string;
+          id?: number;
+          language?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "code_explain_request_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       comment_likes: {
         Row: {
           created_at: string;

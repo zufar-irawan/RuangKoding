@@ -74,9 +74,9 @@ export default function Sidebar({ tabs }: { tabs: string }) {
               </Link>
 
               <Link
-                href="/blogs"
+                href="/explain-your-code"
                 className={`ps-5 h-11 items-center flex justify-between gap-3 hover:bg-tertiary/30 transition-colors
-                  ${tabs === "blogs" ? "bg-tertiary" : ""}`}
+                  ${tabs === "explain-your-code" ? "bg-tertiary" : ""}`}
               >
                 <div className="flex gap-4 items-center text-sm text-muted-foreground hover:text-foreground transition-colors">
                   <Code strokeWidth={2} size={18} />

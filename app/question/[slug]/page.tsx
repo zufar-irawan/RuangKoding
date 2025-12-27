@@ -21,7 +21,7 @@ export default async function QuestionDetailPage({ params }: Props) {
       <Navbar />
 
       <div className="flex w-full gap-4 mt-16">
-        <Sidebar />
+        <Sidebar tabs="questions" />
 
         <div className="flex flex-col justify-center max-w-4xl py-10 ml-[22rem]">
           <div>
