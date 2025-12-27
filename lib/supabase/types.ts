@@ -14,39 +14,6 @@ export type Database = {
   };
   public: {
     Tables: {
-      ai_review: {
-        Row: {
-          code_logic: number;
-          code_neat: number;
-          code_security: number;
-          content: string;
-          created_at: string;
-          id: number;
-          overall_perform: number;
-          submission_id: number;
-        };
-        Insert: {
-          code_logic: number;
-          code_neat: number;
-          code_security: number;
-          content: string;
-          created_at?: string;
-          id?: number;
-          overall_perform: number;
-          submission_id: number;
-        };
-        Update: {
-          code_logic?: number;
-          code_neat?: number;
-          code_security?: number;
-          content?: string;
-          created_at?: string;
-          id?: number;
-          overall_perform?: number;
-          submission_id?: number;
-        };
-        Relationships: [];
-      };
       answ_comment: {
         Row: {
           answer_id: number;
@@ -180,12 +147,121 @@ export type Database = {
           },
         ];
       };
+      code_ai_question: {
+        Row: {
+          answer: string | null;
+          code: string;
+          code_id: number;
+          created_at: string;
+          firstname: string;
+          id: number;
+          options: string[];
+          question: string;
+          user_id: string;
+        };
+        Insert: {
+          answer?: string | null;
+          code: string;
+          code_id: number;
+          created_at?: string;
+          firstname: string;
+          id?: number;
+          options: string[];
+          question: string;
+          user_id: string;
+        };
+        Update: {
+          answer?: string | null;
+          code?: string;
+          code_id?: number;
+          created_at?: string;
+          firstname?: string;
+          id?: number;
+          options?: string[];
+          question?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "code_ai_question_code_id_fkey";
+            columns: ["code_id"];
+            isOneToOne: false;
+            referencedRelation: "code_explain_request";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "code_ai_question_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      code_ai_review: {
+        Row: {
+          answer: string;
+          code: string;
+          code_id: number;
+          conclusions: string;
+          created_at: string;
+          explanation: string;
+          firstname: string;
+          greetings: string;
+          id: number;
+          tips: string;
+          user_id: string;
+        };
+        Insert: {
+          answer: string;
+          code: string;
+          code_id: number;
+          conclusions: string;
+          created_at?: string;
+          explanation: string;
+          firstname: string;
+          greetings: string;
+          id?: number;
+          tips: string;
+          user_id: string;
+        };
+        Update: {
+          answer?: string;
+          code?: string;
+          code_id?: number;
+          conclusions?: string;
+          created_at?: string;
+          explanation?: string;
+          firstname?: string;
+          greetings?: string;
+          id?: number;
+          tips?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "code_ai_review_code_id_fkey";
+            columns: ["code_id"];
+            isOneToOne: false;
+            referencedRelation: "code_explain_request";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "code_ai_review_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       code_explain_request: {
         Row: {
           code: string;
           created_at: string;
           firstname: string;
           id: number;
+          is_analyzed: boolean | null;
           language: string;
           user_id: string;
         };
@@ -194,6 +270,7 @@ export type Database = {
           created_at?: string;
           firstname: string;
           id?: number;
+          is_analyzed?: boolean | null;
           language: string;
           user_id: string;
         };
@@ -202,6 +279,7 @@ export type Database = {
           created_at?: string;
           firstname?: string;
           id?: number;
+          is_analyzed?: boolean | null;
           language?: string;
           user_id?: string;
         };
