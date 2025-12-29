@@ -325,6 +325,72 @@ export type Database = {
           },
         ];
       };
+      daily_code_challenge: {
+        Row: {
+          challenge: string;
+          created_at: string;
+          id: string;
+        };
+        Insert: {
+          challenge: string;
+          created_at?: string;
+          id?: string;
+        };
+        Update: {
+          challenge?: string;
+          created_at?: string;
+          id?: string;
+        };
+        Relationships: [];
+      };
+      daily_code_user: {
+        Row: {
+          answer: string;
+          challenge_id: string;
+          created_at: string;
+          id: string;
+          is_correct: boolean | null;
+          language: string | null;
+          penjelasan: string | null;
+          user_id: string;
+        };
+        Insert: {
+          answer: string;
+          challenge_id: string;
+          created_at?: string;
+          id?: string;
+          is_correct?: boolean | null;
+          language?: string | null;
+          penjelasan?: string | null;
+          user_id: string;
+        };
+        Update: {
+          answer?: string;
+          challenge_id?: string;
+          created_at?: string;
+          id?: string;
+          is_correct?: boolean | null;
+          language?: string | null;
+          penjelasan?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "daily_code_user_challenge_id_fkey";
+            columns: ["challenge_id"];
+            isOneToOne: false;
+            referencedRelation: "daily_code_challenge";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "daily_code_user_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       feedback: {
         Row: {
           created_at: string;

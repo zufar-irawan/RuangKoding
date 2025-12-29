@@ -3,9 +3,12 @@ import Footer from "@/components/ui/footer";
 import Sidebar from "@/components/ui/sidebar";
 import HomePageContent from "@/components/home-page-content";
 import TrendingQuestionsSection from "@/components/Questions/trending-questions-section";
+import { DailyReminderModal } from "@/components/daily-reminder";
+import { getDailyChallengeStatus } from "@/lib/daily-challenge";
 
 export default async function Home() {
   const { data: initialTrendingData } = await TrendingQuestionsSection();
+  const dailyChallengeStatus = await getDailyChallengeStatus();
 
   return (
     <main className="min-h-screen flex flex-col bg-background">
@@ -18,6 +21,7 @@ export default async function Home() {
       </div>
 
       <Footer />
+      <DailyReminderModal initialStatus={dailyChallengeStatus} />
     </main>
   );
 }
