@@ -14,15 +14,15 @@ type Props = {
 
 function RequestDetailSkeleton() {
   return (
-    <div className="flex flex-col gap-4">
-      <Skeleton className="h-12 w-3/4" />
-      <Skeleton className="h-6 w-1/2" />
-      <div className="flex gap-4 mt-2">
-        <Skeleton className="h-5 w-32" />
-        <Skeleton className="h-5 w-32" />
+    <div className="flex flex-col gap-3 md:gap-4">
+      <Skeleton className="h-10 md:h-12 w-3/4" />
+      <Skeleton className="h-5 md:h-6 w-1/2" />
+      <div className="flex gap-3 md:gap-4 mt-2">
+        <Skeleton className="h-4 md:h-5 w-24 md:w-32" />
+        <Skeleton className="h-4 md:h-5 w-24 md:w-32" />
       </div>
-      <Skeleton className="h-40 w-full mt-4" />
-      <Skeleton className="h-10 w-full mt-8" />
+      <Skeleton className="h-32 md:h-40 w-full mt-4" />
+      <Skeleton className="h-8 md:h-10 w-full mt-6 md:mt-8" />
     </div>
   );
 }
@@ -38,8 +38,8 @@ export default async function FeedbackDetailPage({ params }: Props) {
       <div className="flex w-full gap-4 mt-16">
         <Sidebar tabs="lautan-feedback" />
 
-        <div className="flex flex-col flex-1 py-10 ml-[22rem] mr-8">
-          <div>
+        <div className="flex flex-col flex-1 py-6 md:py-8 lg:py-10 px-4 md:px-6 lg:px-8 lg:ml-[22rem] lg:mr-8">
+          <div className="mb-4 md:mb-6">
             <BackButton href="/lautan-feedback" label="Kembali" />
           </div>
 

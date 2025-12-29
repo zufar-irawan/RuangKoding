@@ -171,23 +171,23 @@ export default function FeedbackRequestForm() {
   };
 
   return (
-    <div className="px-10 pb-4 flex flex-col flex-1 gap-8">
+    <div className="px-4 md:px-8 lg:px-10 pb-4 flex flex-col flex-1 gap-6 md:gap-8">
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl text-primary font-bold">
+        <h1 className="text-xl md:text-2xl text-primary font-bold">
           Request Feedback untuk Projectmu!
         </h1>
 
-        <p className="text-muted-foreground max-w-xl text-sm">
+        <p className="text-muted-foreground max-w-xl text-sm md:text-base">
           Minta feedback dari para sepuh untuk project kamu! Dapatkan saran dan
           masukan yang berguna untuk meningkatkan kualitas project!
         </p>
       </div>
 
-      <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+      <form className="flex flex-col gap-4 md:gap-6" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-1">
-          <div className="text-xl font-bold space-y-2">
+          <div className="text-lg md:text-xl font-bold space-y-2">
             Judul
-            <p className="text-muted-foreground text-sm font-normal">
+            <p className="text-muted-foreground text-xs md:text-sm font-normal">
               Buat judul yang jelas dan spesifik untuk permintaan feedbackmu!
             </p>
           </div>
@@ -200,9 +200,9 @@ export default function FeedbackRequestForm() {
         </div>
 
         <div className="flex flex-col gap-1">
-          <div className="text-xl font-bold space-y-2">
+          <div className="text-lg md:text-xl font-bold space-y-2">
             URL Project
-            <p className="text-muted-foreground text-sm font-normal">
+            <p className="text-muted-foreground text-xs md:text-sm font-normal">
               Masukkan link ke project kamu (GitHub, Live Demo, dll)
             </p>
           </div>
@@ -216,9 +216,9 @@ export default function FeedbackRequestForm() {
         </div>
 
         <div className="flex flex-col gap-1">
-          <div className="text-xl font-bold space-y-2">
+          <div className="text-lg md:text-xl font-bold space-y-2">
             Project Icon (Opsional)
-            <p className="text-muted-foreground text-sm font-normal">
+            <p className="text-muted-foreground text-xs md:text-sm font-normal">
               Upload icon atau logo untuk projectmu. Format: PNG, JPG, JPEG.
               Maksimal 5MB.
             </p>
@@ -276,9 +276,9 @@ export default function FeedbackRequestForm() {
         </div>
 
         <div className="flex flex-col justify-start">
-          <div className="text-xl font-bold space-y-2">
+          <div className="text-lg md:text-xl font-bold space-y-2">
             Deskripsi
-            <p className="text-muted-foreground text-sm font-normal">
+            <p className="text-muted-foreground text-xs md:text-sm font-normal">
               Jelaskan tentang projectmu dan aspek apa yang ingin kamu dapatkan
               feedbacknya.
             </p>
@@ -288,9 +288,9 @@ export default function FeedbackRequestForm() {
         </div>
 
         <div className="flex flex-col gap-1">
-          <div className="text-xl font-bold space-y-2">
+          <div className="text-lg md:text-xl font-bold space-y-2">
             Tags
-            <p className="text-muted-foreground text-sm font-normal">
+            <p className="text-muted-foreground text-xs md:text-sm font-normal">
               Tambahkan tag yang relevan dengan project kamu untuk memudahkan
               pencarian.
             </p>
@@ -302,8 +302,13 @@ export default function FeedbackRequestForm() {
           />
         </div>
 
-        <div className="flex gap-4">
-          <Button type="submit" variant="default" disabled={isSubmitting}>
+        <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+          <Button
+            type="submit"
+            variant="default"
+            disabled={isSubmitting}
+            className="w-full sm:w-auto"
+          >
             {isSubmitting ? "Mengirim..." : "Kirim Request Feedback!"}
           </Button>
           <Button
@@ -311,6 +316,7 @@ export default function FeedbackRequestForm() {
             variant="outline"
             disabled={isSubmitting}
             onClick={() => router.back()}
+            className="w-full sm:w-auto"
           >
             Batal
           </Button>

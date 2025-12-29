@@ -174,7 +174,7 @@ export function Editor({
         <div className="relative">
           <RichTextPlugin
             contentEditable={
-              <ContentEditable className="min-h-[320px] w-full bg-transparent p-5 text-base leading-relaxed text-foreground outline-none" />
+              <ContentEditable className="min-h-[250px] md:min-h-[320px] w-full bg-transparent p-3 md:p-5 text-sm md:text-base leading-relaxed text-foreground outline-none" />
             }
             placeholder={<Placeholder />}
             ErrorBoundary={LexicalErrorBoundary}

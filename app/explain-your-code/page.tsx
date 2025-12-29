@@ -14,7 +14,7 @@ export default async function ExplainYourCodePage() {
       <div className="flex flex-1 w-full mt-16">
         <Sidebar tabs="explain-your-code" />
 
-        <div className="flex flex-col flex-1 gap-2 py-6 px-8 ml-[22rem]">
+        <div className="flex flex-col flex-1 gap-2 py-6 px-8 lg:ml-[22rem]">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-foreground">

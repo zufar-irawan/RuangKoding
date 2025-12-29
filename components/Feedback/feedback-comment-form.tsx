@@ -10,10 +10,28 @@ import {
 } from "@/lib/servers/FeedbackAction";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Loader2, MessageSquare, Trash2 } from "lucide-react";
+import {
+  Loader2,
+  MessageSquare,
+  Trash2,
+  ChevronUp,
+  ChevronDown,
+  Reply,
+} from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
 import { getClientUser } from "@/utils/GetClientUser";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type Comment = {
   id: number;
@@ -37,9 +55,11 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
   const router = useRouter();
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentText, setCommentText] = useState("");
-  const [replyToId, setReplyToId] = useState<number | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCommentOpen, setIsCommentOpen] = useState(false);
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [currentUser, setCurrentUser] = useState<{ id: string } | null>(null);
 
@@ -76,11 +96,9 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
     setIsSubmitting(true);
 
     try {
-      await createFeedbackComment(feedbackId, commentText, replyToId || undefined);
-
+      await createFeedbackComment(feedbackId, commentText);
       toast.success("Komentar berhasil ditambahkan!");
       setCommentText("");
-      setReplyToId(null);
       setShowCommentForm(false);
       await loadComments();
       router.refresh();
@@ -89,7 +107,34 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Gagal menambahkan komentar. Silakan coba lagi."
+          : "Gagal menambahkan komentar. Silakan coba lagi.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleReplySubmit = async (parentId: number) => {
+    if (!replyText.trim()) {
+      toast.error("Balasan tidak boleh kosong");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await createFeedbackComment(feedbackId, replyText, parentId);
+      toast.success("Balasan berhasil ditambahkan!");
+      setReplyText("");
+      setReplyingTo(null);
+      await loadComments();
+      router.refresh();
+    } catch (error) {
+      console.error("Error creating reply:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Gagal menambahkan balasan. Silakan coba lagi.",
       );
     } finally {
       setIsSubmitting(false);
@@ -105,177 +150,368 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
     } catch (error) {
       console.error("Error deleting comment:", error);
       toast.error(
-        error instanceof Error ? error.message : "Gagal menghapus komentar"
+        error instanceof Error ? error.message : "Gagal menghapus komentar",
       );
     }
   };
 
-  const handleReply = (commentId: number, username: string) => {
-    setReplyToId(commentId);
-    setShowCommentForm(true);
-    setCommentText(`@${username} `);
+  const toggleReply = (commentId: number) => {
+    if (replyingTo === commentId) {
+      setReplyingTo(null);
+      setReplyText("");
+    } else {
+      setReplyingTo(commentId);
+      setReplyText("");
+    }
   };
 
-  const cancelReply = () => {
-    setReplyToId(null);
-    setCommentText("");
-  };
+  const parentComments = comments.filter((c) => c.reply_id === null);
+  const getReplies = (parentId: number) =>
+    comments.filter((c) => c.reply_id === parentId);
 
-  // Group comments by parent
-  const topLevelComments = comments.filter((c) => !c.reply_id);
-  const getReplies = (commentId: number) =>
-    comments.filter((c) => c.reply_id === commentId);
+  const CommentTextarea = ({
+    value,
+    onChange,
+    onSubmit,
+    onCancel,
+    placeholder,
+    isLoading,
+  }: {
+    value: string;
+    onChange: (value: string) => void;
+    onSubmit: () => void;
+    onCancel: () => void;
+    placeholder: string;
+    isLoading: boolean;
+  }) => (
+    <div className="mt-3 space-y-3">
+      <Textarea
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="min-h-[80px] md:min-h-[100px] text-sm md:text-base"
+        disabled={isLoading}
+      />
+      <div className="flex gap-2 justify-end">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onCancel}
+          disabled={isLoading}
+          className="text-xs md:text-sm"
+        >
+          Batal
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          onClick={onSubmit}
+          disabled={isLoading}
+          className="text-xs md:text-sm"
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+              Mengirim...
+            </>
+          ) : (
+            "Kirim"
+          )}
+        </Button>
+      </div>
+    </div>
+  );
 
-  const CommentItem = ({ comment, isReply = false }: { comment: Comment; isReply?: boolean }) => {
-    const profile = comment.profiles;
-    const timeAgo = formatDistanceToNow(new Date(comment.created_at), {
-      addSuffix: true,
-      locale: id,
-    });
+  const CommentReplies = ({ replies }: { replies: Comment[] }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
 
-    const replies = getReplies(comment.id);
+    if (replies.length === 0) return null;
 
     return (
-      <div className={`${isReply ? "ml-8 mt-3" : "mt-4"}`}>
-        <div className="flex gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-secondary-foreground shrink-0">
-            {profile?.fullname.charAt(0).toUpperCase() || "U"}
+      <div className="ml-[44px] md:ml-[52px]">
+        {/* Toggle Button */}
+        <Button
+          variant="ghost"
+          className="font-semibold text-primary hover:bg-primary/10 mb-3 text-xs md:text-sm h-auto py-1.5 md:py-2"
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          {isExpanded ? (
+            <ChevronUp size={14} className="md:w-4 md:h-4" />
+          ) : (
+            <ChevronDown size={14} className="md:w-4 md:h-4" />
+          )}
+          {isExpanded ? "Sembunyikan" : "Tampilkan"} {replies.length} balasan
+        </Button>
+
+        {/* Replies List */}
+        {isExpanded && (
+          <div className="space-y-3 md:space-y-4 border-l-2 border-muted pl-3 md:pl-4">
+            {replies.map((reply) => {
+              const profile = reply.profiles;
+              return (
+                <div key={reply.id} className="flex gap-2 md:gap-3">
+                  {/* Avatar */}
+                  <div className="flex-shrink-0">
+                    <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full bg-secondary text-xs md:text-sm font-semibold text-secondary-foreground">
+                      {profile?.fullname.charAt(0).toUpperCase() ?? "U"}
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    {/* Header */}
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-xs md:text-sm">
+                        {profile?.fullname ?? "Pengguna"}
+                      </span>
+
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground text-xs hidden sm:inline">
+                          {formatDistanceToNow(new Date(reply.created_at), {
+                            addSuffix: true,
+                            locale: id,
+                          })}
+                        </span>
+
+                        {currentUser && reply.user_id === currentUser.id && (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                className="h-7 md:h-10 w-7 md:w-10 flex justify-start p-0 hover:w-28 md:hover:w-40 transition-[width] duration-300 ease-in-out group overflow-hidden"
+                              >
+                                <div className="flex items-center space-x-1 md:space-x-2 px-1.5 md:px-3">
+                                  <Trash2
+                                    size={14}
+                                    className="shrink-0 md:w-5 md:h-5"
+                                  />
+                                  <span className="translate-x-1 opacity-0 transition-all duration-300 ease-in-out whitespace-nowrap group-hover:translate-x-0 group-hover:opacity-100 text-xs md:text-sm">
+                                    Hapus balasan
+                                  </span>
+                                </div>
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Kamu yakin ga nih?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Kalau kamu hapus balasan ini, kamu tidak bisa
+                                  mengembalikannya lagi loh. Pastikan kamu udah
+                                  mikir sebelum menghapusnya.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Batal</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDelete(reply.id)}
+                                >
+                                  Ya, Hapus!
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Show timeAgo on mobile below name */}
+                    <p className="text-xs text-muted-foreground mt-0.5 sm:hidden">
+                      {formatDistanceToNow(new Date(reply.created_at), {
+                        addSuffix: true,
+                        locale: id,
+                      })}
+                    </p>
+
+                    {/* Comment Text */}
+                    <p className="mt-1 text-xs md:text-sm text-foreground leading-relaxed">
+                      {reply.text}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-
-          <div className="flex-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-medium text-sm">
-                {profile?.fullname || "Pengguna"}
-              </span>
-              <span className="text-xs text-muted-foreground">{timeAgo}</span>
-            </div>
-
-            <p className="mt-1 text-sm text-foreground whitespace-pre-wrap">
-              {comment.text}
-            </p>
-
-            <div className="flex items-center gap-3 mt-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 text-xs"
-                onClick={() => handleReply(comment.id, profile?.fullname || "Pengguna")}
-              >
-                Balas
-              </Button>
-
-              {currentUser && comment.user_id === currentUser.id && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 text-xs text-destructive hover:text-destructive"
-                  onClick={() => handleDelete(comment.id)}
-                >
-                  <Trash2 className="h-3 w-3 mr-1" />
-                  Hapus
-                </Button>
-              )}
-            </div>
-
-            {/* Replies */}
-            {replies.length > 0 && (
-              <div className="mt-2">
-                {replies.map((reply) => (
-                  <CommentItem key={reply.id} comment={reply} isReply={true} />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+        )}
       </div>
     );
   };
 
   return (
-    <div className="w-full mt-6">
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="text-sm font-semibold flex items-center gap-2">
-          <MessageSquare className="h-4 w-4" />
-          {comments.length} Komentar
-        </h4>
-
-        {!showCommentForm && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowCommentForm(true)}
-          >
-            Tambah Komentar
-          </Button>
-        )}
+    <div className="mt-4 md:mt-6">
+      <div className="flex items-center justify-between">
+        <Button
+          variant="ghost"
+          onClick={() => setIsCommentOpen(!isCommentOpen)}
+          className="text-base md:text-lg font-semibold p-0 h-auto hover:bg-transparent"
+        >
+          {isCommentOpen ? (
+            <ChevronUp size={28} strokeWidth={3} className="md:w-8 md:h-8" />
+          ) : (
+            <ChevronDown size={28} strokeWidth={3} className="md:w-8 md:h-8" />
+          )}
+          Komentar ({parentComments.length})
+        </Button>
+        <Button
+          variant="outline"
+          className="flex items-center gap-2 text-xs md:text-sm h-8 md:h-10"
+          onClick={() => setShowCommentForm((prev) => !prev)}
+        >
+          <MessageSquare size={16} className="md:w-[18px] md:h-[18px]" />
+          {showCommentForm ? "Tutup" : "Tambah komentar"}
+        </Button>
       </div>
 
-      {/* Comment Form */}
       {showCommentForm && (
-        <div className="mb-4 p-4 border border-foreground/10 rounded-lg bg-card">
-          {replyToId && (
-            <div className="mb-2 text-sm text-muted-foreground flex items-center gap-2">
-              <span>Membalas komentar</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 text-xs"
-                onClick={cancelReply}
-              >
-                Batal
-              </Button>
-            </div>
-          )}
-
-          <Textarea
-            placeholder="Tulis komentar..."
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            className="min-h-[80px] mb-3"
-            disabled={isSubmitting}
-          />
-
-          <div className="flex gap-2 justify-end">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setShowCommentForm(false);
-                setCommentText("");
-                setReplyToId(null);
-              }}
-              disabled={isSubmitting}
-            >
-              Batal
-            </Button>
-            <Button size="sm" onClick={handleSubmit} disabled={isSubmitting}>
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-3 w-3 animate-spin" />
-                  Mengirim...
-                </>
-              ) : (
-                "Kirim"
-              )}
-            </Button>
-          </div>
-        </div>
+        <CommentTextarea
+          value={commentText}
+          onChange={setCommentText}
+          onSubmit={handleSubmit}
+          onCancel={() => setShowCommentForm(false)}
+          placeholder="Tulis komentar..."
+          isLoading={isSubmitting}
+        />
       )}
 
-      {/* Comments List */}
-      {isLoading ? (
-        <div className="flex justify-center py-8">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-        </div>
-      ) : comments.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-8">
-          Belum ada komentar. Jadilah yang pertama berkomentar!
-        </p>
-      ) : (
-        <div className="space-y-1">
-          {topLevelComments.map((comment) => (
-            <CommentItem key={comment.id} comment={comment} />
-          ))}
+      {isCommentOpen && (
+        <div className="mt-3 md:mt-4 space-y-3">
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : parentComments.length === 0 ? (
+            <p className="text-xs md:text-sm text-muted-foreground text-center py-8">
+              Belum ada komentar.
+            </p>
+          ) : (
+            parentComments.map((comment) => {
+              const profile = comment.profiles;
+              const replies = getReplies(comment.id);
+
+              return (
+                <div key={comment.id} className="space-y-2">
+                  {/* Parent Comment */}
+                  <div className="flex gap-2 md:gap-3">
+                    {/* Avatar */}
+                    <div className="flex-shrink-0">
+                      <div className="flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-full bg-secondary text-xs md:text-sm font-semibold text-secondary-foreground">
+                        {profile?.fullname.charAt(0).toUpperCase() ?? "U"}
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      {/* Header */}
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-xs md:text-sm">
+                          {profile?.fullname ?? "Pengguna"}
+                        </span>
+
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground text-xs hidden sm:inline">
+                            {formatDistanceToNow(new Date(comment.created_at), {
+                              addSuffix: true,
+                              locale: id,
+                            })}
+                          </span>
+
+                          {currentUser &&
+                            comment.user_id === currentUser.id && (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    type="button"
+                                    variant="destructive"
+                                    className="h-8 md:h-10 w-8 md:w-10 flex justify-start p-0 hover:w-32 md:hover:w-40 transition-[width] duration-300 ease-in-out group overflow-hidden"
+                                  >
+                                    <div className="flex items-center space-x-2 px-2 md:px-3">
+                                      <Trash2
+                                        size={16}
+                                        className="shrink-0 md:w-5 md:h-5"
+                                      />
+                                      <span className="translate-x-1 opacity-0 transition-all duration-300 ease-in-out whitespace-nowrap group-hover:translate-x-0 group-hover:opacity-100 text-xs md:text-sm">
+                                        Hapus komentar
+                                      </span>
+                                    </div>
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                      Kamu yakin ga nih?
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Kalau kamu hapus komentar ini, kamu tidak
+                                      bisa mengembalikannya lagi loh. Pastikan
+                                      kamu udah mikir sebelum menghapusnya.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Batal</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDelete(comment.id)}
+                                    >
+                                      Ya, Hapus!
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
+                        </div>
+                      </div>
+
+                      {/* Show timeAgo on mobile below name */}
+                      <p className="text-xs text-muted-foreground mt-0.5 sm:hidden">
+                        {formatDistanceToNow(new Date(comment.created_at), {
+                          addSuffix: true,
+                          locale: id,
+                        })}
+                      </p>
+
+                      {/* Comment Text */}
+                      <p className="mt-1 text-xs md:text-sm text-foreground leading-relaxed">
+                        {comment.text}
+                      </p>
+
+                      {/* Actions */}
+                      <div className="mt-2 flex items-center">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => toggleReply(comment.id)}
+                          className="h-7 md:h-8 px-2 md:px-3 flex items-center gap-1 font-semibold hover:bg-muted text-xs md:text-sm"
+                        >
+                          <Reply
+                            size={12}
+                            className="md:w-[14px] md:h-[14px]"
+                          />
+                          {replyingTo === comment.id ? "Batal" : "Balas"}
+                        </Button>
+                      </div>
+
+                      {/* Reply Form */}
+                      {replyingTo === comment.id && (
+                        <CommentTextarea
+                          value={replyText}
+                          onChange={setReplyText}
+                          onSubmit={() => handleReplySubmit(comment.id)}
+                          onCancel={() => toggleReply(comment.id)}
+                          placeholder="Tulis balasan..."
+                          isLoading={isSubmitting}
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Replies */}
+                  <CommentReplies replies={replies} />
+                </div>
+              );
+            })
+          )}
         </div>
       )}
     </div>

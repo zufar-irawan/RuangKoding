@@ -33,11 +33,11 @@ export default async function QuestionPage({ searchParams }: PageProps) {
       <div className="flex flex-1 w-full mt-16">
         <Sidebar tabs="questions" />
 
-        <div className="flex flex-col flex-1 gap-6 py-6 px-8 ml-[22rem]">
+        <div className="flex flex-col flex-1 gap-4 md:gap-6 py-4 md:py-6 px-4 md:px-6 lg:px-8 lg:ml-[22rem]">
           {/* Header */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex flex-col gap-1">
-              <h1 className="text-3xl font-bold text-foreground">
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground">
                 {searchQuery
                   ? `Hasil Pencarian: "${searchQuery}"`
                   : "Semua Pertanyaan"}
@@ -49,8 +49,8 @@ export default async function QuestionPage({ searchParams }: PageProps) {
               </p>
             </div>
 
-            <Link href="/question/create">
-              <Button>
+            <Link href="/question/create" className="w-full md:w-auto">
+              <Button className="w-full md:w-auto">
                 <Plus className="mr-2" size={16} />
                 Buat pertanyaan baru
               </Button>

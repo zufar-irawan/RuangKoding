@@ -31,10 +31,10 @@ export default async function ExplainYourCodePage({ searchParams }: PageProps) {
       <div className="flex flex-1 w-full mt-16">
         <Sidebar tabs="lautan-feedback" />
 
-        <div className="flex flex-col flex-1 gap-4 py-6 px-8 ml-[22rem]">
-          <div className="flex items-center justify-between">
+        <div className="flex flex-col flex-1 gap-4 md:gap-6 py-4 md:py-6 px-4 md:px-6 lg:px-8 lg:ml-[22rem]">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex flex-col gap-1">
-              <h1 className="text-2xl font-bold text-foreground">
+              <h1 className="text-xl md:text-2xl font-bold text-foreground">
                 {searchQuery
                   ? `Hasil Pencarian: "${searchQuery}"`
                   : "Lautan Feedback"}
@@ -46,17 +46,23 @@ export default async function ExplainYourCodePage({ searchParams }: PageProps) {
               )}
             </div>
 
-            <Link href="/lautan-feedback/create">
-              <Button>
+            <Link href="/lautan-feedback/create" className="w-full md:w-auto">
+              <Button className="w-full md:w-auto whitespace-nowrap">
                 <Plus className="mr-2" size={16} />
-                Buat permintaan feedback baru
+                <span className="hidden sm:inline">
+                  Buat permintaan feedback baru
+                </span>
+                <span className="sm:hidden">Buat Feedback</span>
               </Button>
             </Link>
           </div>
 
           {/* Watched Tags */}
-          <div className="flex items-center gap-2 flex-wrap text-sm">
-            <span className="text-muted-foreground">Watched tags:</span>
+          <div className="flex items-center gap-2 flex-wrap text-xs md:text-sm">
+            <span className="text-muted-foreground hidden sm:inline">
+              Watched tags:
+            </span>
+            <span className="text-muted-foreground sm:hidden">Tags:</span>
             <Link
               href="#"
               className="px-2 py-1 bg-accent text-accent-foreground rounded text-xs hover:bg-accent/80 transition-colors"
@@ -79,43 +85,48 @@ export default async function ExplainYourCodePage({ searchParams }: PageProps) {
 
           <div className="flex items-center justify-between border-b border-border pb-3">
             <Tabs defaultValue="interesting" className="w-full">
-              <div className="flex items-center justify-between">
-                <TabsList className="bg-transparent border-0 p-0 h-auto gap-1">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <TabsList className="bg-transparent border-0 p-0 h-auto gap-1 overflow-x-auto flex-nowrap">
                   <TabsTrigger
                     value="interesting"
-                    className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground rounded-md px-3 py-1.5"
+                    className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground rounded-md px-2 sm:px-3 py-1.5 text-xs sm:text-sm whitespace-nowrap"
                   >
                     Interesting
                   </TabsTrigger>
                   <TabsTrigger
                     value="bountied"
-                    className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground rounded-md px-3 py-1.5"
+                    className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground rounded-md px-2 sm:px-3 py-1.5 text-xs sm:text-sm whitespace-nowrap"
                   >
                     Bountied
                   </TabsTrigger>
                   <TabsTrigger
                     value="hot"
-                    className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground rounded-md px-3 py-1.5"
+                    className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground rounded-md px-2 sm:px-3 py-1.5 text-xs sm:text-sm whitespace-nowrap"
                   >
                     Hot
                   </TabsTrigger>
                   <TabsTrigger
                     value="week"
-                    className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground rounded-md px-3 py-1.5"
+                    className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground rounded-md px-2 sm:px-3 py-1.5 text-xs sm:text-sm whitespace-nowrap"
                   >
                     Week
                   </TabsTrigger>
                   <TabsTrigger
                     value="month"
-                    className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground rounded-md px-3 py-1.5"
+                    className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground rounded-md px-2 sm:px-3 py-1.5 text-xs sm:text-sm whitespace-nowrap"
                   >
                     Month
                   </TabsTrigger>
                 </TabsList>
 
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2 w-full sm:w-auto"
+                >
                   <Filter size={14} />
-                  Filter
+                  <span className="hidden sm:inline">Filter</span>
+                  <span className="sm:hidden">Filter</span>
                 </Button>
               </div>
             </Tabs>

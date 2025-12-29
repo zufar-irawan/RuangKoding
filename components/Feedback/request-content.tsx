@@ -57,10 +57,10 @@ export default async function RequestContent({
   );
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-start gap-4">
+    <div className="flex flex-col gap-3 md:gap-4">
+      <div className="flex items-start gap-3 md:gap-4">
         {request.icon_url && (
-          <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-foreground/10 shrink-0">
+          <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-lg overflow-hidden border border-foreground/10 shrink-0">
             <Image
               src={request.icon_url}
               alt={request.title}
@@ -69,23 +69,25 @@ export default async function RequestContent({
             />
           </div>
         )}
-        <div className="flex-1">
-          <h1 className="text-4xl font-bold text-primary">{request.title}</h1>
+        <div className="flex-1 min-w-0">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary break-words">
+            {request.title}
+          </h1>
           <a
             href={request.project_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-blue-600 hover:underline mt-2 inline-block"
+            className="text-xs md:text-sm text-blue-600 hover:underline mt-1 md:mt-2 inline-block break-all"
           >
             {request.project_url}
           </a>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+      <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
         {profile && (
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-secondary-foreground">
+            <div className="flex h-7 w-7 md:h-8 md:w-8 lg:w-9 lg:h-9 items-center justify-center rounded-full bg-secondary text-xs md:text-sm lg:text-md font-semibold text-secondary-foreground">
               {profile.fullname.charAt(0).toUpperCase()}
             </div>
             <span>{profile.fullname}</span>
@@ -95,28 +97,28 @@ export default async function RequestContent({
         <span>{createdAtLabel}</span>
       </div>
 
-      <div className="flex gap-8 text-sm mt-2">
+      <div className="flex gap-4 md:gap-8 text-xs md:text-sm mt-2">
         <span className="text-muted-foreground">
-          <MessageSquare className="inline mr-1" size={16} />
+          <MessageSquare className="inline mr-1" size={14} />
           {feedbacks.length} Feedback
         </span>
 
         <span className="text-muted-foreground">
-          <ThumbsUp className="inline mr-1" size={16} />
+          <ThumbsUp className="inline mr-1" size={14} />
           {voteCount} Vote
         </span>
       </div>
 
       {descriptionHTML && (
-        <div className="max-w-none">
+        <div className="max-w-none overflow-hidden">
           <article
-            className="w-full mx-auto py-4"
+            className="w-full mx-auto py-3 md:py-4 prose prose-sm md:prose-base max-w-none"
             dangerouslySetInnerHTML={{ __html: descriptionHTML }}
           />
         </div>
       )}
 
-      <div className="flex flex-col w-full gap-8 mt-10">
+      <div className="flex flex-col w-full gap-6 md:gap-8 mt-6 md:mt-10">
         <RequestVote
           requestId={request.id}
           initialVoteCount={voteCount}
