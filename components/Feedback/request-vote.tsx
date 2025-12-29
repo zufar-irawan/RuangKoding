@@ -20,12 +20,14 @@ import {
 } from "@/lib/servers/FeedbackAction";
 import { useRouter } from "next/navigation";
 import { ShareModal } from "./ShareModal";
+import { getClientUser } from "@/utils/GetClientUser";
 
 type Props = {
   requestId: number;
   initialVoteCount: number;
   requestTitle?: string;
   requestSlug?: string;
+  requestUserId: string;
 };
 
 export default function RequestVote({
@@ -33,6 +35,7 @@ export default function RequestVote({
   initialVoteCount,
   requestTitle,
   requestSlug,
+  requestUserId,
 }: Props) {
   const router = useRouter();
   const [isSaved, setIsSaved] = useState(false);
@@ -43,6 +46,8 @@ export default function RequestVote({
   const [userVote, setUserVote] = useState<boolean | null>(null);
   const [currentVoteCount, setCurrentVoteCount] = useState(initialVoteCount);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [isAuthor, setIsAuthor] = useState(false);
 
   const shareUrl =
     typeof window !== "undefined"
@@ -57,6 +62,15 @@ export default function RequestVote({
   const loadInitialData = async () => {
     setIsInitialLoading(true);
     try {
+      // Get current user
+      const user = await getClientUser();
+      const userId = user?.id || null;
+      setCurrentUserId(userId);
+
+      // Check if current user is the author
+      const userIsAuthor = userId !== null && userId === requestUserId;
+      setIsAuthor(userIsAuthor);
+
       // Load save status and user vote in parallel
       const [saveStatus, voteStatus] = await Promise.all([
         checkRequestBookmarkStatus(requestId),
@@ -102,6 +116,14 @@ export default function RequestVote({
 
   const handleVote = async (voteType: boolean) => {
     if (isVoteLoading || isSaveLoading) return;
+
+    // Prevent author from voting on their own request
+    if (isAuthor) {
+      toast.error("Anda tidak dapat memvote request feedback Anda sendiri", {
+        duration: 3000,
+      });
+      return;
+    }
 
     setIsVoteLoading(true);
 
@@ -278,8 +300,12 @@ export default function RequestVote({
               variant={userVote === true ? "default" : "ghost"}
               size="lg"
               className="h-11 w-11 p-0 relative transition-all duration-200"
-              disabled={isVoteLoading || isSaveLoading}
-              title="Vote up"
+              disabled={isVoteLoading || isSaveLoading || isAuthor}
+              title={
+                isAuthor
+                  ? "Anda tidak dapat memvote request Anda sendiri"
+                  : "Vote up"
+              }
             >
               {isVoteLoading && userVote === true ? (
                 <Loader2 size={26} className="animate-spin" />
@@ -306,8 +332,12 @@ export default function RequestVote({
               variant={userVote === false ? "default" : "ghost"}
               size="lg"
               className="h-11 w-11 p-0 relative transition-all duration-200"
-              disabled={isVoteLoading || isSaveLoading}
-              title="Vote down"
+              disabled={isVoteLoading || isSaveLoading || isAuthor}
+              title={
+                isAuthor
+                  ? "Anda tidak dapat memvote request Anda sendiri"
+                  : "Vote down"
+              }
             >
               {isVoteLoading && userVote === false ? (
                 <Loader2 size={26} className="animate-spin" />
@@ -327,6 +357,11 @@ export default function RequestVote({
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Loader2 size={12} className="animate-spin" />
               <span>Memproses vote...</span>
+            </div>
+          )}
+          {isAuthor && (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span>Anda tidak dapat memvote request Anda sendiri</span>
             </div>
           )}
         </div>

@@ -124,6 +124,7 @@ export default async function RequestContent({
           initialVoteCount={voteCount}
           requestTitle={request.title}
           requestSlug={`${request.id}`}
+          requestUserId={request.user_id}
         />
 
         <div className="flex border border-foreground/10 w-full"></div>

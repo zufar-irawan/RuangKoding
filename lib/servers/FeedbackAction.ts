@@ -394,6 +394,17 @@ export async function handleRequestVote(requestId: number, voteType: boolean) {
     throw new Error("Pengguna harus login untuk melakukan voting.");
   }
 
+  // Check if user is the author of the request
+  const { data: request } = await supabase
+    .from("request_feedback")
+    .select("user_id")
+    .eq("id", requestId)
+    .single();
+
+  if (request?.user_id === user.sub) {
+    throw new Error("Anda tidak dapat memvote request feedback Anda sendiri.");
+  }
+
   // Check existing vote
   const { data: existingVote } = await supabase
     .from("request_vote")

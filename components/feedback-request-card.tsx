@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
-import { FileText } from "lucide-react";
+import { FileText, ThumbsUp, MessageSquare } from "lucide-react";
 import Image from "next/image";
 
 import {
@@ -9,6 +9,26 @@ import {
   CardContent,
   CardHeader,
 } from "@/components/ui/card";
+
+type RequestTagsRelation = {
+  tag_id: number;
+  tags: {
+    id: number;
+    tag: string | null;
+  } | {
+    id: number;
+    tag: string | null;
+  }[];
+} | {
+  tag_id: number;
+  tags: {
+    id: number;
+    tag: string | null;
+  } | {
+    id: number;
+    tag: string | null;
+  }[];
+}[];
 
 interface FeedbackRequestCardProps {
   request: {
@@ -22,7 +42,29 @@ interface FeedbackRequestCardProps {
     profiles: {
       fullname: string;
     } | null;
+    vote_count?: number;
+    feedback_count?: number;
+    request_tags?: RequestTagsRelation;
   };
+}
+
+function normalizeRequestTags(
+  relation: RequestTagsRelation | undefined,
+): { tag: string | null }[] {
+  if (!relation) return [];
+
+  const list = Array.isArray(relation) ? relation : [relation];
+
+  return list.flatMap((item) => {
+    if (!item || !item.tags) return [];
+    const tags = item.tags;
+
+    if (Array.isArray(tags)) {
+      return tags.map((tag) => ({ tag: tag?.tag ?? null }));
+    }
+
+    return [{ tag: tags.tag ?? null }];
+  });
 }
 
 export default function FeedbackRequestCard({
@@ -34,6 +76,10 @@ export default function FeedbackRequestCard({
   });
 
   const userProfile = request.profiles;
+
+  const flattenedTags = normalizeRequestTags(request.request_tags)
+    .map((tag) => tag.tag)
+    .filter(Boolean);
 
   return (
     <Card className="hover:shadow-lg transition-shadow">
@@ -70,7 +116,7 @@ export default function FeedbackRequestCard({
             </div>
           ) : (
             <div className="flex-shrink-0 flex items-center justify-center w-12 h-12 bg-secondary rounded-lg">
-              <FileText size={24} className="text-muted-foreground" />
+              <FileText size={24} className="text-foreground" />
             </div>
           )}
 
@@ -90,6 +136,35 @@ export default function FeedbackRequestCard({
             >
               {request.project_url}
             </Link>
+
+            {/* Tags */}
+            <div className="flex gap-2 items-center flex-wrap mt-2">
+              {flattenedTags.length === 0 ? (
+                <span className="text-xs text-muted-foreground">Belum ada tag</span>
+              ) : (
+                flattenedTags.map((tag) => (
+                  <Link
+                    href="#"
+                    key={tag}
+                    className="px-2 py-1 bg-accent text-accent-foreground rounded text-xs hover:bg-accent/80 transition-colors"
+                  >
+                    {tag}
+                  </Link>
+                ))
+              )}
+            </div>
+
+            {/* Vote and Feedback Counts */}
+            <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <ThumbsUp size={14} />
+                <span>{request.vote_count ?? 0}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <MessageSquare size={14} />
+                <span>{request.feedback_count ?? 0}</span>
+              </div>
+            </div>
           </div>
         </div>
       </CardContent>

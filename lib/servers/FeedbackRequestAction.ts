@@ -241,6 +241,26 @@ export async function associateRequestTags(
   }
 }
 
+type RequestTagsRelation = {
+  tag_id: number;
+  tags: {
+    id: number;
+    tag: string | null;
+  } | {
+    id: number;
+    tag: string | null;
+  }[];
+} | {
+  tag_id: number;
+  tags: {
+    id: number;
+    tag: string | null;
+  } | {
+    id: number;
+    tag: string | null;
+  }[];
+}[];
+
 type FeedbackRequestListItem = {
   id: number;
   title: string;
@@ -252,6 +272,9 @@ type FeedbackRequestListItem = {
   profiles: {
     fullname: string;
   } | null;
+  vote_count?: number;
+  feedback_count?: number;
+  request_tags?: RequestTagsRelation;
 };
 
 type GetFeedbackRequestsParams = {
@@ -309,6 +332,13 @@ export async function getFeedbackRequests(
         user_id,
         profiles (
           fullname
+        ),
+        request_tags (
+          tag_id,
+          tags (
+            id,
+            tag
+          )
         )
       `,
     );
@@ -329,12 +359,41 @@ export async function getFeedbackRequests(
       };
     }
 
+    // Get vote counts and feedback counts for each request
+    const requestIds = (data || []).map((req) => req.id);
+    const requestsWithCounts = await Promise.all(
+      (data || []).map(async (req) => {
+        // Get vote count
+        const { data: votes } = await supabase
+          .from("request_vote")
+          .select("vote")
+          .eq("request_id", req.id);
+
+        const upvotes = votes?.filter((v) => v.vote === true).length || 0;
+        const downvotes = votes?.filter((v) => v.vote === false).length || 0;
+        const voteCount = upvotes - downvotes;
+
+        // Get feedback count
+        const { count: feedbackCount } = await supabase
+          .from("feedback")
+          .select("*", { count: "exact", head: true })
+          .eq("request_id", req.id);
+
+        return {
+          ...req,
+          vote_count: voteCount,
+          feedback_count: feedbackCount || 0,
+          request_tags: req.request_tags,
+        };
+      }),
+    );
+
     const totalPages = Math.ceil((count || 0) / limit);
 
     return {
       success: true,
       message: "Data berhasil diambil",
-      data: data as FeedbackRequestListItem[],
+      data: requestsWithCounts as FeedbackRequestListItem[],
       total: count || 0,
       totalPages,
       currentPage: page,
@@ -374,6 +433,13 @@ export async function searchFeedbackRequests(
         user_id,
         profiles (
           fullname
+        ),
+        request_tags (
+          tag_id,
+          tags (
+            id,
+            tag
+          )
         )
       `,
       )
@@ -389,16 +455,162 @@ export async function searchFeedbackRequests(
       };
     }
 
+    // Get vote counts and feedback counts for each request
+    const requestsWithCounts = await Promise.all(
+      (data || []).map(async (req) => {
+        // Get vote count
+        const { data: votes } = await supabase
+          .from("request_vote")
+          .select("vote")
+          .eq("request_id", req.id);
+
+        const upvotes = votes?.filter((v) => v.vote === true).length || 0;
+        const downvotes = votes?.filter((v) => v.vote === false).length || 0;
+        const voteCount = upvotes - downvotes;
+
+        // Get feedback count
+        const { count: feedbackCount } = await supabase
+          .from("feedback")
+          .select("*", { count: "exact", head: true })
+          .eq("request_id", req.id);
+
+        return {
+          ...req,
+          vote_count: voteCount,
+          feedback_count: feedbackCount || 0,
+          request_tags: req.request_tags,
+        };
+      }),
+    );
+
     return {
       success: true,
       message: "Data berhasil ditemukan",
-      data: data as FeedbackRequestListItem[],
+      data: requestsWithCounts as FeedbackRequestListItem[],
     };
   } catch (error) {
     console.error("Unexpected error in searchFeedbackRequests:", error);
     return {
       success: false,
       message: "Terjadi kesalahan saat mencari data",
+    };
+  }
+}
+
+type GetFilteredFeedbackRequestsResult = {
+  success: boolean;
+  message: string;
+  data?: FeedbackRequestListItem[];
+};
+
+export async function getFilteredFeedbackRequests(
+  tagId?: number,
+): Promise<GetFilteredFeedbackRequestsResult> {
+  try {
+    const supabase = await createClient();
+
+    let query = supabase.from("request_feedback").select(
+      `
+        id,
+        title,
+        description,
+        project_url,
+        icon_url,
+        created_at,
+        user_id,
+        profiles (
+          fullname
+        ),
+        request_tags (
+          tag_id,
+          tags (
+            id,
+            tag
+          )
+        )
+      `,
+    );
+
+    query = query.order("created_at", { ascending: false });
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Failed to get filtered feedback requests:", error);
+      return {
+        success: false,
+        message: "Gagal mengambil data feedback request",
+      };
+    }
+
+    if (!data) {
+      return { success: true, message: "Data berhasil diambil", data: [] };
+    }
+
+    let filteredData = data;
+
+    // Filter by tag if tagId is provided
+    if (tagId) {
+      filteredData = data.filter((request) => {
+        const tags = request.request_tags;
+        if (!tags) return false;
+
+        const tagList = Array.isArray(tags) ? tags : [tags];
+        return tagList.some((tagRelation) => {
+          const tag = tagRelation.tags;
+          if (Array.isArray(tag)) {
+            return tag.some((t) => t?.id === tagId);
+          }
+          return tag?.id === tagId;
+        });
+      });
+    }
+
+    // Get vote counts and feedback counts for each request
+    const requestsWithCounts = await Promise.all(
+      filteredData.map(async (req) => {
+        // Get vote count
+        const { data: votes } = await supabase
+          .from("request_vote")
+          .select("vote")
+          .eq("request_id", req.id);
+
+        const upvotes = votes?.filter((v) => v.vote === true).length || 0;
+        const downvotes = votes?.filter((v) => v.vote === false).length || 0;
+        const voteCount = upvotes - downvotes;
+
+        // Get feedback count
+        const { count: feedbackCount } = await supabase
+          .from("feedback")
+          .select("*", { count: "exact", head: true })
+          .eq("request_id", req.id);
+
+        return {
+          id: req.id,
+          title: req.title,
+          description: req.description,
+          project_url: req.project_url,
+          icon_url: req.icon_url,
+          created_at: req.created_at,
+          user_id: req.user_id,
+          profiles: req.profiles,
+          vote_count: voteCount,
+          feedback_count: feedbackCount || 0,
+          request_tags: req.request_tags,
+        };
+      }),
+    );
+
+    return {
+      success: true,
+      message: "Data berhasil diambil",
+      data: requestsWithCounts as FeedbackRequestListItem[],
+    };
+  } catch (error) {
+    console.error("Unexpected error in getFilteredFeedbackRequests:", error);
+    return {
+      success: false,
+      message: "Terjadi kesalahan saat mengambil data",
     };
   }
 }
