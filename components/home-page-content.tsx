@@ -27,7 +27,7 @@ export default function HomePageContent({
   >("monthly");
   const [feedbackPeriod, setFeedbackPeriod] = useState<
     "daily" | "monthly" | "yearly"
-  >("daily");
+  >("monthly");
 
   const handleQuestionsPeriodChange = (value: string) => {
     setQuestionsPeriod(value as "daily" | "weekly" | "monthly");
