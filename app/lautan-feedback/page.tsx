@@ -10,16 +10,18 @@ import Pagination from "@/components/pagination";
 import { getFeedbackRequests } from "@/lib/servers/FeedbackRequestAction";
 
 interface PageProps {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; search?: string }>;
 }
 
 export default async function ExplainYourCodePage({ searchParams }: PageProps) {
   const params = await searchParams;
   const currentPage = Number(params.page) || 1;
+  const searchQuery = params.search || "";
 
   const result = await getFeedbackRequests({
     page: currentPage,
     limit: 30,
+    search: searchQuery,
   });
 
   return (
@@ -31,9 +33,18 @@ export default async function ExplainYourCodePage({ searchParams }: PageProps) {
 
         <div className="flex flex-col flex-1 gap-4 py-6 px-8 ml-[22rem]">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-foreground">
-              Lautan Feedback
-            </h1>
+            <div className="flex flex-col gap-1">
+              <h1 className="text-2xl font-bold text-foreground">
+                {searchQuery
+                  ? `Hasil Pencarian: "${searchQuery}"`
+                  : "Lautan Feedback"}
+              </h1>
+              {searchQuery && (
+                <p className="text-sm text-muted-foreground">
+                  Menampilkan hasil pencarian untuk &quot;{searchQuery}&quot;
+                </p>
+              )}
+            </div>
 
             <Link href="/lautan-feedback/create">
               <Button>
@@ -145,7 +156,11 @@ export default async function ExplainYourCodePage({ searchParams }: PageProps) {
                   <Pagination
                     currentPage={currentPage}
                     totalPages={result.totalPages}
-                    baseUrl="/lautan-feedback"
+                    baseUrl={
+                      searchQuery
+                        ? `/lautan-feedback?search=${searchQuery}`
+                        : "/lautan-feedback"
+                    }
                   />
                 </div>
               )}

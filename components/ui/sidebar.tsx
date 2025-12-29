@@ -22,7 +22,7 @@ export default function Sidebar({ tabs }: { tabs: string }) {
       {/* Mobile Toggle Button */}
       <button
         onClick={() => setIsMobileOpen(!isMobileOpen)}
-        className="lg:hidden fixed top-20 left-4 z-50 p-2 rounded-lg bg-card border border-border hover:bg-tertiary/30 transition-colors"
+        className="lg:hidden fixed top-20 left-4 z-30 p-2 rounded-lg bg-card border border-border hover:bg-tertiary/30 transition-colors"
         aria-label="Toggle Sidebar"
       >
         {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -31,14 +31,14 @@ export default function Sidebar({ tabs }: { tabs: string }) {
       {/* Overlay for mobile */}
       {isMobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-30 mt-16"
+          className="lg:hidden fixed inset-0 bg-black/50 z-20 mt-16"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed min-h-full border-r border-border max-w-xs w-full bg-card z-40 transition-transform duration-300 ease-in-out
+        className={`fixed min-h-full border-r border-border max-w-xs w-full bg-card z-30 transition-transform duration-300 ease-in-out
           ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0`}
       >

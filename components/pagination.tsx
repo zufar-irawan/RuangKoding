@@ -16,7 +16,8 @@ export default function Pagination({
   if (totalPages <= 1) return null;
 
   const getPageUrl = (page: number) => {
-    return `${baseUrl}?page=${page}`;
+    const separator = baseUrl.includes("?") ? "&" : "?";
+    return `${baseUrl}${separator}page=${page}`;
   };
 
   const renderPageNumbers = () => {

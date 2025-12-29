@@ -35,9 +35,9 @@ export default async function Navbar() {
   }
 
   return (
-    <nav className="fixed top-0 left-0 w-full flex justify-center border-b border-border h-16 bg-card z-40">
-      <div className="flex w-full justify-between items-center py-3 px-4 md:px-10 text-sm">
-        <div className="flex gap-5 font-semibold">
+    <nav className="fixed top-0 left-0 w-full flex justify-center border-b border-border h-16 bg-card z-40 shadow-sm">
+      <div className="flex w-full items-center py-3 px-4 md:px-10 text-sm gap-2 md:gap-4">
+        <div className="flex gap-5 font-semibold shrink-0">
           <Link href={"/"}>
             <Image
               src="/logo.png"

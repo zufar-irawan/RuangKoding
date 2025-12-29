@@ -257,6 +257,7 @@ type FeedbackRequestListItem = {
 type GetFeedbackRequestsParams = {
   page?: number;
   limit?: number;
+  search?: string;
 };
 
 type GetFeedbackRequestsResult = {
@@ -278,9 +279,15 @@ export async function getFeedbackRequests(
     const offset = (page - 1) * limit;
 
     // Get total count
-    const { count, error: countError } = await supabase
+    let countQuery = supabase
       .from("request_feedback")
       .select("*", { count: "exact", head: true });
+
+    if (params.search) {
+      countQuery = countQuery.ilike("title", `%${params.search}%`);
+    }
+
+    const { count, error: countError } = await countQuery;
 
     if (countError) {
       console.error("Failed to get feedback requests count:", countError);
@@ -291,10 +298,8 @@ export async function getFeedbackRequests(
     }
 
     // Get paginated data
-    const { data, error } = await supabase
-      .from("request_feedback")
-      .select(
-        `
+    let query = supabase.from("request_feedback").select(
+      `
         id,
         title,
         description,
@@ -306,7 +311,13 @@ export async function getFeedbackRequests(
           fullname
         )
       `,
-      )
+    );
+
+    if (params.search) {
+      query = query.ilike("title", `%${params.search}%`);
+    }
+
+    const { data, error } = await query
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -333,6 +344,61 @@ export async function getFeedbackRequests(
     return {
       success: false,
       message: "Terjadi kesalahan saat mengambil data",
+    };
+  }
+}
+
+type SearchFeedbackRequestsResult = {
+  success: boolean;
+  message: string;
+  data?: FeedbackRequestListItem[];
+};
+
+export async function searchFeedbackRequests(
+  query: string,
+  limit: number = 5,
+): Promise<SearchFeedbackRequestsResult> {
+  try {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from("request_feedback")
+      .select(
+        `
+        id,
+        title,
+        description,
+        project_url,
+        icon_url,
+        created_at,
+        user_id,
+        profiles (
+          fullname
+        )
+      `,
+      )
+      .ilike("title", `%${query}%`)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error("Failed to search feedback requests:", error);
+      return {
+        success: false,
+        message: "Gagal mencari feedback request",
+      };
+    }
+
+    return {
+      success: true,
+      message: "Data berhasil ditemukan",
+      data: data as FeedbackRequestListItem[],
+    };
+  } catch (error) {
+    console.error("Unexpected error in searchFeedbackRequests:", error);
+    return {
+      success: false,
+      message: "Terjadi kesalahan saat mencari data",
     };
   }
 }

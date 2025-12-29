@@ -7,10 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
-export default async function QuestionPage() {
+interface PageProps {
+  searchParams: Promise<{ search?: string }>;
+}
+
+export default async function QuestionPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const searchQuery = params.search || "";
+
   const [tagsResult, questionsResult] = await Promise.all([
     getAllTags(),
-    getFilteredQuestions(),
+    getFilteredQuestions(undefined, false, searchQuery),
   ]);
 
   // Filter out tags with null values
@@ -31,10 +38,14 @@ export default async function QuestionPage() {
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-1">
               <h1 className="text-3xl font-bold text-foreground">
-                Semua Pertanyaan
+                {searchQuery
+                  ? `Hasil Pencarian: "${searchQuery}"`
+                  : "Semua Pertanyaan"}
               </h1>
               <p className="text-sm text-muted-foreground">
-                Jelajahi pertanyaan dari komunitas developer
+                {searchQuery
+                  ? `Menampilkan hasil pencarian untuk "${searchQuery}"`
+                  : "Jelajahi pertanyaan dari komunitas developer"}
               </p>
             </div>
 
