@@ -7,6 +7,7 @@ import LevelBar from "@/components/Profiles/LevelBar";
 import { NotificationDropdown } from "@/components/ui/notification-dropdown";
 import { DailyChallengeButton } from "@/components/ui/daily-challenge-button";
 import { getDailyChallengeStatus } from "@/lib/daily-challenge";
+import { NavbarClientWrapper } from "./navbar-client-wrapper";
 
 export default async function Navbar() {
   const supabase = await createClient();
@@ -35,7 +36,7 @@ export default async function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 w-full flex justify-center border-b border-border h-16 bg-card z-40">
-      <div className="flex w-full justify-between items-center py-3 px-10 text-sm">
+      <div className="flex w-full justify-between items-center py-3 px-4 md:px-10 text-sm">
         <div className="flex gap-5 font-semibold">
           <Link href={"/"}>
             <Image
@@ -43,18 +44,15 @@ export default async function Navbar() {
               alt="Ruang Koding Logo"
               width={170}
               height={150}
+              className="w-32 md:w-[170px]"
             />
           </Link>
         </div>
 
-        <div className="flex flex-1 items-center justify-center max-w-2xl">
-          <SearchBar />
-        </div>
-
-        <div className="flex items-center gap-4">
+        <NavbarClientWrapper searchBar={<SearchBar />}>
           {user && (
             <>
-              <div className="w-48 hidden lg:block">
+              <div className="w-48 hidden xl:block">
                 <LevelBar level={userLevel} xp={userXP} />
               </div>
 
@@ -70,7 +68,7 @@ export default async function Navbar() {
           )}
 
           <AuthButton />
-        </div>
+        </NavbarClientWrapper>
       </div>
     </nav>
   );

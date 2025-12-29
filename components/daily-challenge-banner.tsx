@@ -25,7 +25,7 @@ export default function DailyChallengeBanner({
         description:
           "Streak kamu masih aman. Jangan lupa kembali besok untuk melanjutkan!",
         buttonText: "Lihat Challenge",
-        icon: <Zap className="w-5 h-5" />,
+        icon: <Zap className="w-4 h-4 md:w-5 md:h-5" />,
       };
     }
 
@@ -35,7 +35,7 @@ export default function DailyChallengeBanner({
         description:
           "Asah skill dengan menyelesaikan tantangan coding setiap hari. Konsisten adalah kunci!",
         buttonText: "Mulai Challenge",
-        icon: <Code2 className="w-5 h-5" />,
+        icon: <Code2 className="w-4 h-4 md:w-5 md:h-5" />,
       };
     }
 
@@ -45,7 +45,7 @@ export default function DailyChallengeBanner({
         description:
           "Kamu sudah mulai konsisten. Selesaikan challenge hari ini untuk melanjutkan momentum!",
         buttonText: "Lanjutkan Challenge",
-        icon: <Flame className="w-5 h-5" />,
+        icon: <Flame className="w-4 h-4 md:w-5 md:h-5" />,
       };
     }
 
@@ -54,49 +54,49 @@ export default function DailyChallengeBanner({
       description:
         "Kamu sudah jadi coding warrior sejati. Pertahankan rekor streak kamu hari ini!",
       buttonText: "Lanjutkan Challenge",
-      icon: <Flame className="w-5 h-5" />,
+      icon: <Flame className="w-4 h-4 md:w-5 md:h-5" />,
     };
   };
 
   const message = getMessage();
 
   return (
-    <div className="flex items-center justify-between gap-6 py-6 border-b border-border">
-      <div className="flex items-center gap-6">
+    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6 py-4 md:py-6 border-b border-border">
+      <div className="flex items-center gap-4 md:gap-6">
         {/* Streak Display */}
-        <div className="flex flex-col items-center justify-center min-w-[80px]">
+        <div className="flex flex-col items-center justify-center min-w-[60px] md:min-w-[80px]">
           <Flame
-            className={`w-10 h-10 ${
+            className={`w-8 h-8 md:w-10 md:h-10 ${
               streak > 0
                 ? "text-orange-500 fill-orange-500"
                 : "text-muted-foreground/40 fill-muted-foreground/40"
             }`}
             strokeWidth={1.5}
           />
-          <div className="text-2xl font-bold mt-1">{streak}</div>
+          <div className="text-xl md:text-2xl font-bold mt-1">{streak}</div>
           <div className="text-xs text-muted-foreground">
             {streak === 1 ? "Hari" : "Hari"}
           </div>
         </div>
 
         {/* Message */}
-        <div className="flex flex-col gap-1">
-          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+        <div className="flex flex-col gap-1 flex-1">
+          <h3 className="text-base md:text-lg font-semibold text-foreground flex items-center gap-2">
             {message.icon}
-            {message.title}
+            <span className="line-clamp-2">{message.title}</span>
           </h3>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">
             {message.description}
           </p>
         </div>
       </div>
 
       {/* CTA Button */}
-      <Link href="/daily-challenge">
+      <Link href="/daily-challenge" className="w-full md:w-auto">
         <Button
           size="lg"
           variant={hasCompletedToday ? "outline" : "default"}
-          className="whitespace-nowrap"
+          className="whitespace-nowrap w-full md:w-auto"
         >
           {message.buttonText}
         </Button>

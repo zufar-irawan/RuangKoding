@@ -81,7 +81,7 @@ export default function TrendingQuestions({
     <div className="flex flex-col gap-4">
       {/* Header with Title and Filter */}
       <div className="flex flex-col gap-3">
-        <h2 className="text-3xl font-bold text-foreground">
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground">
           Pertanyaan Trending
         </h2>
 

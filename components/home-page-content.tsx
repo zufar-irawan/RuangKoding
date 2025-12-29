@@ -38,24 +38,24 @@ export default function HomePageContent({
   };
 
   return (
-    <div className="flex flex-col flex-1 gap-8 py-6 px-8 ml-[22rem]">
+    <div className="flex flex-col flex-1 gap-6 md:gap-8 py-4 md:py-6 px-4 md:px-8 ml-0 lg:ml-[22rem]">
       {/* Daily Challenge Banner */}
       {dailyChallengeStatus && (
         <DailyChallengeBanner status={dailyChallengeStatus} />
       )}
 
       {/* Hero Section - Gimana kabarmu hari ini */}
-      <div className="flex flex-col gap-6 py-6">
+      <div className="flex flex-col gap-4 md:gap-6 py-4 md:py-6">
         <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-1 h-12 bg-primary rounded-full" />
-            <h1 className="text-4xl font-bold text-foreground">
+          <div className="flex items-center gap-2 md:gap-3">
+            <div className="w-1 h-8 md:h-12 bg-primary rounded-full" />
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">
               Gimana kabarmu hari ini?
             </h1>
           </div>
 
-          <div className="max-w-3xl text-lg text-muted-foreground leading-relaxed ml-4">
-            <p className="mb-3">
+          <div className="max-w-3xl text-base md:text-lg text-muted-foreground leading-relaxed ml-3 md:ml-4">
+            <p className="mb-2 md:mb-3">
               Bete karena kodingan error terus? Daripada kena limit AI, kamu
               bisa bertanya aja di{" "}
               <span className="font-semibold text-foreground">
@@ -63,7 +63,7 @@ export default function HomePageContent({
               </span>
               .
             </p>
-            <p className="text-base">
+            <p className="text-sm md:text-base">
               Pastikan kalau pertanyaan kamu{" "}
               <span className="font-semibold text-foreground">
                 jelas dan spesifik
@@ -73,40 +73,48 @@ export default function HomePageContent({
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-3 ml-4">
-          <Link href="/question/create">
-            <Button size="lg" className="gap-2">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 md:gap-3 ml-0 md:ml-4">
+          <Link href="/question/create" className="w-full sm:w-auto">
+            <Button size="lg" className="gap-2 w-full sm:w-auto">
               <Plus size={18} />
               Buat Pertanyaan Baru
             </Button>
           </Link>
 
-          <Link href="/lautan-feedback">
-            <Button size="lg" variant="outline" className="gap-2">
+          <Link href="/lautan-feedback" className="w-full sm:w-auto">
+            <Button
+              size="lg"
+              variant="outline"
+              className="gap-2 w-full sm:w-auto"
+            >
               <MessageSquare size={18} />
               Request Feedback
             </Button>
           </Link>
 
-          <Link href="/explain-your-code">
-            <Button size="lg" variant="outline" className="gap-2">
+          <Link href="/explain-your-code" className="w-full sm:w-auto">
+            <Button
+              size="lg"
+              variant="outline"
+              className="gap-2 w-full sm:w-auto"
+            >
               <Sparkles size={18} />
               Explain Your Code
             </Button>
           </Link>
         </div>
 
-        <div className="flex gap-6 text-sm text-muted-foreground ml-4 mt-2">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 md:gap-6 text-xs md:text-sm text-muted-foreground ml-0 md:ml-4 mt-2">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500" />
+            <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
             <span>Komunitas developer yang aktif</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-blue-500" />
+            <div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
             <span>Jawaban berkualitas dari sepuh</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-purple-500" />
+            <div className="w-2 h-2 rounded-full bg-purple-500 flex-shrink-0" />
             <span>Gratis tanpa limit</span>
           </div>
         </div>

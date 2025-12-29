@@ -81,7 +81,7 @@ export default function TrendingFeedback({
     <div className="flex flex-col gap-4">
       {/* Header with Title and Filter */}
       <div className="flex flex-col gap-3">
-        <h2 className="text-3xl font-bold text-foreground">
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground">
           Feedback Trending
         </h2>
 
@@ -114,7 +114,7 @@ export default function TrendingFeedback({
                 {getPeriodLabel().toLowerCase()}.
               </div>
             ) : (
-              <div className="flex flex-col px-4">
+              <div className="flex flex-col p-4">
                 {feedbacks.map((feedback) => (
                   <FeedbackRequestCard key={feedback.id} request={feedback} />
                 ))}

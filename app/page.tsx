@@ -19,11 +19,13 @@ export default async function Home() {
       <div className="flex flex-1 w-full mt-16">
         <Sidebar tabs="home" />
 
-        <HomePageContent
-          initialTrendingData={initialTrendingData}
-          initialFeedbackData={initialFeedbackData}
-          dailyChallengeStatus={dailyChallengeStatus}
-        />
+        <div className="flex-1 w-full lg:ml-[288px]">
+          <HomePageContent
+            initialTrendingData={initialTrendingData}
+            initialFeedbackData={initialFeedbackData}
+            dailyChallengeStatus={dailyChallengeStatus}
+          />
+        </div>
       </div>
 
       <Footer />
