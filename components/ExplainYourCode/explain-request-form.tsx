@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -46,6 +46,31 @@ export default function ExplainRequestForm({
   const [code, setCode] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string>("");
+  const [editorHeight, setEditorHeight] = useState<string>("250px");
+  const [editorFontSize, setEditorFontSize] = useState<number>(11);
+  const [showLineNumbers, setShowLineNumbers] = useState<"on" | "off">("off");
+
+  useEffect(() => {
+    const updateEditorSettings = () => {
+      if (window.innerWidth >= 768) {
+        setEditorHeight("400px");
+        setEditorFontSize(12);
+        setShowLineNumbers("on");
+      } else if (window.innerWidth >= 640) {
+        setEditorHeight("300px");
+        setEditorFontSize(11);
+        setShowLineNumbers("on");
+      } else {
+        setEditorHeight("250px");
+        setEditorFontSize(11);
+        setShowLineNumbers("off");
+      }
+    };
+
+    updateEditorSettings();
+    window.addEventListener("resize", updateEditorSettings);
+    return () => window.removeEventListener("resize", updateEditorSettings);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,15 +103,15 @@ export default function ExplainRequestForm({
   };
 
   return (
-    <div className="">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-2 ">
+    <div className="w-full">
+      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 md:space-y-6">
+        <div className="space-y-1.5 sm:space-y-2">
           <Label
             htmlFor="language"
-            className="text-foreground flex flex-col gap-1"
+            className="text-sm sm:text-base text-foreground flex flex-col gap-0.5 sm:gap-1"
           >
             Bahasa Pemrograman
-            <span className="text-muted-foreground">
+            <span className="text-xs sm:text-sm text-muted-foreground">
               Pilih bahasa pemrograman dari program kamu!
             </span>
           </Label>
@@ -104,41 +129,42 @@ export default function ExplainRequestForm({
           </Select>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="code" className="text-foreground flex flex-col gap-1">
+        <div className="space-y-1.5 sm:space-y-2">
+          <Label htmlFor="code" className="text-sm sm:text-base text-foreground flex flex-col gap-0.5 sm:gap-1">
             Kode Program
-            <span className="text-muted-foreground">
+            <span className="text-xs sm:text-sm text-muted-foreground">
               Copy kode program yang ingin kamu pahami, dan Paste ke sini!
             </span>
           </Label>
-          <div className="rounded-2xl overflow-hidden">
+          <div className="rounded-md sm:rounded-lg md:rounded-2xl overflow-hidden border border-border/50">
             <Editor
-              height="400px"
+              height={editorHeight}
               language={language}
               value={code}
               onChange={(value) => setCode(value || "")}
               theme="vs-dark"
               options={{
                 minimap: { enabled: false },
-                fontSize: 14,
-                lineNumbers: "on",
+                fontSize: editorFontSize,
+                lineNumbers: showLineNumbers,
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
                 tabSize: 2,
+                wordWrap: "on",
               }}
             />
           </div>
         </div>
 
         {error && (
-          <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-lg text-sm">
+          <div className="bg-destructive/10 text-destructive px-2.5 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 rounded-md sm:rounded-lg text-xs sm:text-sm">
             {error}
           </div>
         )}
 
         <Button
           type="submit"
-          className=""
+          className="w-full sm:w-auto text-sm sm:text-base"
           disabled={isSubmitting || !code.trim()}
         >
           {isSubmitting ? (

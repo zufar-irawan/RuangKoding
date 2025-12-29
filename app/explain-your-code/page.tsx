@@ -14,13 +14,13 @@ export default async function ExplainYourCodePage() {
       <div className="flex flex-1 w-full mt-16">
         <Sidebar tabs="explain-your-code" />
 
-        <div className="flex flex-col flex-1 gap-2 py-6 px-8 lg:ml-[22rem]">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">
+        <div className="flex flex-col flex-1 gap-4 md:gap-6 py-4 md:py-6 px-4 md:px-6 lg:px-8 lg:ml-[22rem]">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex flex-col gap-1">
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground">
                 Explain Your Code
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-muted-foreground">
                 Dapatkan penjelasan mendalam tentang kode Anda dengan bantuan AI
               </p>
             </div>
