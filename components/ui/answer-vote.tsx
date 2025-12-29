@@ -151,11 +151,11 @@ export default function AnswerVote({
     !currentUserId;
 
   return (
-    <div className="flex flex-col items-center gap-2 pt-1">
+    <div className="flex flex-col items-center gap-1 md:gap-2 pt-1 shrink-0">
       <button
         onClick={handleUpVote}
         disabled={isDisabledUp}
-        className={`p-2 rounded-lg transition-colors ${
+        className={`p-1.5 md:p-2 rounded-lg transition-colors ${
           hasVotedUp
             ? "bg-green-100 dark:bg-green-900/30 text-green-600"
             : "hover:bg-secondary text-muted-foreground hover:text-foreground"
@@ -170,15 +170,15 @@ export default function AnswerVote({
                 : "Upvote jawaban"
         }
       >
-        <ArrowUp size={20} />
+        <ArrowUp className="w-4 h-4 md:w-5 md:h-5" />
       </button>
 
-      <span className="text-lg font-semibold text-foreground">{voteCount}</span>
+      <span className="text-base md:text-lg font-semibold text-foreground">{voteCount}</span>
 
       <button
         onClick={handleDownVote}
         disabled={isDisabledDown}
-        className={`p-2 rounded-lg transition-colors ${
+        className={`p-1.5 md:p-2 rounded-lg transition-colors ${
           hasVotedDown
             ? "bg-red-100 dark:bg-red-900/30 text-red-600"
             : "hover:bg-secondary text-muted-foreground hover:text-foreground"
@@ -193,7 +193,7 @@ export default function AnswerVote({
                 : "Downvote jawaban"
         }
       >
-        <ArrowDown size={20} />
+        <ArrowDown className="w-4 h-4 md:w-5 md:h-5" />
       </button>
     </div>
   );

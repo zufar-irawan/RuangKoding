@@ -80,29 +80,31 @@ export default async function QuestionContent({
   }));
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-4xl font-bold text-primary">{question?.title}</h1>
+    <div className="flex flex-col gap-3 md:gap-4">
+      <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary leading-tight">
+        {question?.title}
+      </h1>
 
       <UserProfilesQuestion
         profile={profile ?? {}}
         createdAtLabel={createdAtLabel}
       />
 
-      <div className="flex gap-8 text-sm mt-2">
+      <div className="flex flex-wrap gap-4 md:gap-6 lg:gap-8 text-xs md:text-sm mt-1 md:mt-2">
         <span
-          className={`${answerCount > 0 ? "text-green-600" : "text-red-600"} items-center`}
+          className={`${answerCount > 0 ? "text-green-600" : "text-red-600"} flex items-center`}
         >
-          <CheckCircle className="inline mr-1" size={16} />
+          <CheckCircle className="inline mr-1" size={14} />
           {answerCount} Jawaban
         </span>
 
-        <span className="text-muted-foreground">
-          <Eye className="inline mr-1" size={16} />
+        <span className="text-muted-foreground flex items-center">
+          <Eye className="inline mr-1" size={14} />
           {question?.view} Dilihat
         </span>
 
-        <span className="text-muted-foreground">
-          <ThumbsUp className="inline mr-1" size={16} />
+        <span className="text-muted-foreground flex items-center">
+          <ThumbsUp className="inline mr-1" size={14} />
           {votesCount} Divote
         </span>
       </div>
@@ -111,7 +113,7 @@ export default async function QuestionContent({
         <QuestionBody question={question} />
       </div>
 
-      <div className="flex flex-col w-full gap-8 mt-10">
+      <div className="flex flex-col w-full gap-4 md:gap-6 lg:gap-8 mt-6 md:mt-8 lg:mt-10">
         <SharesNVote
           votesCount={votesCount}
           question_id={question?.id}

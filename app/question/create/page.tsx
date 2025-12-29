@@ -8,23 +8,23 @@ export default function QuestionCreate() {
     <main className="min-h-screen flex flex-col">
       <Navbar />
 
-      <div className="flex flex-1 gap-2 mt-16">
+      <div className="flex flex-1 gap-2 mt-16 flex-col lg:flex-row">
         <div className="flex flex-col w-full">
-          <div className="ml-10 mt-6">
+          <div className="ml-4 md:ml-10 mt-6">
             <BackButton href="/" label="Kembali" />
           </div>
 
           <QuestionCreateForm />
         </div>
 
-        <div className="w-px bg-foreground/10 ml-8" aria-hidden></div>
+        <div className="hidden lg:block w-px bg-foreground/10 ml-8" aria-hidden></div>
 
-        <aside className="flex flex-col py-5 px-10 gap-2">
+        <aside className="hidden lg:flex flex-col py-5 px-10 gap-2 min-w-[280px] max-w-[320px]">
           <h1 className="text-2xl text-primary font-bold">
             Tips membuat pertanyaan
           </h1>
 
-          <ul>
+          <ul className="space-y-2 text-sm">
             <li>1. Gunakan judul yang jelas dan spesifik.</li>
             <li>2. Jelaskan konteks pertanyaanmu dengan detail.</li>
             <li>3. Sertakan kode atau contoh jika perlu.</li>

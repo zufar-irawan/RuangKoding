@@ -82,7 +82,7 @@ export default function FeedbackRequestCard({
     .filter(Boolean);
 
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card className="hover:shadow-lg transition-shadow mb-4">
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           {userProfile ? (

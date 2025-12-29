@@ -24,7 +24,7 @@ export default function QuestionBody({ question }: QuestionBodyProps) {
 
   return (
     <article
-      className={`w-full mx-auto py-4 ${styles["blog-content"]}`}
+      className={`w-full mx-auto py-2 md:py-4 ${styles["blog-content"]}`}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );

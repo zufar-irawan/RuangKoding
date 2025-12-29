@@ -317,27 +317,28 @@ export default function CommentForm({ question_id, answer }: Props) {
     comments.filter((c) => c.reply_id === parentId);
 
   return (
-    <div className="mt-4">
-      <div className="flex items-center justify-between">
+    <div className="mt-3 md:mt-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 md:gap-4">
         <Button
           variant={"ghost"}
           onClick={() => setIsComment(!isComment)}
-          className="text-lg font-semibold"
+          className="text-sm md:text-base lg:text-lg font-semibold h-auto p-2"
         >
           {isComment ? (
-            <ChevronUp size={32} strokeWidth={3} />
+            <ChevronUp className="w-6 h-6 md:w-8 md:h-8" strokeWidth={3} />
           ) : (
-            <ChevronDown size={32} strokeWidth={3} />
+            <ChevronDown className="w-6 h-6 md:w-8 md:h-8" strokeWidth={3} />
           )}
-          Komentar ({parentComments.length})
+          <span className="ml-1 md:ml-2">Komentar ({parentComments.length})</span>
         </Button>
         <Button
           variant="outline"
-          className="flex items-center gap-2"
+          className="flex items-center gap-1 md:gap-2 text-xs md:text-sm h-8 md:h-9"
           onClick={() => setIsOpen((prev) => !prev)}
         >
-          <MessageSquare size={18} />
-          {isOpen ? "Tutup" : "Tambah komentar"}
+          <MessageSquare className="w-4 h-4 md:w-[18px] md:h-[18px]" />
+          <span className="hidden sm:inline">{isOpen ? "Tutup" : "Tambah komentar"}</span>
+          <span className="sm:hidden">{isOpen ? "Tutup" : "Tambah"}</span>
         </Button>
       </div>
 

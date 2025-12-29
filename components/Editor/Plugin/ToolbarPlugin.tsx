@@ -253,33 +253,33 @@ export function ToolbarPlugin() {
   );
 
   const baseButtonClass =
-    "inline-flex h-9 items-center justify-center rounded-lg px-2 text-sm font-medium text-foreground/80 transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+    "inline-flex h-8 md:h-9 items-center justify-center rounded-lg px-1.5 md:px-2 text-sm font-medium text-foreground/80 transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
   const activeButtonClass = "bg-primary/10 text-primary ring-1 ring-primary/30";
 
   const buttons = useMemo(
     () => [
       {
-        label: <Bold size={20} />,
+        label: <Bold className="w-4 h-4 md:w-5 md:h-5" />,
         format: "bold" as TextFormatType,
         active: isBold,
       },
       {
-        label: <Italic size={20} />,
+        label: <Italic className="w-4 h-4 md:w-5 md:h-5" />,
         format: "italic" as TextFormatType,
         active: isItalic,
       },
       {
-        label: <Underline size={20} />,
+        label: <Underline className="w-4 h-4 md:w-5 md:h-5" />,
         format: "underline" as TextFormatType,
         active: isUnderline,
       },
       {
-        label: <Strikethrough size={20} />,
+        label: <Strikethrough className="w-4 h-4 md:w-5 md:h-5" />,
         format: "strikethrough" as TextFormatType,
         active: isStrikethrough,
       },
       {
-        label: <Code size={20} />,
+        label: <Code className="w-4 h-4 md:w-5 md:h-5" />,
         format: "code" as TextFormatType,
         active: isCode,
       },
@@ -406,10 +406,10 @@ export function ToolbarPlugin() {
   );
 
   return (
-    <div className="flex flex-wrap items-center gap-2 border-b border-border bg-muted/60 px-3 py-2 text-sm backdrop-blur">
+    <div className="flex flex-wrap items-center gap-1 md:gap-2 border-b border-border bg-muted/60 px-2 md:px-3 py-1.5 md:py-2 text-sm backdrop-blur">
       <select
         value={blockType}
-        className="mr-1 h-9 cursor-pointer rounded-lg border border-border bg-card px-3 text-sm text-foreground shadow-sm transition focus:outline-none focus:ring-2 focus:ring-primary/30"
+        className="mr-0.5 md:mr-1 h-8 md:h-9 cursor-pointer rounded-lg border border-border bg-card px-2 md:px-3 text-xs md:text-sm text-foreground shadow-sm transition focus:outline-none focus:ring-2 focus:ring-primary/30"
         onChange={(e) =>
           formatBlock(e.target.value as keyof typeof blockTypeToBlockName)
         }
@@ -427,14 +427,14 @@ export function ToolbarPlugin() {
         aria-label="Toggle code block"
         className={cn(
           baseButtonClass,
-          "mr-1 px-2",
+          "mr-0.5 md:mr-1",
           blockType === "code" && activeButtonClass,
         )}
       >
-        <Code2 size={18} />
+        <Code2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
       </button>
 
-      <span className="mx-2 h-6 w-px bg-border/60" />
+      <span className="mx-1 md:mx-2 h-5 md:h-6 w-px bg-border/60" />
 
       {buttons.map(({ label, format, active }) => (
         <button
@@ -444,7 +444,7 @@ export function ToolbarPlugin() {
           aria-label={`Format ${format}`}
           className={cn(
             baseButtonClass,
-            "mr-1 px-2",
+            "mr-0.5 md:mr-1",
             active && activeButtonClass,
           )}
         >
@@ -460,26 +460,26 @@ export function ToolbarPlugin() {
         }}
         className={cn(
           baseButtonClass,
-          "mr-1 px-2",
+          "mr-0.5 md:mr-1",
           isLink && activeButtonClass,
         )}
       >
-        <Link size={20} />
+        <Link className="w-4 h-4 md:w-5 md:h-5" />
       </button>
 
-      <span className="mx-2 h-6 w-px bg-border/60" />
+      <span className="mx-1 md:mx-2 h-5 md:h-6 w-px bg-border/60" />
 
       <button
         type="button"
         onClick={() => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "left")}
         className={cn(
           baseButtonClass,
-          "mr-1 px-2",
+          "mr-0.5 md:mr-1",
           elementFormat === "left" && activeButtonClass,
         )}
         aria-label="Align Left"
       >
-        <AlignLeft size={18} />
+        <AlignLeft className="w-4 h-4 md:w-[18px] md:h-[18px]" />
       </button>
 
       <button
@@ -487,12 +487,12 @@ export function ToolbarPlugin() {
         onClick={() => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center")}
         className={cn(
           baseButtonClass,
-          "mr-1 px-2",
+          "mr-0.5 md:mr-1",
           elementFormat === "center" && activeButtonClass,
         )}
         aria-label="Align Center"
       >
-        <AlignCenter size={18} />
+        <AlignCenter className="w-4 h-4 md:w-[18px] md:h-[18px]" />
       </button>
 
       <button
@@ -500,12 +500,12 @@ export function ToolbarPlugin() {
         onClick={() => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "right")}
         className={cn(
           baseButtonClass,
-          "mr-1 px-2",
+          "mr-0.5 md:mr-1",
           elementFormat === "right" && activeButtonClass,
         )}
         aria-label="Align Right"
       >
-        <AlignRight size={18} />
+        <AlignRight className="w-4 h-4 md:w-[18px] md:h-[18px]" />
       </button>
 
       <button
@@ -515,15 +515,15 @@ export function ToolbarPlugin() {
         }
         className={cn(
           baseButtonClass,
-          "mr-1 px-2",
+          "mr-0.5 md:mr-1",
           elementFormat === "justify" && activeButtonClass,
         )}
         aria-label="Align Justify"
       >
-        <AlignJustify size={18} />
+        <AlignJustify className="w-4 h-4 md:w-[18px] md:h-[18px]" />
       </button>
 
-      <span className="mx-2 h-6 w-px bg-border/60" />
+      <span className="mx-1 md:mx-2 h-5 md:h-6 w-px bg-border/60" />
 
       <input
         ref={fileInputRef}
@@ -538,9 +538,9 @@ export function ToolbarPlugin() {
           event.preventDefault();
           handleImageButtonClick();
         }}
-        className={cn(baseButtonClass, "mr-1 px-2")}
+        className={cn(baseButtonClass, "mr-0.5 md:mr-1")}
       >
-        <ImageIcon />
+        <ImageIcon className="w-4 h-4 md:w-5 md:h-5" />
       </button>
 
       <button
@@ -549,22 +549,22 @@ export function ToolbarPlugin() {
           event.preventDefault();
           insertTable();
         }}
-        className={cn(baseButtonClass, "mr-1 px-2")}
+        className={cn(baseButtonClass, "mr-0.5 md:mr-1")}
       >
-        <Table />
+        <Table className="w-4 h-4 md:w-5 md:h-5" />
       </button>
 
       {isInsideTable && (
-        <div className="ml-2 flex items-center space-x-1 border-l border-border/60 pl-2">
+        <div className="ml-1 md:ml-2 flex flex-wrap items-center gap-1 md:space-x-1 border-l border-border/60 pl-1 md:pl-2">
           <button
             type="button"
             onMouseDown={(event) => {
               event.preventDefault();
               runTableMutation("row-before");
             }}
-            className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-3 py-1 text-xs font-semibold text-primary transition hover:bg-card"
+            className="inline-flex items-center gap-0.5 md:gap-1 rounded-full border border-border bg-muted px-2 md:px-3 py-0.5 md:py-1 text-[10px] md:text-xs font-semibold text-primary transition hover:bg-card"
           >
-            <Plus size={14} /> Row↑
+            <Plus className="w-3 h-3 md:w-3.5 md:h-3.5" /> <span className="hidden sm:inline">Row↑</span><span className="sm:hidden">R↑</span>
           </button>
           <button
             type="button"
@@ -572,9 +572,9 @@ export function ToolbarPlugin() {
               event.preventDefault();
               runTableMutation("row-after");
             }}
-            className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-3 py-1 text-xs font-semibold text-primary transition hover:bg-card"
+            className="inline-flex items-center gap-0.5 md:gap-1 rounded-full border border-border bg-muted px-2 md:px-3 py-0.5 md:py-1 text-[10px] md:text-xs font-semibold text-primary transition hover:bg-card"
           >
-            <Plus size={14} /> Row↓
+            <Plus className="w-3 h-3 md:w-3.5 md:h-3.5" /> <span className="hidden sm:inline">Row↓</span><span className="sm:hidden">R↓</span>
           </button>
           <button
             type="button"
@@ -582,9 +582,9 @@ export function ToolbarPlugin() {
               event.preventDefault();
               runTableMutation("col-before");
             }}
-            className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-3 py-1 text-xs font-semibold text-emerald-500 transition hover:bg-card"
+            className="inline-flex items-center gap-0.5 md:gap-1 rounded-full border border-border bg-muted px-2 md:px-3 py-0.5 md:py-1 text-[10px] md:text-xs font-semibold text-emerald-500 transition hover:bg-card"
           >
-            <Plus size={14} /> Col←
+            <Plus className="w-3 h-3 md:w-3.5 md:h-3.5" /> <span className="hidden sm:inline">Col←</span><span className="sm:hidden">C←</span>
           </button>
           <button
             type="button"
@@ -592,9 +592,9 @@ export function ToolbarPlugin() {
               event.preventDefault();
               runTableMutation("col-after");
             }}
-            className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-3 py-1 text-xs font-semibold text-emerald-500 transition hover:bg-card"
+            className="inline-flex items-center gap-0.5 md:gap-1 rounded-full border border-border bg-muted px-2 md:px-3 py-0.5 md:py-1 text-[10px] md:text-xs font-semibold text-emerald-500 transition hover:bg-card"
           >
-            <Plus size={14} /> Col→
+            <Plus className="w-3 h-3 md:w-3.5 md:h-3.5" /> <span className="hidden sm:inline">Col→</span><span className="sm:hidden">C→</span>
           </button>
           <button
             type="button"
@@ -602,9 +602,9 @@ export function ToolbarPlugin() {
               event.preventDefault();
               runTableMutation("delete-row");
             }}
-            className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-3 py-1 text-xs font-semibold text-destructive transition hover:bg-card"
+            className="inline-flex items-center gap-0.5 md:gap-1 rounded-full border border-border bg-muted px-2 md:px-3 py-0.5 md:py-1 text-[10px] md:text-xs font-semibold text-destructive transition hover:bg-card"
           >
-            <Minus size={14} /> Row
+            <Minus className="w-3 h-3 md:w-3.5 md:h-3.5" /> <span className="hidden sm:inline">Row</span><span className="sm:hidden">R</span>
           </button>
           <button
             type="button"
@@ -612,9 +612,9 @@ export function ToolbarPlugin() {
               event.preventDefault();
               runTableMutation("delete-col");
             }}
-            className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-3 py-1 text-xs font-semibold text-destructive transition hover:bg-card"
+            className="inline-flex items-center gap-0.5 md:gap-1 rounded-full border border-border bg-muted px-2 md:px-3 py-0.5 md:py-1 text-[10px] md:text-xs font-semibold text-destructive transition hover:bg-card"
           >
-            <Minus size={14} /> Col
+            <Minus className="w-3 h-3 md:w-3.5 md:h-3.5" /> <span className="hidden sm:inline">Col</span><span className="sm:hidden">C</span>
           </button>
         </div>
       )}

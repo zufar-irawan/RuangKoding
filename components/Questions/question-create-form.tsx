@@ -75,22 +75,12 @@ export default function QuestionCreateForm() {
 
     // Validasi form
     if (!title.trim()) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Judul pertanyaan tidak boleh kosong",
-        confirmButtonColor: "#667eea",
-      });
+      toast.error("Judul pertanyaan tidak boleh kosong");
       return;
     }
 
     if (!bodyJson.trim()) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Isi pertanyaan tidak boleh kosong",
-        confirmButtonColor: "#667eea",
-      });
+      toast.error("Isi pertanyaan tidak boleh kosong");
       return;
     }
 
@@ -99,12 +89,7 @@ export default function QuestionCreateForm() {
     try {
       const user = await getClientUser();
       if (!user?.id) {
-        Swal.fire({
-          icon: "warning",
-          title: "Login Diperlukan",
-          text: "Anda harus login terlebih dahulu",
-          confirmButtonColor: "#667eea",
-        });
+        toast.warning("Anda harus login terlebih dahulu");
         router.push("/auth/login");
         return;
       }
@@ -133,59 +118,41 @@ export default function QuestionCreateForm() {
 
       if (error) {
         console.error("Failed to submit question", error);
-        Swal.fire({
-          icon: "error",
-          title: "Gagal!",
-          text: "Gagal membuat pertanyaan. Silakan coba lagi.",
-          confirmButtonColor: "#667eea",
-        });
+        toast.error("Gagal membuat pertanyaan. Silakan coba lagi.");
         return;
       }
 
       // Associate tags
       await handleTagSubmit(data.id);
 
-      // Show XP Alert
-      showXPAlert({
-        xp: 15,
-        title: "Pertanyaan Berhasil Dibuat!",
-        message:
-          "Pertanyaanmu sudah dipublikasikan. Tunggu jawaban dari para sepuh!",
-      });
-
       router.push("/");
       router.refresh();
     } catch (error) {
       console.error("Unexpected error:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Terjadi Kesalahan",
-        text: "Terjadi kesalahan. Silakan coba lagi.",
-        confirmButtonColor: "#667eea",
-      });
+      toast.error("Terjadi kesalahan. Silakan coba lagi.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="px-10 pb-4 flex flex-col flex-1 gap-8">
+    <div className="px-4 md:px-6 lg:px-10 pb-4 flex flex-col flex-1 gap-6 md:gap-8">
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl text-primary font-bold">
+        <h1 className="text-xl md:text-2xl text-primary font-bold">
           Tanyakan Pertanyaan!
         </h1>
 
-        <p className="text-muted-foreground max-w-xl text-sm">
+        <p className="text-muted-foreground max-w-xl text-xs md:text-sm">
           Ajukan pertanyaan kepada para sepuh yang udah khatam kodingan! Dijamin
           dapet jawaban ga lebih dari satu tahun!
         </p>
       </div>
 
-      <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+      <form className="flex flex-col gap-4 md:gap-6" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-1">
-          <div className="text-xl font-bold space-y-2">
+          <div className="text-lg md:text-xl font-bold space-y-2">
             Judul
-            <p className="text-muted-foreground text-sm font-normal">
+            <p className="text-muted-foreground text-xs md:text-sm font-normal">
               Buat judul pertanyaanmu yang spesifik!
             </p>
           </div>
@@ -198,9 +165,9 @@ export default function QuestionCreateForm() {
         </div>
 
         <div className="flex flex-col justify-start">
-          <div className="text-xl font-bold space-y-2">
+          <div className="text-lg md:text-xl font-bold space-y-2">
             Isi Pertanyaan
-            <p className="text-muted-foreground text-sm font-normal">
+            <p className="text-muted-foreground text-xs md:text-sm font-normal">
               Jelaskan secara rinci mengenai pertanyaan yang ingin kamu ajukan.
             </p>
           </div>
@@ -213,9 +180,9 @@ export default function QuestionCreateForm() {
         </div>
 
         <div className="flex flex-col gap-1">
-          <div className="text-xl font-bold space-y-2">
+          <div className="text-lg md:text-xl font-bold space-y-2">
             Tags
-            <p className="text-muted-foreground text-sm font-normal">
+            <p className="text-muted-foreground text-xs md:text-sm font-normal">
               Tambahkan beberapa tag yang relevan dengan pertanyaanmu untuk
               memudahkan pencarian.
             </p>
@@ -227,11 +194,11 @@ export default function QuestionCreateForm() {
           />
         </div>
 
-        <div className="flex gap-4">
-          <Button type="submit" variant="default" disabled={isSubmitting}>
+        <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+          <Button type="submit" variant="default" disabled={isSubmitting} className="w-full sm:w-auto">
             {isSubmitting ? "Mengirim..." : "Kirim, dan tunggu jawabannya!"}
           </Button>
-          <Button variant="outline" disabled={isSubmitting}>
+          <Button variant="outline" disabled={isSubmitting} className="w-full sm:w-auto">
             Simpan sebagai draft
           </Button>
         </div>

@@ -125,23 +125,23 @@ export default function AnswersSection({
 
   return (
     <div className="w-full flex flex-col gap-2">
-      <h2 className="text-2xl font-semibold">{answerCount} Jawaban</h2>
+      <h2 className="text-xl md:text-2xl font-semibold">{answerCount} Jawaban</h2>
 
       <div className="flex flex-col w-full">
         {answerCount === 0 ? (
           <>
-            <h1 className="text-md text-foreground">
+            <h1 className="text-sm md:text-base text-foreground">
               Belum ada jawaban saat ini. Kamu bisa menjadi yang{" "}
               <span className="font-semibold">pertama menjawab!</span>
             </h1>
 
             {!isLoading &&
               (hasAnswered ? (
-                <p className="text-sm text-muted-foreground mt-4 p-4 bg-secondary/50 rounded-md">
+                <p className="text-xs md:text-sm text-muted-foreground mt-3 md:mt-4 p-3 md:p-4 bg-secondary/50 rounded-md">
                   Kamu sudah memberikan jawaban untuk pertanyaan ini.
                 </p>
               ) : currentUser?.id === user_question_id ? (
-                <p className="text-sm text-muted-foreground mt-4 p-4 bg-secondary/50 rounded-md">
+                <p className="text-xs md:text-sm text-muted-foreground mt-3 md:mt-4 p-3 md:p-4 bg-secondary/50 rounded-md">
                   Kamu tidak bisa menjawab pertanyaan kamu sendiri.
                 </p>
               ) : (
@@ -152,13 +152,13 @@ export default function AnswersSection({
               ))}
           </>
         ) : (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3 md:gap-4">
             {answers.map((answer, idx) => (
               <div
                 key={answer.id}
-                className="px-4 py-8 border-b border-foreground/10"
+                className="px-2 md:px-4 py-4 md:py-8 border-b border-foreground/10"
               >
-                <div className="flex gap-4">
+                <div className="flex gap-2 md:gap-4">
                   {/* Vote Section */}
                   <AnswerVote
                     currentUserId={currentUser?.id ?? null}
@@ -167,33 +167,33 @@ export default function AnswersSection({
                   />
 
                   {/* Answer Content */}
-                  <div className="flex-1">
-                    <div className="text-sm text-muted-foreground">
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs md:text-sm text-muted-foreground">
                       {(() => {
                         if (!answer.profiles)
                           return (
                             <div className="flex items-center gap-2">
-                              <p className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-secondary-foreground">
+                              <p className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full bg-secondary text-xs md:text-sm font-semibold text-secondary-foreground">
                                 P
                               </p>
-                              Pengguna
+                              <span className="truncate">Pengguna</span>
                             </div>
                           );
                         const profile = Array.isArray(answer.profiles)
                           ? answer.profiles[0]
                           : answer.profiles;
                         return (
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <p className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-secondary-foreground">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <p className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full bg-secondary text-xs md:text-sm font-semibold text-secondary-foreground shrink-0">
                                 {profile?.fullname.charAt(0).toUpperCase()}
                               </p>
 
-                              {profile?.fullname ?? "Pengguna"}
+                              <span className="truncate">{profile?.fullname ?? "Pengguna"}</span>
                             </div>
 
-                            <div className="flex items-center gap-3">
-                              <p className="text-muted-foreground">
+                            <div className="flex items-center gap-2 md:gap-3 shrink-0">
+                              <p className="text-muted-foreground text-xs md:text-sm whitespace-nowrap">
                                 {createdAtLabel[idx]}
                               </p>
 
@@ -204,20 +204,20 @@ export default function AnswersSection({
                                       <Button
                                         type="button"
                                         variant={"destructive"}
-                                        className="h-10 w-10 flex justify-start p-0 hover:w-40 transition-[width] duration-300 ease-in-out group overflow-hidden"
+                                        className="h-8 w-8 md:h-10 md:w-10 flex justify-start p-0 hover:w-32 md:hover:w-40 transition-[width] duration-300 ease-in-out group overflow-hidden"
                                       >
-                                        <div className="flex items-center space-x-2 px-3">
+                                        <div className="flex items-center space-x-2 px-2 md:px-3">
                                           <Trash2
-                                            size={20}
-                                            className="shrink-0"
+                                            size={16}
+                                            className="md:w-5 md:h-5 shrink-0"
                                           />
-                                          <span className="translate-x-1 opacity-0 transition-all duration-300 ease-in-out whitespace-nowrap group-hover:translate-x-0 group-hover:opacity-100">
+                                          <span className="hidden md:inline translate-x-1 opacity-0 transition-all duration-300 ease-in-out whitespace-nowrap group-hover:translate-x-0 group-hover:opacity-100">
                                             Hapus jawaban
                                           </span>
                                         </div>
                                       </Button>
                                     </AlertDialogTrigger>
-                                    <AlertDialogContent>
+                                    <AlertDialogContent className="mx-4">
                                       <AlertDialogHeader>
                                         <AlertDialogTitle>
                                           Kamu yakin ga nih?
@@ -229,14 +229,15 @@ export default function AnswersSection({
                                           menghapusnya.
                                         </AlertDialogDescription>
                                       </AlertDialogHeader>
-                                      <AlertDialogFooter>
-                                        <AlertDialogCancel>
+                                      <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                                        <AlertDialogCancel className="w-full sm:w-auto">
                                           Batal
                                         </AlertDialogCancel>
                                         <AlertDialogAction
                                           onClick={() =>
                                             handleDelete(answer.id)
                                           }
+                                          className="w-full sm:w-auto"
                                         >
                                           Ya, Hapus!
                                         </AlertDialogAction>
@@ -254,7 +255,7 @@ export default function AnswersSection({
                       const html = answer.html;
                       if (!html) {
                         return (
-                          <p className="mt-2 text-foreground whitespace-pre-wrap">
+                          <p className="mt-2 text-sm md:text-base text-foreground whitespace-pre-wrap break-words">
                             {typeof answer.content === "string"
                               ? answer.content
                               : ""}
@@ -264,7 +265,7 @@ export default function AnswersSection({
 
                       return (
                         <article
-                          className={`w-full mx-auto pt-4 ${styles["blog-content"]}`}
+                          className={`w-full mx-auto pt-2 md:pt-4 ${styles["blog-content"]}`}
                           dangerouslySetInnerHTML={{ __html: html }}
                         />
                       );
@@ -276,8 +277,8 @@ export default function AnswersSection({
                       answer.user_id !== currentUser.id &&
                       !answer.helpful &&
                       !hasHelpfulAnswer && (
-                        <div className="flex items-center gap-3 mt-6 p-4 bg-secondary/30 rounded-lg border border-foreground/10">
-                          <p className="text-sm text-foreground">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 md:gap-3 mt-4 md:mt-6 p-3 md:p-4 bg-secondary/30 rounded-lg border border-foreground/10">
+                          <p className="text-xs md:text-sm text-foreground flex-1">
                             Apakah jawaban ini membantu untukmu?
                           </p>
                           <Button
@@ -290,6 +291,7 @@ export default function AnswersSection({
                             }
                             variant="default"
                             size="sm"
+                            className="w-full sm:w-auto text-xs md:text-sm"
                           >
                             Ya, Terima Jawaban
                           </Button>
@@ -297,9 +299,9 @@ export default function AnswersSection({
                       )}
 
                     {answer.helpful && (
-                      <div className="flex items-center gap-2 mt-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                        <CheckCircle className="text-green-500" />
-                        <p className="text-sm text-green-700 dark:text-green-400 font-medium">
+                      <div className="flex items-center gap-2 mt-4 md:mt-6 p-3 md:p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                        <CheckCircle className="text-green-500 w-4 h-4 md:w-5 md:h-5 shrink-0" />
+                        <p className="text-xs md:text-sm text-green-700 dark:text-green-400 font-medium">
                           Jawaban diterima sebagai solusi
                         </p>
                       </div>
@@ -319,8 +321,8 @@ export default function AnswersSection({
               ) : currentUser?.id === user_question_id ? (
                 <></>
               ) : (
-                <div className="flex flex-col">
-                  <h1 className="text-md text-foreground">
+                <div className="flex flex-col mt-4 md:mt-6">
+                  <h1 className="text-sm md:text-base text-foreground mb-3 md:mb-4">
                     Tahu jawaban lainnya? Tambahkan jawabanmu di bawah!
                   </h1>
 

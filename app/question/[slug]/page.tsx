@@ -23,8 +23,8 @@ export default async function QuestionDetailPage({ params }: Props) {
       <div className="flex w-full gap-4 mt-16">
         <Sidebar tabs="questions" />
 
-        <div className="flex flex-col justify-center max-w-4xl py-10 ml-[22rem]">
-          <div>
+        <div className="flex flex-col justify-center w-full max-w-4xl py-4 md:py-6 lg:py-10 px-4 md:px-6 lg:px-8 lg:ml-[22rem]">
+          <div className="mb-2 md:mb-4">
             <BackButton href="/" label="Kembali" />
           </div>
 
