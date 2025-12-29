@@ -243,3 +243,36 @@
     background-color: hsl(var(--secondary));
     color: hsl(var(--secondary-foreground));
 }
+
+/* Custom animations for CTA components */
+@keyframes delay-pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.delay-75 {
+    animation-delay: 75ms;
+}
+
+.delay-150 {
+    animation-delay: 150ms;
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}

@@ -75,6 +75,23 @@ type TagsType = {
   created_at: Timestamp;
 };
 
+type FeedbackListItem = {
+  id: number;
+  title: string;
+  description: unknown;
+  project_url: string;
+  icon_url: string | null;
+  user_id: string;
+  created_at: string;
+  profiles: {
+    id: string;
+    fullname: string;
+    bio: string | null;
+    profile_pic: string | null;
+  } | null;
+  voteScore?: number;
+};
+
 export type {
   QuestionListItem,
   QuestionDetailItem,
@@ -86,4 +103,5 @@ export type {
   ProfilePreview,
   SupabaseResponse,
   TagsType,
+  FeedbackListItem,
 };
