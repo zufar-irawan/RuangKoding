@@ -2,6 +2,7 @@ import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
 import { CheckCircle, Eye, MessageSquare } from "lucide-react";
+import Image from "next/image";
 
 import type { QuestionListItem, CountRelation } from "@/lib/type";
 
@@ -67,9 +68,19 @@ export default function PostCard({ question }: PostCardProps) {
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           {userProfile ? (
             <>
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-secondary/80 text-xs font-semibold text-secondary-foreground">
-                {userProfile.fullname.charAt(0).toUpperCase()}
-              </span>
+              {userProfile.profile_pic ? (
+                <Image
+                  height={200}
+                  width={200}
+                  src={userProfile.profile_pic}
+                  alt={userProfile.fullname}
+                  className="h-5 w-5 rounded-full"
+                />
+              ) : (
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-secondary/80 text-xs font-semibold text-secondary-foreground">
+                  {userProfile.fullname.charAt(0).toUpperCase()}
+                </span>
+              )}
               <span className="font-medium text-foreground">
                 {userProfile.fullname}
               </span>

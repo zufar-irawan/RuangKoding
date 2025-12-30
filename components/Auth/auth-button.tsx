@@ -41,7 +41,7 @@ export async function AuthButton() {
 
   return (
     <UserAvatarDropdown
-      profilePic={user.profile_pic}
+      profilePic={userProfile?.profile_pic}
       userInitial={userProfileInitial}
     />
   );

@@ -1,15 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { Upload, X, Loader2 } from "lucide-react";
 import SkillsSection from "./SkillsSection";
 import ExperienceSection from "./ExperienceSection";
 import LinksSection from "./LinksSection";
 import {
   updateProfile,
+  uploadProfilePicture,
+  updateProfilePicture,
   createUserSkill,
   updateUserSkill,
   deleteUserSkill,
@@ -51,6 +56,7 @@ type Profile = {
   lastname: string | null;
   motto: string | null;
   bio: string | null;
+  profile_pic: string | null;
 };
 
 type EditProfileFormProps = {
@@ -74,6 +80,42 @@ export default function EditProfileForm({
     useState<Experience[]>(initialExperiences);
   const [links, setLinks] = useState<UserLink[]>(initialLinks);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validasi tipe file
+      if (!file.type.startsWith("image/")) {
+        toast.error("File harus berupa gambar!");
+        return;
+      }
+
+      // Validasi ukuran file (2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error("Ukuran file maksimal 2MB!");
+        return;
+      }
+
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setSelectedFile(null);
+    setPreviewUrl("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -86,6 +128,29 @@ export default function EditProfileForm({
       const firstname = formData.get("firstname") as string;
       const lastname = formData.get("lastname") as string;
       const motto = formData.get("motto") as string;
+
+      // Upload foto profil jika ada file baru
+      if (selectedFile) {
+        setIsUploadingPhoto(true);
+        try {
+          const publicUrl = await uploadProfilePicture(
+            userId,
+            selectedFile,
+            basicProfile?.profile_pic || undefined,
+          );
+          await updateProfilePicture(userId, publicUrl);
+        } catch (error) {
+          console.error("Error uploading profile picture:", error);
+          toast.error("Gagal mengupload foto profil. Silakan coba lagi.", {
+            id: toastId,
+          });
+          setIsSubmitting(false);
+          setIsUploadingPhoto(false);
+          return;
+        } finally {
+          setIsUploadingPhoto(false);
+        }
+      }
 
       // Update basic profile
       await updateProfile(userId, {
@@ -224,6 +289,81 @@ export default function EditProfileForm({
       onSubmit={handleSubmit}
       className="flex flex-col gap-4 mt-4 w-full max-w-xl"
     >
+      {/* Profile Picture Upload Section */}
+      <div className="flex flex-col gap-3">
+        <Label>Foto Profil</Label>
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            {previewUrl ? (
+              <div className="relative">
+                <Image
+                  src={previewUrl}
+                  alt="Preview"
+                  width={100}
+                  height={100}
+                  className="rounded-full object-cover w-24 h-24 sm:w-28 sm:h-28 border-2 border-border"
+                />
+                <button
+                  type="button"
+                  onClick={handleRemovePhoto}
+                  className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90 transition-colors"
+                  disabled={isSubmitting || isUploadingPhoto}
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ) : basicProfile?.profile_pic ? (
+              <Image
+                src={basicProfile.profile_pic}
+                alt="Current Profile Picture"
+                width={100}
+                height={100}
+                className="rounded-full object-cover w-24 h-24 sm:w-28 sm:h-28 border-2 border-border"
+              />
+            ) : (
+              <div className="flex h-24 w-24 sm:h-28 sm:w-28 items-center justify-center rounded-full bg-secondary/80 text-2xl sm:text-3xl font-semibold text-secondary-foreground border-2 border-border">
+                {basicProfile?.firstname?.charAt(0).toUpperCase() || "U"}
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2 flex-1">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileSelect}
+              accept="image/*"
+              className="hidden"
+              disabled={isSubmitting || isUploadingPhoto}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isSubmitting || isUploadingPhoto}
+              className="w-full sm:w-auto"
+            >
+              {isUploadingPhoto ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Mengupload...
+                </>
+              ) : (
+                <>
+                  <Upload className="mr-2 h-4 w-4" />
+                  {previewUrl || basicProfile?.profile_pic
+                    ? "Ganti Foto"
+                    : "Upload Foto"}
+                </>
+              )}
+            </Button>
+            <p className="text-xs text-muted-foreground">
+              Maksimal ukuran file 2MB. Format: JPG, PNG, atau JPEG.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="flex gap-2">
         <div className="flex flex-col w-full">
           <label htmlFor="firstname">Nama Depan Kamu</label>
@@ -234,6 +374,7 @@ export default function EditProfileForm({
             id="firstname"
             name="firstname"
             required
+            disabled={isSubmitting}
           />
         </div>
 
@@ -245,6 +386,7 @@ export default function EditProfileForm({
             defaultValue={basicProfile?.lastname ?? ""}
             id="lastname"
             name="lastname"
+            disabled={isSubmitting}
           />
         </div>
       </div>
@@ -265,6 +407,7 @@ export default function EditProfileForm({
           defaultValue={basicProfile?.motto ?? ""}
           id="motto"
           name="motto"
+          disabled={isSubmitting}
         />
       </div>
 
@@ -278,15 +421,26 @@ export default function EditProfileForm({
       <LinksSection initialLinks={initialLinks} onLinksChange={setLinks} />
 
       <div className="flex flex-col gap-2">
-        <Button type="submit" variant="default" disabled={isSubmitting}>
-          {isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}
+        <Button
+          type="submit"
+          variant="default"
+          disabled={isSubmitting || isUploadingPhoto}
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Menyimpan...
+            </>
+          ) : (
+            "Simpan Perubahan"
+          )}
         </Button>
 
         <Button
           type="button"
           variant="outline"
           onClick={handleCancel}
-          disabled={isSubmitting}
+          disabled={isSubmitting || isUploadingPhoto}
         >
           Batal
         </Button>

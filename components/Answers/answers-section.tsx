@@ -26,6 +26,7 @@ import {
 } from "../ui/alert-dialog";
 import { useRouter } from "next/navigation";
 import { acceptAnswer } from "@/lib/servers/AnswerAction";
+import Image from "next/image";
 
 type Props = {
   answers?: AnswerWithHTML[];
@@ -125,7 +126,9 @@ export default function AnswersSection({
 
   return (
     <div className="w-full flex flex-col gap-2">
-      <h2 className="text-xl md:text-2xl font-semibold">{answerCount} Jawaban</h2>
+      <h2 className="text-xl md:text-2xl font-semibold">
+        {answerCount} Jawaban
+      </h2>
 
       <div className="flex flex-col w-full">
         {answerCount === 0 ? (
@@ -185,11 +188,23 @@ export default function AnswersSection({
                         return (
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2 min-w-0">
-                              <p className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full bg-secondary text-xs md:text-sm font-semibold text-secondary-foreground shrink-0">
-                                {profile?.fullname.charAt(0).toUpperCase()}
-                              </p>
+                              {profile?.profile_pic ? (
+                                <Image
+                                  src={profile.profile_pic}
+                                  alt={profile.fullname}
+                                  width={32}
+                                  height={32}
+                                  className="h-7 w-7 md:h-8 md:w-8 rounded-full"
+                                />
+                              ) : (
+                                <p className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full bg-secondary text-xs md:text-sm font-semibold text-secondary-foreground shrink-0">
+                                  {profile?.fullname.charAt(0).toUpperCase()}
+                                </p>
+                              )}
 
-                              <span className="truncate">{profile?.fullname ?? "Pengguna"}</span>
+                              <span className="truncate">
+                                {profile?.fullname ?? "Pengguna"}
+                              </span>
                             </div>
 
                             <div className="flex items-center gap-2 md:gap-3 shrink-0">

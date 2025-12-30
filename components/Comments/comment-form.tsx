@@ -119,12 +119,7 @@ export default function CommentForm({ question_id, answer }: Props) {
     e.preventDefault();
 
     if (!commentText.trim()) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Komentar tidak boleh kosong",
-        confirmButtonColor: "#667eea",
-      });
+      toast.warning("Komentar tidak boleh kosong.");
       return;
     }
 
@@ -149,12 +144,7 @@ export default function CommentForm({ question_id, answer }: Props) {
       setIsOpen(false);
     } catch (error) {
       console.error("Gagal membuat komentar:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Gagal!",
-        text: "Gagal menambahkan komentar. Silakan coba lagi.",
-        confirmButtonColor: "#667eea",
-      });
+      toast.error("Gagal menambahkan komentar. Silakan coba lagi.");
     } finally {
       setIsLoadingCreate(false);
     }
@@ -167,12 +157,7 @@ export default function CommentForm({ question_id, answer }: Props) {
     e.preventDefault();
 
     if (!replyText.trim()) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Balasan tidak boleh kosong",
-        confirmButtonColor: "#667eea",
-      });
+      toast.error("Balasan tidak boleh kosong");
       return;
     }
 
@@ -190,13 +175,6 @@ export default function CommentForm({ question_id, answer }: Props) {
       } else if (answer?.id) {
         fetchComments(answer.id, false);
       }
-
-      // Show XP Alert
-      showXPAlert({
-        xp: 5,
-        title: "Balasan Berhasil Ditambahkan!",
-        message: "Terimakasih sudah berkontribusi!",
-      });
 
       setReplyText("");
       setReplyingTo(null);
@@ -329,7 +307,9 @@ export default function CommentForm({ question_id, answer }: Props) {
           ) : (
             <ChevronDown className="w-6 h-6 md:w-8 md:h-8" strokeWidth={3} />
           )}
-          <span className="ml-1 md:ml-2">Komentar ({parentComments.length})</span>
+          <span className="ml-1 md:ml-2">
+            Komentar ({parentComments.length})
+          </span>
         </Button>
         <Button
           variant="outline"
@@ -337,7 +317,9 @@ export default function CommentForm({ question_id, answer }: Props) {
           onClick={() => setIsOpen((prev) => !prev)}
         >
           <MessageSquare className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          <span className="hidden sm:inline">{isOpen ? "Tutup" : "Tambah komentar"}</span>
+          <span className="hidden sm:inline">
+            {isOpen ? "Tutup" : "Tambah komentar"}
+          </span>
           <span className="sm:hidden">{isOpen ? "Tutup" : "Tambah"}</span>
         </Button>
       </div>
