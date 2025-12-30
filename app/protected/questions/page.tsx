@@ -35,11 +35,11 @@ export default async function YouQuestions() {
       <ProfileTabs />
 
       {/*body */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-6">
-          <div className="flex items-center gap-3">
-            <Bookmark className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-bold">Pertanyaan kamu</h1>
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 md:py-8">
+        <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Bookmark className="h-5 w-5 sm:h-6 sm:w-6 text-primary shrink-0" />
+            <h1 className="text-xl sm:text-2xl font-bold">Pertanyaan kamu</h1>
           </div>
 
           <YourQuestionsList questions={questions} />

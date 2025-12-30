@@ -11,23 +11,23 @@ interface AnswersChartProps {
 export default function AnswersChart({ data }: AnswersChartProps) {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Statistik Jawaban Bulanan</CardTitle>
-        <p className="text-sm text-muted-foreground">
+      <CardHeader className="p-4 sm:p-6">
+        <CardTitle className="text-lg sm:text-xl">Statistik Jawaban Bulanan</CardTitle>
+        <p className="text-xs sm:text-sm text-muted-foreground">
           Jumlah jawaban yang kamu berikan dalam 12 bulan terakhir
         </p>
       </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
+      <CardContent className="p-2 sm:p-4 md:p-6">
+        <ResponsiveContainer width="100%" height={250} className="sm:h-[300px]">
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
             <XAxis
               dataKey="month"
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 10 }}
               className="text-muted-foreground"
             />
             <YAxis
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 10 }}
               className="text-muted-foreground"
               allowDecimals={false}
             />
@@ -36,6 +36,7 @@ export default function AnswersChart({ data }: AnswersChartProps) {
                 backgroundColor: "hsl(var(--card))",
                 border: "1px solid hsl(var(--border))",
                 borderRadius: "8px",
+                fontSize: "12px",
               }}
               labelStyle={{ color: "hsl(var(--foreground))" }}
               itemStyle={{ color: "hsl(var(--primary))" }}
@@ -45,8 +46,8 @@ export default function AnswersChart({ data }: AnswersChartProps) {
               dataKey="count"
               stroke="hsl(var(--primary))"
               strokeWidth={2}
-              dot={{ fill: "hsl(var(--primary))", r: 4 }}
-              activeDot={{ r: 6 }}
+              dot={{ fill: "hsl(var(--primary))", r: 3 }}
+              activeDot={{ r: 5 }}
               name="Jawaban"
             />
           </LineChart>

@@ -46,16 +46,16 @@ export default async function ProtectedPage() {
       <ProfileTabs />
 
       {/*body */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-8">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 md:py-8">
+        <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6 md:space-y-8">
           {/* Level Bar Section */}
-          <div className="bg-card border rounded-lg p-6 shadow-sm">
-            <h2 className="text-xl font-semibold mb-4">Progress Kamu</h2>
+          <div className="bg-card border rounded-lg p-4 sm:p-6 shadow-sm">
+            <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Progress Kamu</h2>
             <LevelBar level={user?.level || 1} xp={user?.xp || 0} />
           </div>
 
           {/* Statistics Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <StatsCard
               title="Total Jawaban"
               value={dashboardStats.totalAnswers}

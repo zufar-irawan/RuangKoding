@@ -13,12 +13,12 @@ type LinksCardProps = {
 export default function LinksCard({ links }: LinksCardProps) {
   if (!links || links.length === 0) {
     return (
-      <div className="bg-card border rounded-lg p-6 shadow-sm">
-        <div className="flex items-center gap-3 mb-4">
-          <LinkIcon className="h-5 w-5 text-muted-foreground" />
-          <h2 className="text-xl font-semibold">Link</h2>
+      <div className="bg-card border rounded-lg p-4 sm:p-6 shadow-sm">
+        <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+          <LinkIcon className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground shrink-0" />
+          <h2 className="text-lg sm:text-xl font-semibold">Link</h2>
         </div>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-xs sm:text-sm">
           Belum ada link yang ditambahkan.
         </p>
       </div>
@@ -26,10 +26,10 @@ export default function LinksCard({ links }: LinksCardProps) {
   }
 
   return (
-    <div className="bg-card border rounded-lg p-6 shadow-sm">
-      <div className="flex items-center gap-3 mb-4">
-        <LinkIcon className="h-5 w-5 text-muted-foreground" />
-        <h2 className="text-xl font-semibold">Link</h2>
+    <div className="bg-card border rounded-lg p-4 sm:p-6 shadow-sm">
+      <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+        <LinkIcon className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground shrink-0" />
+        <h2 className="text-lg sm:text-xl font-semibold">Link</h2>
       </div>
       <div className="flex flex-wrap gap-2">
         {links.map((link, index) => (
@@ -42,11 +42,11 @@ export default function LinksCard({ links }: LinksCardProps) {
           >
             <Badge
               variant="outline"
-              className="px-3 py-2 text-sm cursor-pointer hover:bg-primary/10 hover:border-primary transition-colors"
+              className="px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm cursor-pointer hover:bg-primary/10 hover:border-primary transition-colors"
             >
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-1 sm:gap-2">
                 {link.platform || "Link"}
-                <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-100 transition-opacity" />
+                <ExternalLink className="h-2.5 w-2.5 sm:h-3 sm:w-3 opacity-50 group-hover:opacity-100 transition-opacity" />
               </span>
             </Badge>
           </a>

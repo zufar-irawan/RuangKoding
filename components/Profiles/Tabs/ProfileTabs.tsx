@@ -32,14 +32,14 @@ export default function ProfileTabs() {
 
   return (
     <div className="w-full border-b">
-      <div className="container mx-auto px-4">
-        <nav className="max-w-4xl mx-auto flex gap-8" aria-label="Profile tabs">
+      <div className="container mx-auto px-2 sm:px-4">
+        <nav className="max-w-4xl mx-auto flex gap-2 sm:gap-4 md:gap-8 overflow-x-auto scrollbar-hide" aria-label="Profile tabs">
           {tabs.map((tab) => (
             <Link
               key={tab.href}
               href={tab.href}
               className={cn(
-                "py-4 px-1 border-b-2 font-medium text-sm transition-colors",
+                "py-3 sm:py-4 px-1 sm:px-2 border-b-2 font-medium text-xs sm:text-sm transition-colors whitespace-nowrap shrink-0",
                 tab.active
                   ? "border-primary text-primary"
                   : "border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground",

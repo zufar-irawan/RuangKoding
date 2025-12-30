@@ -117,32 +117,32 @@ export default function EditEmailPage() {
   }
 
   return (
-    <div className="container max-w-2xl mx-auto py-10 px-4">
+    <div className="container max-w-2xl mx-auto py-4 sm:py-6 md:py-10 px-2 sm:px-4">
       <Button
         variant="ghost"
         size="sm"
         onClick={() => router.push("/protected/settings/account")}
-        className="mb-6"
+        className="mb-4 sm:mb-6 text-xs sm:text-sm"
       >
-        <ArrowLeft size={16} className="mr-2" />
+        <ArrowLeft size={14} className="sm:w-4 sm:h-4 mr-1 sm:mr-2" />
         Kembali ke Settings
       </Button>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Mail className="w-5 h-5" />
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+            <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
             Ubah Email
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-xs sm:text-sm">
             Masukkan email baru Anda. Anda akan menerima email konfirmasi untuk
             mengaktifkan email baru.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-6">
           {message && (
             <div
-              className={`mb-6 p-4 rounded-lg ${
+              className={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg ${
                 message.type === "success"
                   ? "bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20"
                   : message.type === "warning"
@@ -152,28 +152,28 @@ export default function EditEmailPage() {
             >
               <div className="flex items-center gap-2">
                 {message.type === "success" && (
-                  <CheckCircle2 className="w-4 h-4" />
+                  <CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4 shrink-0" />
                 )}
-                {message.type === "warning" && <Clock className="w-4 h-4" />}
-                <p className="text-sm">{message.text}</p>
+                {message.type === "warning" && <Clock className="w-3 h-3 sm:w-4 sm:h-4 shrink-0" />}
+                <p className="text-xs sm:text-sm">{message.text}</p>
               </div>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="current-email">Email Saat Ini</Label>
+              <Label htmlFor="current-email" className="text-sm">Email Saat Ini</Label>
               <Input
                 id="current-email"
                 type="email"
                 value={currentEmail}
                 disabled
-                className="bg-muted"
+                className="bg-muted text-sm"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="new-email">Email Baru</Label>
+              <Label htmlFor="new-email" className="text-sm">Email Baru</Label>
               <Input
                 id="new-email"
                 type="email"
@@ -182,15 +182,16 @@ export default function EditEmailPage() {
                 placeholder="emailbaru@example.com"
                 required
                 disabled={isLoading}
+                className="text-sm"
               />
               <p className="text-xs text-muted-foreground">
                 Link konfirmasi akan dikirim ke email baru Anda
               </p>
             </div>
 
-            <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+            <div className="p-2 sm:p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
               <div className="flex items-start gap-2">
-                <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5" />
+                <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
                 <p className="text-xs text-blue-700 dark:text-blue-300">
                   <strong>Catatan:</strong> Setelah mengubah email, Anda harus
                   menunggu 7 hari sebelum dapat mengubah email atau nomor
@@ -199,25 +200,25 @@ export default function EditEmailPage() {
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => router.push("/protected/settings/account")}
                 disabled={isLoading}
-                className="flex-1"
+                className="flex-1 text-sm"
               >
                 Batal
               </Button>
-              <Button type="submit" disabled={isLoading} className="flex-1">
+              <Button type="submit" disabled={isLoading} className="flex-1 text-sm">
                 {isLoading ? (
                   <>
-                    <Loader2 size={16} className="animate-spin mr-2" />
+                    <Loader2 size={14} className="sm:w-4 sm:h-4 animate-spin mr-2" />
                     Menyimpan...
                   </>
                 ) : (
                   <>
-                    <Save size={16} className="mr-2" />
+                    <Save size={14} className="sm:w-4 sm:h-4 mr-2" />
                     Simpan Perubahan
                   </>
                 )}

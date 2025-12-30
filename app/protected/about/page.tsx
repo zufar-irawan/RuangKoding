@@ -41,14 +41,15 @@ export default async function AboutPage() {
       <ProfileTabs />
 
       {/*body */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Tentang</h1>
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 md:py-8">
+        <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6 md:space-y-8">
+          <div className="flex justify-between items-center gap-2 sm:gap-4">
+            <h1 className="text-xl sm:text-2xl font-bold">Tentang</h1>
             <Link href="/protected/about/edit">
-              <Button size="sm">
-                <Pencil className="h-4 w-4 mr-2" />
-                Edit Bio
+              <Button size="sm" className="text-xs sm:text-sm">
+                <Pencil className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Edit Bio</span>
+                <span className="sm:hidden">Edit</span>
               </Button>
             </Link>
           </div>

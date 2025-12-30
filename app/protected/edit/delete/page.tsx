@@ -154,36 +154,36 @@ export default function DeleteAccountPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background to-muted/20 p-4 mt-12">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background to-muted/20 p-2 sm:p-4 mt-12">
       <Card className="w-full max-w-md border-destructive/50">
-        <CardHeader>
+        <CardHeader className="p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-2">
-            <div className="p-2 rounded-lg bg-destructive/10">
-              <Trash2 className="w-6 h-6 text-destructive" />
+            <div className="p-1.5 sm:p-2 rounded-lg bg-destructive/10">
+              <Trash2 className="w-5 h-5 sm:w-6 sm:h-6 text-destructive" />
             </div>
-            <CardTitle className="text-destructive">
+            <CardTitle className="text-destructive text-lg sm:text-xl">
               Hapus Akun Permanen
             </CardTitle>
           </div>
-          <CardDescription>
+          <CardDescription className="text-xs sm:text-sm">
             Verifikasi identitas Anda untuk menghapus akun
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <CardContent className="p-4 sm:p-6">
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             {/* Warning Alert */}
-            <div className="relative w-full rounded-lg border p-4 bg-destructive/10 border-destructive/30">
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
-                <div className="space-y-2">
-                  <p className="text-sm font-semibold text-destructive">
+            <div className="relative w-full rounded-lg border p-3 sm:p-4 bg-destructive/10 border-destructive/30">
+              <div className="flex items-start gap-2 sm:gap-3">
+                <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-destructive mt-0.5 flex-shrink-0" />
+                <div className="space-y-1 sm:space-y-2">
+                  <p className="text-xs sm:text-sm font-semibold text-destructive">
                     Peringatan: Tindakan Tidak Dapat Dibatalkan
                   </p>
-                  <p className="text-xs text-destructive/80">
+                  <p className="text-[10px] sm:text-xs text-destructive/80">
                     Menghapus akun Anda akan menghapus semua data secara
                     permanen:
                   </p>
-                  <ul className="text-xs text-destructive/80 list-disc list-inside space-y-1">
+                  <ul className="text-[10px] sm:text-xs text-destructive/80 list-disc list-inside space-y-0.5 sm:space-y-1">
                     <li>Profil dan informasi pribadi</li>
                     <li>Semua pertanyaan yang Anda ajukan</li>
                     <li>Semua jawaban dan komentar</li>
@@ -194,16 +194,16 @@ export default function DeleteAccountPage() {
             </div>
 
             {/* Email Display */}
-            <div className="p-3 bg-muted rounded-lg">
-              <p className="text-xs text-muted-foreground mb-1">
+            <div className="p-2 sm:p-3 bg-muted rounded-lg">
+              <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">
                 Akun yang akan dihapus:
               </p>
-              <p className="text-sm font-medium">{userEmail}</p>
+              <p className="text-xs sm:text-sm font-medium break-all">{userEmail}</p>
             </div>
 
             {/* Password Verification */}
             <div className="space-y-2">
-              <Label htmlFor="password">Verifikasi Password Anda</Label>
+              <Label htmlFor="password" className="text-sm">Verifikasi Password Anda</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -211,23 +211,23 @@ export default function DeleteAccountPage() {
                   value={formData.password}
                   onChange={(e) => setFormData({ password: e.target.value })}
                   placeholder="Masukkan password Anda"
-                  className={error ? "border-destructive" : ""}
+                  className={error ? "border-destructive text-sm" : "text-sm"}
                   disabled={isSubmitting}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? <EyeOff size={16} className="sm:w-[18px] sm:h-[18px]" /> : <Eye size={16} className="sm:w-[18px] sm:h-[18px]" />}
                 </button>
               </div>
-              {error && <p className="text-sm text-destructive">{error}</p>}
+              {error && <p className="text-xs sm:text-sm text-destructive">{error}</p>}
             </div>
 
             {/* Confirmations */}
-            <div className="space-y-3 pt-2">
-              <p className="text-sm font-medium">Konfirmasi pemahaman Anda:</p>
+            <div className="space-y-2 sm:space-y-3 pt-2">
+              <p className="text-xs sm:text-sm font-medium">Konfirmasi pemahaman Anda:</p>
 
               <div className="flex items-start space-x-2">
                 <Checkbox
@@ -243,7 +243,7 @@ export default function DeleteAccountPage() {
                 />
                 <label
                   htmlFor="understand"
-                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  className="text-xs sm:text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   Saya memahami bahwa tindakan ini tidak dapat dibatalkan
                 </label>
@@ -263,7 +263,7 @@ export default function DeleteAccountPage() {
                 />
                 <label
                   htmlFor="permanent"
-                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  className="text-xs sm:text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   Saya memahami bahwa akun saya akan dihapus secara permanen
                 </label>
@@ -283,7 +283,7 @@ export default function DeleteAccountPage() {
                 />
                 <label
                   htmlFor="dataLoss"
-                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  className="text-xs sm:text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   Saya memahami bahwa semua data saya akan hilang selamanya
                 </label>
@@ -291,13 +291,13 @@ export default function DeleteAccountPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-3 pt-4">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-3 sm:pt-4">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => router.push("/protected/settings")}
                 disabled={isSubmitting}
-                className="flex-1"
+                className="flex-1 text-sm"
               >
                 Batalkan
               </Button>
@@ -305,7 +305,7 @@ export default function DeleteAccountPage() {
                 type="submit"
                 variant="destructive"
                 disabled={isSubmitting}
-                className="flex-1"
+                className="flex-1 text-sm"
               >
                 {isSubmitting ? (
                   <>

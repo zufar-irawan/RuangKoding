@@ -240,24 +240,24 @@ export default function ChangePasswordPage() {
 
   if (!canChangePassword) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background to-muted/20 p-4">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background to-muted/20 p-2 sm:p-4">
         <Card className="w-full max-w-md">
-          <CardHeader>
+          <CardHeader className="p-4 sm:p-6">
             <div className="flex items-center gap-2 mb-2">
-              <div className="p-2 rounded-lg bg-amber-500/10">
-                <AlertCircle className="w-6 h-6 text-amber-500" />
+              <div className="p-1.5 sm:p-2 rounded-lg bg-amber-500/10">
+                <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500" />
               </div>
-              <CardTitle>Tidak Dapat Mengubah Password</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">Tidak Dapat Mengubah Password</CardTitle>
             </div>
-            <CardDescription>
+            <CardDescription className="text-xs sm:text-sm">
               Anda harus menunggu sebelum dapat mengubah password lagi.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="relative w-full rounded-lg border p-4 bg-amber-500/10 border-amber-500/20">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5" />
-                <div className="text-sm text-amber-900 dark:text-amber-100">
+          <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6">
+            <div className="relative w-full rounded-lg border p-3 sm:p-4 bg-amber-500/10 border-amber-500/20">
+              <div className="flex items-start gap-2 sm:gap-3">
+                <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+                <div className="text-xs sm:text-sm text-amber-900 dark:text-amber-100">
                   Password Anda terakhir diubah kurang dari 7 hari yang lalu.
                   Untuk keamanan, Anda perlu menunggu{" "}
                   <strong>{daysRemaining} hari lagi</strong> sebelum dapat
@@ -267,7 +267,7 @@ export default function ChangePasswordPage() {
             </div>
             <Button
               onClick={() => router.push("/protected/settings")}
-              className="w-full"
+              className="w-full text-sm"
             >
               Kembali ke Settings
             </Button>
@@ -278,23 +278,23 @@ export default function ChangePasswordPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background to-muted/20 p-4 mt-12">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background to-muted/20 p-2 sm:p-4 mt-12">
       <Card className="w-full max-w-md">
-        <CardHeader>
+        <CardHeader className="p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-2">
-            <div className="p-2 rounded-lg bg-green-500/10">
-              <KeyRound className="w-6 h-6 text-green-500" />
+            <div className="p-1.5 sm:p-2 rounded-lg bg-green-500/10">
+              <KeyRound className="w-5 h-5 sm:w-6 sm:h-6 text-green-500" />
             </div>
-            <CardTitle>Ganti Password</CardTitle>
+            <CardTitle className="text-lg sm:text-xl">Ganti Password</CardTitle>
           </div>
-          <CardDescription>Buat password baru untuk akun Anda</CardDescription>
+          <CardDescription className="text-xs sm:text-sm">Buat password baru untuk akun Anda</CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="relative w-full rounded-lg border p-4 bg-blue-500/10 border-blue-500/20">
-              <div className="flex items-start gap-3">
-                <ShieldCheck className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5" />
-                <div className="text-sm text-blue-900 dark:text-blue-100">
+        <CardContent className="p-4 sm:p-6">
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+            <div className="relative w-full rounded-lg border p-3 sm:p-4 bg-blue-500/10 border-blue-500/20">
+              <div className="flex items-start gap-2 sm:gap-3">
+                <ShieldCheck className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
+                <div className="text-xs sm:text-sm text-blue-900 dark:text-blue-100">
                   Pastikan password Anda minimal 8 karakter dan mudah diingat
                   namun sulit ditebak.
                 </div>
@@ -302,7 +302,7 @@ export default function ChangePasswordPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="newPassword">Password Baru</Label>
+              <Label htmlFor="newPassword" className="text-sm">Password Baru</Label>
               <div className="relative">
                 <Input
                   id="newPassword"
@@ -312,24 +312,24 @@ export default function ChangePasswordPage() {
                     setFormData({ ...formData, newPassword: e.target.value })
                   }
                   placeholder="Masukkan password baru"
-                  className={errors.newPassword ? "border-red-500" : ""}
+                  className={errors.newPassword ? "border-red-500 text-sm" : "text-sm"}
                   disabled={isSubmitting}
                 />
                 <button
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
-                  {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showNewPassword ? <EyeOff size={16} className="sm:w-[18px] sm:h-[18px]" /> : <Eye size={16} className="sm:w-[18px] sm:h-[18px]" />}
                 </button>
               </div>
               {errors.newPassword && (
-                <p className="text-sm text-red-500">{errors.newPassword}</p>
+                <p className="text-xs sm:text-sm text-red-500">{errors.newPassword}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Konfirmasi Password Baru</Label>
+              <Label htmlFor="confirmPassword" className="text-sm">Konfirmasi Password Baru</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
@@ -342,37 +342,37 @@ export default function ChangePasswordPage() {
                     })
                   }
                   placeholder="Masukkan ulang password baru"
-                  className={errors.confirmPassword ? "border-red-500" : ""}
+                  className={errors.confirmPassword ? "border-red-500 text-sm" : "text-sm"}
                   disabled={isSubmitting}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
                   {showConfirmPassword ? (
-                    <EyeOff size={18} />
+                    <EyeOff size={16} className="sm:w-[18px] sm:h-[18px]" />
                   ) : (
-                    <Eye size={18} />
+                    <Eye size={16} className="sm:w-[18px] sm:h-[18px]" />
                   )}
                 </button>
               </div>
               {errors.confirmPassword && (
-                <p className="text-sm text-red-500">{errors.confirmPassword}</p>
+                <p className="text-xs sm:text-sm text-red-500">{errors.confirmPassword}</p>
               )}
             </div>
 
-            <div className="flex gap-3 pt-4">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-3 sm:pt-4">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => router.push("/protected/settings")}
                 disabled={isSubmitting}
-                className="flex-1"
+                className="flex-1 text-sm"
               >
                 Batal
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="flex-1">
+              <Button type="submit" disabled={isSubmitting} className="flex-1 text-sm">
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />

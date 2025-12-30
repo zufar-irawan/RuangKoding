@@ -18,21 +18,23 @@ export default function StatsCard({
 }: StatsCardProps) {
   return (
     <Card className="overflow-hidden">
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">
+      <CardContent className="p-4 sm:p-6">
+        <div className="flex items-start justify-between gap-2">
+          <div className="space-y-1 sm:space-y-2 min-w-0 flex-1">
+            <p className="text-xs sm:text-sm font-medium text-muted-foreground">
               {title}
             </p>
-            <p className="text-3xl font-bold">{value}</p>
+            <p className="text-2xl sm:text-3xl font-bold">{value}</p>
             {description && (
-              <p className="text-xs text-muted-foreground">{description}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground line-clamp-2">
+                {description}
+              </p>
             )}
           </div>
           <div
-            className={`rounded-full bg-primary/10 p-3 ${iconColor}`}
+            className={`rounded-full bg-primary/10 p-2 sm:p-3 ${iconColor} shrink-0`}
           >
-            <Icon className="h-6 w-6" />
+            <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
           </div>
         </div>
       </CardContent>

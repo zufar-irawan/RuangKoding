@@ -18,11 +18,11 @@ export default async function EditProfile() {
   const links = userLink.data;
 
   return (
-    <div className="flex flex-col mt-16 p-8 items-center w-full">
+    <div className="flex flex-col mt-16 p-4 sm:p-6 md:p-8 items-center w-full">
       <div className="flex flex-col w-full max-w-xl">
-        <div className="mt-4">
-          <h1 className="text-2xl font-bold text-primary">Edit Profilmu</h1>
-          <p className="text-md text-muted-foreground">
+        <div className="mt-2 sm:mt-4">
+          <h1 className="text-xl sm:text-2xl font-bold text-primary">Edit Profilmu</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
             Edit profil kamu agar tampak keren di depan programmer lain!
           </p>
         </div>
