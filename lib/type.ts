@@ -12,9 +12,9 @@ type CountRelation = CountAgg | CountAgg[] | null;
 
 type ProfilePreview = Pick<
   ProfileRow,
-  "id" | "fullname" | "bio" | "profile_pic"
+  "id" | "fullname" | "bio" | "profile_pic" | "id_dummy"
 >;
-type AnswerProfile = Pick<ProfileRow, "id" | "fullname" | "profile_pic">;
+type AnswerProfile = Pick<ProfileRow, "id" | "fullname" | "profile_pic" | "id_dummy">;
 type TagPreview = { tags: Pick<TagRow, "tag"> | null } | null;
 type TagRelation = TagPreview | TagPreview[] | null;
 

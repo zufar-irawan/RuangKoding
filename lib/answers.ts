@@ -26,7 +26,8 @@ const getComments = async (id: number) => {
        id,
        fullname,
        bio,
-       profile_pic
+       profile_pic,
+       id_dummy
       )
     `,
     )

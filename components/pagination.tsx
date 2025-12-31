@@ -6,18 +6,20 @@ interface PaginationProps {
   currentPage: number;
   totalPages: number;
   baseUrl: string;
+  pageParamName?: string;
 }
 
 export default function Pagination({
   currentPage,
   totalPages,
   baseUrl,
+  pageParamName = "page",
 }: PaginationProps) {
   if (totalPages <= 1) return null;
 
   const getPageUrl = (page: number) => {
     const separator = baseUrl.includes("?") ? "&" : "?";
-    return `${baseUrl}${separator}page=${page}`;
+    return `${baseUrl}${separator}${pageParamName}=${page}`;
   };
 
   const renderPageNumbers = () => {

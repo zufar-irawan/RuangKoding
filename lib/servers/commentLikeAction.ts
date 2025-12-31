@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-type CommentType = "answ_comment" | "quest_comment";
+type CommentType = "answ_comment" | "quest_comment" | "feedback_comment";
 
 interface LikeCommentResult {
   success: boolean;

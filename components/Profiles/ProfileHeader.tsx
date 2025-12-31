@@ -25,9 +25,10 @@ type Props = {
   user: UserProfile;
   userId: string;
   userLinks: UserLink[];
+  isPublic?: boolean;
 };
 
-export default function ProfileHeader({ user, userId, userLinks }: Props) {
+export default function ProfileHeader({ user, userId, userLinks, isPublic }: Props) {
   return (
     <header className="flex w-full justify-center items-center steps haikei">
       <Card className="w-full max-w-3xl rounded-none md:rounded-2xl lg:rounded-2xl">
@@ -42,8 +43,12 @@ export default function ProfileHeader({ user, userId, userLinks }: Props) {
 
               <div className="flex flex-col gap-1 sm:gap-2 md:gap-4 min-w-0 flex-1">
                 <h2 className="text-xs text-muted-foreground flex flex-col font-semibold">
-                  <span className="hidden sm:inline">Selamat datang kembali, </span>
-                  <span className="sm:hidden">Selamat datang,</span>
+                  {!isPublic && (
+                    <>
+                      <span className="hidden sm:inline">Selamat datang kembali, </span>
+                      <span className="sm:hidden">Selamat datang,</span>
+                    </>
+                  )}
                   <span className="text-primary text-xl sm:text-2xl md:text-3xl font-bold break-words">
                     {user?.fullname}
                   </span>
@@ -54,12 +59,14 @@ export default function ProfileHeader({ user, userId, userLinks }: Props) {
               </div>
             </div>
 
-            <Link
-              href={"/protected/edit"}
-              className="rounded-full w-10 h-10 sm:w-12 sm:h-12 hover:text-primary flex justify-center items-center p-2 shrink-0"
-            >
-              <Edit size={20} className="w-6 h-6 sm:w-8 sm:h-8" />
-            </Link>
+            {!isPublic && (
+              <Link
+                href={"/protected/edit"}
+                className="rounded-full w-10 h-10 sm:w-12 sm:h-12 hover:text-primary flex justify-center items-center p-2 shrink-0"
+              >
+                <Edit size={20} className="w-6 h-6 sm:w-8 sm:h-8" />
+              </Link>
+            )}
           </div>
 
           <div className="flex flex-col mt-4 sm:mt-6 gap-4">

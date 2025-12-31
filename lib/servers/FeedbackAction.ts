@@ -15,6 +15,7 @@ export type FeedbackDetailItem = {
     fullname: string;
     bio: string | null;
     profile_pic: string | null;
+    id_dummy: number;
   } | null;
 };
 
@@ -31,6 +32,7 @@ export type RequestDetailItem = {
     fullname: string;
     bio: string | null;
     profile_pic: string | null;
+    id_dummy: number;
   } | null;
 };
 
@@ -53,7 +55,8 @@ export async function getRequestById(requestId: number) {
         id,
         fullname,
         bio,
-        profile_pic
+        profile_pic,
+        id_dummy
       )
     `,
     )
@@ -85,7 +88,8 @@ export async function getFeedbacksByRequestId(requestId: number) {
         id,
         fullname,
         bio,
-        profile_pic
+        profile_pic,
+        id_dummy
       )
     `,
     )
@@ -144,7 +148,8 @@ export async function getFeedbackComments(feedbackId: number) {
         id,
         fullname,
         bio,
-        profile_pic
+        profile_pic,
+        id_dummy
       )
     `,
     )

@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import Link from "next/link";
 
 type Props = {
   replies: AnswerCommentItem[];
@@ -68,7 +69,7 @@ export default function CommentReplies({
             return (
               <div key={reply.id} className="flex gap-3">
                 {/* Avatar */}
-                <div className="flex-shrink-0">
+                <Link href={`/${replyProfile?.fullname?.toLowerCase().replace(" ", "-")}-${replyProfile?.id_dummy}`} className="flex-shrink-0">
                   {replyProfile?.profile_pic ? (
                     <Image
                       src={replyProfile.profile_pic}
@@ -82,15 +83,15 @@ export default function CommentReplies({
                       {replyProfile?.fullname.charAt(0).toUpperCase() ?? "U"}
                     </div>
                   )}
-                </div>
+                </Link>
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   {/* Header */}
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-sm">
+                    <Link href={`/${replyProfile?.fullname?.toLowerCase().replace(" ", "-")}-${replyProfile?.id_dummy}`} className="font-semibold text-sm hover:text-primary">
                       {replyProfile?.fullname ?? "Pengguna"}
-                    </span>
+                    </Link>
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground text-xs">
                         {formatDistanceToNow(new Date(reply.created_at), {
@@ -153,10 +154,9 @@ export default function CommentReplies({
                       className={`
                         group relative flex items-center gap-2 px-3 py-2 rounded-xl
                         font-semibold transition-all duration-300 ease-out
-                        ${
-                          likesData.get(reply.id)?.liked
-                            ? "bg-primary/10 hover:bg-primary/20 text-primary"
-                            : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
+                        ${likesData.get(reply.id)?.liked
+                          ? "bg-primary/10 hover:bg-primary/20 text-primary"
+                          : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
                         }
                         ${likingComments.has(reply.id) ? "opacity-50 cursor-not-allowed" : "hover:scale-105 active:scale-95"}
                         disabled:pointer-events-none
@@ -166,10 +166,9 @@ export default function CommentReplies({
                         size={16}
                         className={`
                           transition-all duration-300 ease-out
-                          ${
-                            likesData.get(reply.id)?.liked
-                              ? "fill-primary stroke-primary scale-110"
-                              : "group-hover:scale-110"
+                          ${likesData.get(reply.id)?.liked
+                            ? "fill-primary stroke-primary scale-110"
+                            : "group-hover:scale-110"
                           }
                           ${likingComments.has(reply.id) ? "animate-pulse" : ""}
                         `}

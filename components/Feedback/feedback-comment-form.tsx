@@ -8,6 +8,10 @@ import {
   createFeedbackComment,
   deleteFeedbackComment,
 } from "@/lib/servers/FeedbackAction";
+import {
+  toggleCommentLike,
+  getCommentsLikesData,
+} from "@/lib/servers/commentLikeAction";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import {
@@ -17,6 +21,7 @@ import {
   ChevronUp,
   ChevronDown,
   Reply,
+  ThumbsUp,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
@@ -32,6 +37,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import Link from "next/link";
+import Image from "next/image";
 
 type Comment = {
   id: number;
@@ -44,6 +51,7 @@ type Comment = {
     fullname: string;
     bio: string | null;
     profile_pic: string | null;
+    id_dummy: number;
   } | null;
 };
 
@@ -62,6 +70,10 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
   const [isCommentOpen, setIsCommentOpen] = useState(false);
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [currentUser, setCurrentUser] = useState<{ id: string } | null>(null);
+  const [likesData, setLikesData] = useState<
+    Map<number, { liked: boolean; likesCount: number }>
+  >(new Map());
+  const [likingComments, setLikingComments] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     loadComments();
@@ -79,11 +91,96 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
     try {
       const data = await getFeedbackComments(feedbackId);
       setComments(data);
+
+      if (data.length > 0) {
+        const commentIds = data.map((c) => c.id);
+        const likesMap = await getCommentsLikesData(
+          commentIds,
+          "feedback_comment",
+        );
+        setLikesData(likesMap);
+      }
     } catch (error) {
       console.error("Error loading comments:", error);
       toast.error("Gagal memuat komentar");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const toggleLike = async (commentId: number, ownerId: string) => {
+    if (!currentUser) {
+      toast.error("Anda harus login untuk menyukai komentar");
+      return;
+    }
+
+    if (currentUser.id === ownerId) {
+      toast.warning("Anda tidak bisa menyukai komentar sendiri");
+      return;
+    }
+
+    // Prevent double-clicking
+    if (likingComments.has(commentId)) {
+      return;
+    }
+
+    // Add to liking set
+    setLikingComments((prev) => new Set(prev).add(commentId));
+
+    // Optimistic update
+    const currentData = likesData.get(commentId) || {
+      liked: false,
+      likesCount: 0,
+    };
+    const newLiked = !currentData.liked;
+    const newCount = newLiked
+      ? currentData.likesCount + 1
+      : Math.max(0, currentData.likesCount - 1);
+
+    setLikesData((prev) => {
+      const newMap = new Map(prev);
+      newMap.set(commentId, { liked: newLiked, likesCount: newCount });
+      return newMap;
+    });
+
+    try {
+      const result = await toggleCommentLike(commentId, "feedback_comment");
+
+      if (result.success) {
+        // Update with actual server data
+        setLikesData((prev) => {
+          const newMap = new Map(prev);
+          newMap.set(commentId, {
+            liked: result.liked,
+            likesCount: result.likesCount,
+          });
+          return newMap;
+        });
+      } else {
+        // Revert on error
+        setLikesData((prev) => {
+          const newMap = new Map(prev);
+          newMap.set(commentId, currentData);
+          return newMap;
+        });
+        toast.error(result.error || "Gagal menyukai komentar");
+      }
+    } catch (error) {
+      // Revert on error
+      setLikesData((prev) => {
+        const newMap = new Map(prev);
+        newMap.set(commentId, currentData);
+        return newMap;
+      });
+      console.error("Error toggling like:", error);
+      toast.error("Terjadi kesalahan saat menyukai komentar");
+    } finally {
+      // Remove from liking set
+      setLikingComments((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(commentId);
+        return newSet;
+      });
     }
   };
 
@@ -250,21 +347,32 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
             {replies.map((reply) => {
               const profile = reply.profiles;
               return (
+
                 <div key={reply.id} className="flex gap-2 md:gap-3">
                   {/* Avatar */}
-                  <div className="flex-shrink-0">
-                    <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full bg-secondary text-xs md:text-sm font-semibold text-secondary-foreground">
-                      {profile?.fullname.charAt(0).toUpperCase() ?? "U"}
-                    </div>
-                  </div>
+                  <Link href={`/${profile?.fullname.toLowerCase().replace(/\s/g, "-")}-${profile?.id_dummy}`} className="flex-shrink-0">
+                    {profile?.profile_pic ? (
+                      <Image
+                        src={profile?.profile_pic}
+                        alt={profile?.fullname}
+                        width={24}
+                        height={24}
+                        className="rounded-full"
+                      />
+                    ) : (
+                      <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full bg-secondary text-xs md:text-sm font-semibold text-secondary-foreground">
+                        {profile?.fullname.charAt(0).toUpperCase() ?? "U"}
+                      </div>
+                    )}
+                  </Link>
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     {/* Header */}
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-xs md:text-sm">
+                      <Link href={`/${profile?.fullname.toLowerCase().replace(/\s/g, "-")}-${profile?.id_dummy}`} className="hover:text-primary font-semibold text-xs md:text-sm">
                         {profile?.fullname ?? "Pengguna"}
-                      </span>
+                      </Link>
 
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground text-xs hidden sm:inline">
@@ -330,9 +438,46 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
                     <p className="mt-1 text-xs md:text-sm text-foreground leading-relaxed">
                       {reply.text}
                     </p>
+
+                    {/* Like Button for Reply */}
+                    <div className="mt-1 flex items-center">
+                      <button
+                        type="button"
+                        onClick={() => toggleLike(reply.id, reply.user_id)}
+                        disabled={likingComments.has(reply.id) || (currentUser?.id === reply.user_id)}
+                        className={`
+                            group relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl
+                            font-semibold transition-all duration-300 ease-out
+                            ${likesData.get(reply.id)?.liked
+                            ? "bg-primary/10 hover:bg-primary/20 text-primary"
+                            : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                          }
+                            ${likingComments.has(reply.id) ? "opacity-50 cursor-not-allowed" : "active:scale-95"}
+                             ${currentUser?.id === reply.user_id ? "opacity-50 cursor-not-allowed" : ""}
+                            disabled:pointer-events-none
+                          `}
+                      >
+                        <ThumbsUp
+                          size={14}
+                          className={`
+                              transition-all duration-300 ease-out
+                              ${likesData.get(reply.id)?.liked
+                              ? "fill-primary stroke-primary scale-110"
+                              : "group-hover:scale-110"
+                            }
+                              ${likingComments.has(reply.id) ? "animate-pulse" : ""}
+                            `}
+                        />
+                        <span className="text-xs font-bold min-w-[14px] text-center">
+                          {likesData.get(reply.id)?.likesCount ?? 0}
+                        </span>
+                      </button>
+                    </div>
+
                   </div>
                 </div>
               );
+
             })}
           </div>
         )}
@@ -396,19 +541,29 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
                   {/* Parent Comment */}
                   <div className="flex gap-2 md:gap-3">
                     {/* Avatar */}
-                    <div className="flex-shrink-0">
-                      <div className="flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-full bg-secondary text-xs md:text-sm font-semibold text-secondary-foreground">
-                        {profile?.fullname.charAt(0).toUpperCase() ?? "U"}
-                      </div>
-                    </div>
+                    <Link href={`/${profile?.fullname.toLowerCase().replace(/\s/g, "-")}-${profile?.id_dummy}`} className="flex-shrink-0">
+                      {profile?.profile_pic ? (
+                        <Image
+                          src={profile.profile_pic}
+                          alt={profile.fullname}
+                          width={40}
+                          height={40}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <div className="flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-full bg-secondary text-xs md:text-sm font-semibold text-secondary-foreground">
+                          {profile?.fullname.charAt(0).toUpperCase() ?? "U"}
+                        </div>
+                      )}
+                    </Link>
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       {/* Header */}
                       <div className="flex items-center justify-between">
-                        <span className="font-semibold text-xs md:text-sm">
+                        <Link href={`/${profile?.fullname.toLowerCase().replace(/\s/g, "-")}-${profile?.id_dummy}`} className="font-semibold text-xs md:text-sm hover:text-primary">
                           {profile?.fullname ?? "Pengguna"}
-                        </span>
+                        </Link>
 
                         <div className="flex items-center gap-2">
                           <span className="text-muted-foreground text-xs hidden sm:inline">
@@ -477,7 +632,7 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
                       </p>
 
                       {/* Actions */}
-                      <div className="mt-2 flex items-center">
+                      <div className="mt-2 flex items-center gap-4">
                         <Button
                           type="button"
                           variant="ghost"
@@ -490,6 +645,38 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
                           />
                           {replyingTo === comment.id ? "Batal" : "Balas"}
                         </Button>
+
+                        <button
+                          type="button"
+                          onClick={() => toggleLike(comment.id, comment.user_id)}
+                          disabled={likingComments.has(comment.id) || (currentUser?.id === comment.user_id)}
+                          className={`
+                            group relative flex items-center gap-2 px-4 py-1.5 rounded-xl
+                            font-semibold transition-all duration-300 ease-out
+                            ${likesData.get(comment.id)?.liked
+                              ? "bg-primary/10 hover:bg-primary/20 text-primary"
+                              : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
+                            }
+                            ${likingComments.has(comment.id) ? "opacity-50 cursor-not-allowed" : "hover:scale-105 active:scale-95"}
+                            ${currentUser?.id === comment.user_id ? "opacity-50 cursor-not-allowed" : ""}
+                            disabled:pointer-events-none
+                          `}
+                        >
+                          <ThumbsUp
+                            size={16}
+                            className={`
+                              transition-all duration-300 ease-out
+                              ${likesData.get(comment.id)?.liked
+                                ? "fill-primary stroke-primary scale-110"
+                                : "group-hover:scale-110"
+                              }
+                              ${likingComments.has(comment.id) ? "animate-pulse" : ""}
+                            `}
+                          />
+                          <span className="text-xs md:text-sm font-bold min-w-[20px] text-center">
+                            {likesData.get(comment.id)?.likesCount ?? 0}
+                          </span>
+                        </button>
                       </div>
 
                       {/* Reply Form */}
@@ -512,8 +699,8 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
               );
             })
           )}
-        </div>
+        </div >
       )}
-    </div>
+    </div >
   );
 }

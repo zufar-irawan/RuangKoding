@@ -12,6 +12,7 @@ import { parseLexicalBodyToHTML } from "@/lib/lexical/lexical-parser";
 
 import RequestVote from "@/components/Feedback/request-vote";
 import FeedbackSection from "@/components/Feedback/feedback-section";
+import Link from "next/link";
 
 type RequestContentProps = {
   requestId: number;
@@ -86,12 +87,22 @@ export default async function RequestContent({
 
       <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
         {profile && (
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 md:h-8 md:w-8 lg:w-9 lg:h-9 items-center justify-center rounded-full bg-secondary text-xs md:text-sm lg:text-md font-semibold text-secondary-foreground">
-              {profile.fullname.charAt(0).toUpperCase()}
-            </div>
-            <span>{profile.fullname}</span>
-          </div>
+          <Link href={`/${profile.fullname.toLowerCase().replace(/\s/g, "-")}-${profile.id_dummy}`} className="flex group items-center gap-2">
+            {profile.profile_pic ? (
+              <Image
+                src={profile.profile_pic}
+                alt={profile.fullname}
+                width={24}
+                height={24}
+                className="rounded-full"
+              />
+            ) : (
+              <div className="flex h-7 w-7 md:h-8 md:w-8 lg:w-9 lg:h-9 items-center justify-center rounded-full bg-secondary text-xs md:text-sm lg:text-md font-semibold text-secondary-foreground">
+                {profile.fullname.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <span className="group-hover:text-primary">{profile.fullname}</span>
+          </Link>
         )}
         <span>•</span>
         <span>{createdAtLabel}</span>

@@ -24,6 +24,11 @@ export default function ProfileTabs() {
       active: pathname === "/protected/questions",
     },
     {
+      name: "Feedback Kamu",
+      href: "/protected/feedback",
+      active: pathname === "/protected/feedback",
+    },
+    {
       name: "Tersimpan",
       href: "/protected/saved",
       active: pathname === "/protected/saved",

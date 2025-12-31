@@ -25,7 +25,8 @@ const getQuestions = async (): Promise<
                 id,
                 fullname,
                 bio,
-                profile_pic
+                profile_pic,
+                id_dummy
             ),
             quest_tags (
                 tags (
@@ -61,7 +62,8 @@ const getQuestionFromID = async (
                 id,
                 fullname,
                 bio,
-                profile_pic
+                profile_pic,
+                id_dummy
             ),
             quest_tags (
                 tags (
@@ -80,7 +82,8 @@ const getQuestionFromID = async (
                 profiles (
                     id,
                     fullname,
-                    profile_pic
+                    profile_pic,
+                    id_dummy
                 )
             )
         `,
@@ -106,7 +109,8 @@ const getQuestionComments = async (id: number) => {
        id,
        fullname,
        bio,
-       profile_pic
+       profile_pic,
+       id_dummy
       )
     `,
     )
@@ -162,23 +166,40 @@ const deleteQuestionComment = async (commentId: number) => {
   }
 };
 
-const getSavedQuestions = async (userId: string) => {
+const getSavedQuestions = async (
+  userId: string,
+  page: number = 1,
+  limit: number = 10,
+) => {
   const supabase = await createClient();
+  const offset = (page - 1) * limit;
 
-  // Get saved question IDs
+  // Get total count of saved questions
+  const { count, error: countError } = await supabase
+    .from("saved_quest")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", userId);
+
+  if (countError) {
+    console.error("Error fetching saved questions count:", countError);
+    return { data: [], total: 0 };
+  }
+
+  // Get saved question IDs with pagination
   const { data: savedData, error: savedError } = await supabase
     .from("saved_quest")
     .select("question_id, created_at")
     .eq("user_id", userId)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit - 1);
 
   if (savedError) {
     console.error("Error fetching saved questions:", savedError);
-    return [];
+    return { data: [], total: 0 };
   }
 
   if (!savedData || savedData.length === 0) {
-    return [];
+    return { data: [], total: count || 0 };
   }
 
   const questionIds = savedData.map((item) => item.question_id);
@@ -196,7 +217,8 @@ const getSavedQuestions = async (userId: string) => {
           id,
           fullname,
           bio,
-          profile_pic
+          profile_pic,
+          id_dummy
       ),
       quest_tags (
           tags (
@@ -214,14 +236,29 @@ const getSavedQuestions = async (userId: string) => {
 
   if (questionsError) {
     console.error("Error fetching questions:", questionsError);
-    return [];
+    return { data: [], total: 0 };
   }
+
+  // Sort questions to match the order of savedData (most recently saved first)
+  // The 'in' query doesn't guarantee order, so we need to sort manually if we want to preserve "Saved At" order
+  // However, existing implementation ordered by questions.created_at ... wait.
+  // The original implementation: .in("id", questionIds).order("created_at", { ascending: false });
+  // This orders by *question creation date*, not *saved date*.
+  // Ideally saved items should be ordered by when they were saved?
+  // User request: "Masing masing section limit hingga tiga item dan gunakan pagination. saved feedback bisa diambil di table saved_req"
+  // It doesn't specify order. But normally "Saved" lists are ordered by saved date.
+  // The previous implementation was:
+  // 1. Get saved items ordered by created_at (saved date).
+  // 2. Get questions WHERE id IN (savedIds) ORDER by created_at (question date).
+  // So it was showing saved questions ordered by their creation date, essentially.
+  // I will keep the ordering logic same as before to avoid changing behavior implicitly:
+  // "order('created_at', { ascending: false })" on questions table.
 
   if (!questions || questions.length === 0) {
-    return [];
+    return { data: [], total: count || 0 };
   }
 
-  return questions;
+  return { data: questions, total: count || 0 };
 };
 
 const getQuestionsFromUserID = async (user_id: string) => {
@@ -239,7 +276,8 @@ const getQuestionsFromUserID = async (user_id: string) => {
           id,
           fullname,
           bio,
-          profile_pic
+          profile_pic,
+          id_dummy
       ),
       quest_tags (
           tags (
@@ -332,7 +370,8 @@ const getTrendingQuestions = async (
                 id,
                 fullname,
                 bio,
-                profile_pic
+                profile_pic,
+                id_dummy
             ),
             quest_tags (
                 tags (
@@ -467,7 +506,8 @@ const getFilteredQuestions = async (
                 id,
                 fullname,
                 bio,
-                profile_pic
+                profile_pic,
+                id_dummy
             ),
             quest_tags (
                 tags (
@@ -551,7 +591,8 @@ const searchQuestions = async (
                 id,
                 fullname,
                 bio,
-                profile_pic
+                profile_pic,
+                id_dummy
             ),
             quest_tags (
                 tags (

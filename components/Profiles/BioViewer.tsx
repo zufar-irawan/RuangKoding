@@ -9,10 +9,9 @@ export default function BioViewer({ bioContent }: BioViewerProps) {
   if (!bioContent) {
     return (
       <div className="bg-card border rounded-lg p-4 sm:p-6 shadow-sm">
-        <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Tentang Kamu</h2>
+        <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Tentang</h2>
         <p className="text-muted-foreground text-sm sm:text-base">
-          Kamu belum menambahkan informasi tentang dirimu. Klik tombol edit
-          untuk mulai menulis.
+          Belum ada bio yang ditambahkan. Klik tombol edit untuk menambahkan bio.
         </p>
       </div>
     );
@@ -28,10 +27,9 @@ export default function BioViewer({ bioContent }: BioViewerProps) {
   if (!html) {
     return (
       <div className="bg-card border rounded-lg p-4 sm:p-6 shadow-sm">
-        <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Tentang Kamu</h2>
+        <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Tentang</h2>
         <p className="text-muted-foreground text-sm sm:text-base">
-          Kamu belum menambahkan informasi tentang dirimu. Klik tombol edit
-          untuk mulai menulis.
+          Belum ada bio yang ditambahkan. Klik tombol edit untuk menambahkan bio.
         </p>
       </div>
     );
@@ -39,7 +37,7 @@ export default function BioViewer({ bioContent }: BioViewerProps) {
 
   return (
     <div className="bg-card border rounded-lg p-4 sm:p-6 shadow-sm">
-      <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Tentang Kamu</h2>
+      <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Tentang</h2>
       <article
         className={`w-full mx-auto ${styles["blog-content"]}`}
         dangerouslySetInnerHTML={{ __html: html }}

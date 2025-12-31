@@ -61,13 +61,17 @@ export default function PostCard({ question }: PostCardProps) {
   const answerCount = getCountValue(question.answers);
   const votesCount = getCountValue(question.votes);
 
+  const userlink = userProfile?.fullname.toLowerCase().replace(" ", "-");
+  const userId = userProfile?.id_dummy;
+  const userReference = `${userlink}-${userId}`;
+
   return (
     <div className="border-b border-border last:border-b-0 py-4 hover:bg-accent/5 transition-colors">
       <div className="flex flex-col gap-3">
         {/* User Profile - Top */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           {userProfile ? (
-            <>
+            <Link href={`/${userReference}`} className="gap-2 group flex items-center">
               {userProfile.profile_pic ? (
                 <Image
                   height={200}
@@ -81,10 +85,10 @@ export default function PostCard({ question }: PostCardProps) {
                   {userProfile.fullname.charAt(0).toUpperCase()}
                 </span>
               )}
-              <span className="font-medium text-foreground">
+              <span className="font-medium group-hover:text-primary text-foreground">
                 {userProfile.fullname}
               </span>
-            </>
+            </Link>
           ) : (
             <span>Pengguna tidak diketahui</span>
           )}

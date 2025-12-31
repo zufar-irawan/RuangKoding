@@ -24,7 +24,6 @@ import {
   deleteQuestionComment,
   getQuestionComments,
 } from "@/lib/questions";
-import { showXPAlert } from "@/utils/xpAlert";
 import Swal from "sweetalert2";
 import { toast } from "sonner";
 import { getClientUser } from "@/utils/GetClientUser";
@@ -43,6 +42,7 @@ import {
   toggleCommentLike,
   getCommentsLikesData,
 } from "@/lib/servers/commentLikeAction";
+import Link from "next/link";
 
 type Props = {
   question_id?: number;
@@ -359,7 +359,7 @@ export default function CommentForm({ question_id, answer }: Props) {
                   {/* Parent Comment */}
                   <div className="flex gap-3">
                     {/* Avatar */}
-                    <div className="flex-shrink-0">
+                    <Link href={`/${profile?.fullname?.toLowerCase().replace(" ", "-")}-${profile?.id_dummy}`} className="flex-shrink-0">
                       {profile?.profile_pic ? (
                         <Image
                           src={profile.profile_pic}
@@ -373,15 +373,15 @@ export default function CommentForm({ question_id, answer }: Props) {
                           {profile?.fullname.charAt(0).toUpperCase() ?? "U"}
                         </div>
                       )}
-                    </div>
+                    </Link>
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       {/* Header */}
                       <div className="flex items-center justify-between">
-                        <span className="font-semibold text-sm">
+                        <Link href={`/${profile?.fullname?.toLowerCase().replace(" ", "-")}-${profile?.id_dummy}`} className="font-semibold text-sm hover:text-primary">
                           {profile?.fullname ?? "Pengguna"}
-                        </span>
+                        </Link>
 
                         <div className="flex items-center gap-2">
                           <span className="text-muted-foreground text-xs">
@@ -456,10 +456,9 @@ export default function CommentForm({ question_id, answer }: Props) {
                           className={`
                             group relative flex items-center gap-2 px-4 py-2.5 rounded-xl
                             font-semibold transition-all duration-300 ease-out
-                            ${
-                              likesData.get(comment.id)?.liked
-                                ? "bg-primary/10 hover:bg-primary/20 text-primary"
-                                : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
+                            ${likesData.get(comment.id)?.liked
+                              ? "bg-primary/10 hover:bg-primary/20 text-primary"
+                              : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
                             }
                             ${likingComments.has(comment.id) ? "opacity-50 cursor-not-allowed" : "hover:scale-105 active:scale-95"}
                             disabled:pointer-events-none
@@ -469,10 +468,9 @@ export default function CommentForm({ question_id, answer }: Props) {
                             size={20}
                             className={`
                               transition-all duration-300 ease-out
-                              ${
-                                likesData.get(comment.id)?.liked
-                                  ? "fill-primary stroke-primary scale-110"
-                                  : "group-hover:scale-110"
+                              ${likesData.get(comment.id)?.liked
+                                ? "fill-primary stroke-primary scale-110"
+                                : "group-hover:scale-110"
                               }
                               ${likingComments.has(comment.id) ? "animate-pulse" : ""}
                             `}

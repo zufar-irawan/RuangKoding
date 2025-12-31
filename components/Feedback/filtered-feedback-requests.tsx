@@ -41,6 +41,8 @@ interface FeedbackRequest {
   user_id: string;
   profiles: {
     fullname: string;
+    id_dummy: number;
+    profile_pic: string | null;
   } | null;
   vote_count?: number;
   feedback_count?: number;
@@ -181,11 +183,10 @@ export default function FilteredFeedbackRequests({
                 <button
                   key={tag.id}
                   onClick={() => handleTagClick(tag.id)}
-                  className={`px-3 py-1 rounded text-xs transition-colors ${
-                    selectedTag === tag.id
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-accent text-accent-foreground hover:bg-accent/80"
-                  }`}
+                  className={`px-3 py-1 rounded text-xs transition-colors ${selectedTag === tag.id
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-accent text-accent-foreground hover:bg-accent/80"
+                    }`}
                 >
                   {tag.tag}
                 </button>

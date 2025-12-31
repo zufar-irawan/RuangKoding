@@ -41,6 +41,8 @@ interface FeedbackRequestCardProps {
     user_id: string;
     profiles: {
       fullname: string;
+      id_dummy: number;
+      profile_pic: string | null;
     } | null;
     vote_count?: number;
     feedback_count?: number;
@@ -86,14 +88,24 @@ export default function FeedbackRequestCard({
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           {userProfile ? (
-            <>
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-secondary/80 text-xs font-semibold text-secondary-foreground">
-                {userProfile.fullname.charAt(0).toUpperCase()}
-              </span>
-              <span className="font-medium text-foreground">
+            <Link href={`/${userProfile?.fullname.toLowerCase().replace(" ", "-")}-${userProfile?.id_dummy}`} className="flex gap-2 items-center group">
+              {userProfile.profile_pic ? (
+                <Image
+                  src={userProfile.profile_pic}
+                  alt={userProfile.fullname}
+                  width={24}
+                  height={24}
+                  className="rounded-full"
+                />
+              ) : (
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-secondary/80 text-xs font-semibold text-secondary-foreground">
+                  {userProfile.fullname.charAt(0).toUpperCase()}
+                </span>
+              )}
+              <span className="font-medium text-foreground group-hover:text-primary">
                 {userProfile.fullname}
               </span>
-            </>
+            </Link>
           ) : (
             <span>Pengguna tidak diketahui</span>
           )}
@@ -122,7 +134,7 @@ export default function FeedbackRequestCard({
 
           <div className="flex-1 min-w-0">
             <Link
-              href={`/lautan-feedback/${request.id}`}
+              href={`/lautan-feedback/${request.title.toLowerCase().replace(" ", "-")}-${request.id}`}
               className="text-base font-semibold text-foreground hover:text-primary transition-colors line-clamp-2 leading-snug"
             >
               {request.title}

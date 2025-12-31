@@ -271,6 +271,8 @@ type FeedbackRequestListItem = {
   user_id: string;
   profiles: {
     fullname: string;
+    id_dummy: number;
+    profile_pic: string | null;
   } | null;
   vote_count?: number;
   feedback_count?: number;
@@ -519,7 +521,9 @@ export async function getFilteredFeedbackRequests(
         created_at,
         user_id,
         profiles (
-          fullname
+          fullname,
+          id_dummy,
+          profile_pic
         ),
         request_tags (
           tag_id,
@@ -611,6 +615,288 @@ export async function getFilteredFeedbackRequests(
     return {
       success: false,
       message: "Terjadi kesalahan saat mengambil data",
+    };
+  }
+}
+
+type GetSavedFeedbackRequestsResult = {
+  success: boolean;
+  message: string;
+  data?: FeedbackRequestListItem[];
+  total?: number;
+};
+
+export async function getSavedFeedbackRequests(
+  userId: string,
+  page: number = 1,
+  limit: number = 10,
+): Promise<GetSavedFeedbackRequestsResult> {
+  try {
+    const supabase = await createClient();
+    const offset = (page - 1) * limit;
+
+    // Get total count of saved feedback
+    const { count, error: countError } = await supabase
+      .from("saved_req")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId);
+
+    if (countError) {
+      console.error("Failed to get saved feedback count:", countError);
+      return {
+        success: false,
+        message: "Gagal mengambil jumlah data tersimpan",
+        data: [],
+        total: 0,
+      };
+    }
+
+    // Get saved feedback IDs with pagination
+    const { data: savedData, error: savedError } = await supabase
+      .from("saved_req")
+      .select("request_id, created_at")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (savedError) {
+      console.error("Failed to get saved feedback:", savedError);
+      return {
+        success: false,
+        message: "Gagal mengambil data saved feedback",
+        data: [],
+        total: 0,
+      };
+    }
+
+    if (!savedData || savedData.length === 0) {
+      return {
+        success: true,
+        message: "Tidak ada data tersimpan",
+        data: [],
+        total: count || 0,
+      };
+    }
+
+    const requestIds = savedData.map((item) => item.request_id);
+
+    // Get full feedback request data
+    const query = supabase
+      .from("request_feedback")
+      .select(
+        `
+        id,
+        title,
+        description,
+        project_url,
+        icon_url,
+        created_at,
+        user_id,
+        profiles (
+          fullname,
+          id_dummy,
+          profile_pic
+        ),
+        request_tags (
+          tag_id,
+          tags (
+            id,
+            tag
+          )
+        )
+      `,
+      )
+      .in("id", requestIds)
+      .order("created_at", { ascending: false });
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Failed to get feedback requests details:", error);
+      return {
+        success: false,
+        message: "Gagal mengambil detail feedback request",
+        data: [],
+        total: 0,
+      };
+    }
+
+    // Get vote counts and feedback counts for each request
+    const requestsWithCounts = await Promise.all(
+      (data || []).map(async (req) => {
+        // Get vote count
+        const { data: votes } = await supabase
+          .from("request_vote")
+          .select("vote")
+          .eq("request_id", req.id);
+
+        const upvotes = votes?.filter((v) => v.vote === true).length || 0;
+        const downvotes = votes?.filter((v) => v.vote === false).length || 0;
+        const voteCount = upvotes - downvotes;
+
+        // Get feedback count
+        const { count: feedbackCount } = await supabase
+          .from("feedback")
+          .select("*", { count: "exact", head: true })
+          .eq("request_id", req.id);
+
+        return {
+          id: req.id,
+          title: req.title,
+          description: req.description,
+          project_url: req.project_url,
+          icon_url: req.icon_url,
+          created_at: req.created_at,
+          user_id: req.user_id,
+          profiles: req.profiles,
+          vote_count: voteCount,
+          feedback_count: feedbackCount || 0,
+          request_tags: req.request_tags,
+        };
+      }),
+    );
+
+    return {
+      success: true,
+      message: "Data berhasil diambil",
+      data: requestsWithCounts as FeedbackRequestListItem[],
+      total: count || 0,
+    };
+  } catch (error) {
+    console.error("Unexpected error in getSavedFeedbackRequests:", error);
+    return {
+      success: false,
+      message: "Terjadi kesalahan saat mengambil data",
+      data: [],
+      total: 0,
+    };
+  }
+}
+
+export async function getFeedbackRequestsByUserId(
+  userId: string,
+  page: number = 1,
+  limit: number = 10,
+): Promise<GetSavedFeedbackRequestsResult> {
+  try {
+    const supabase = await createClient();
+    const offset = (page - 1) * limit;
+
+    // Get total count
+    const { count, error: countError } = await supabase
+      .from("request_feedback")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId);
+
+    if (countError) {
+      console.error("Failed to get user feedback count:", countError);
+      return {
+        success: false,
+        message: "Gagal mengambil jumlah data",
+        data: [],
+        total: 0,
+      };
+    }
+
+    // Get paginated data
+    const query = supabase
+      .from("request_feedback")
+      .select(
+        `
+        id,
+        title,
+        description,
+        project_url,
+        icon_url,
+        created_at,
+        user_id,
+        profiles (
+          fullname,
+          id_dummy,
+          profile_pic
+        ),
+        request_tags (
+          tag_id,
+          tags (
+            id,
+            tag
+          )
+        )
+      `,
+      )
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Failed to get user feedback requests:", error);
+      return {
+        success: false,
+        message: "Gagal mengambil data feedback request",
+        data: [],
+        total: 0,
+      };
+    }
+
+    if (!data || data.length === 0) {
+      return {
+        success: true,
+        message: "Tidak ada data feedback",
+        data: [],
+        total: count || 0,
+      };
+    }
+
+    // Get vote counts and feedback counts for each request
+    const requestsWithCounts = await Promise.all(
+      data.map(async (req) => {
+        // Get vote count
+        const { data: votes } = await supabase
+          .from("request_vote")
+          .select("vote")
+          .eq("request_id", req.id);
+
+        const upvotes = votes?.filter((v) => v.vote === true).length || 0;
+        const downvotes = votes?.filter((v) => v.vote === false).length || 0;
+        const voteCount = upvotes - downvotes;
+
+        // Get feedback count
+        const { count: feedbackCount } = await supabase
+          .from("feedback")
+          .select("*", { count: "exact", head: true })
+          .eq("request_id", req.id);
+
+        return {
+          id: req.id,
+          title: req.title,
+          description: req.description,
+          project_url: req.project_url,
+          icon_url: req.icon_url,
+          created_at: req.created_at,
+          user_id: req.user_id,
+          profiles: req.profiles,
+          vote_count: voteCount,
+          feedback_count: feedbackCount || 0,
+          request_tags: req.request_tags,
+        };
+      }),
+    );
+
+    return {
+      success: true,
+      message: "Data berhasil diambil",
+      data: requestsWithCounts as FeedbackRequestListItem[],
+      total: count || 0,
+    };
+  } catch (error) {
+    console.error("Unexpected error in getFeedbackRequestsByUserId:", error);
+    return {
+      success: false,
+      message: "Terjadi kesalahan saat mengambil data",
+      data: [],
+      total: 0,
     };
   }
 }

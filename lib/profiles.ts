@@ -27,6 +27,33 @@ export const GetUserProps = async (id: string) => {
   return { userLink, userExperience, userSkills, userProfile };
 };
 
+export const GetUserPropsByDummyId = async (id: string) => {
+  const supabase = createClient();
+
+  const userProfile = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id_dummy", id)
+    .single();
+
+  const userLink = await supabase
+    .from("user_links")
+    .select("*")
+    .eq("user_id_dummy", id);
+
+  const userExperience = await supabase
+    .from("user_experience")
+    .select("*")
+    .eq("user_id_dummy", id);
+
+  const userSkills = await supabase
+    .from("user_skills")
+    .select("*")
+    .eq("user_id_dummy", id);
+
+  return { userLink, userExperience, userSkills, userProfile };
+};
+
 // ============ PROFILE UPDATE ============
 export const updateProfile = async (
   userId: string,
@@ -170,10 +197,13 @@ export const createUserSkill = async (
 ) => {
   const supabase = createClient();
 
+  const { data: id_dummy } = await supabase.from("profiles").select("id_dummy").eq("id", userId).single();
+
   const { data, error } = await supabase
     .from("user_skills")
     .insert({
       user_id: userId,
+      user_id_dummy: id_dummy?.id_dummy,
       skill_name: skillName,
       level: level,
     })
@@ -230,10 +260,13 @@ export const createUserExperience = async (data: {
 }) => {
   const supabase = createClient();
 
+  const { data: id_dummy } = await supabase.from("profiles").select("id_dummy").eq("id", data.userId).single();
+
   const { data: newExperience, error } = await supabase
     .from("user_experience")
     .insert({
       user_id: data.userId,
+      user_id_dummy: id_dummy?.id_dummy,
       organization_name: data.organizationName,
       role: data.role,
       start_date: data.startDate,
@@ -295,10 +328,13 @@ export const createUserLink = async (
 ) => {
   const supabase = createClient();
 
+  const { data: id_dummy } = await supabase.from("profiles").select("id_dummy").eq("id", userId).single();
+
   const { data, error } = await supabase
     .from("user_links")
     .insert({
       user_id: userId,
+      user_id_dummy: id_dummy?.id_dummy,
       platform: platform,
       url: url,
     })

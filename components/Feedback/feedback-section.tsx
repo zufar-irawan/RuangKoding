@@ -24,6 +24,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import Image from "next/image";
+import Link from "next/link";
 
 type FeedbackWithHTML = {
   id: number;
@@ -37,6 +39,7 @@ type FeedbackWithHTML = {
     fullname: string;
     bio: string | null;
     profile_pic: string | null;
+    id_dummy: number;
   } | null;
 };
 
@@ -127,9 +130,9 @@ export default function FeedbackSection({
               const profile = feedback.profiles;
               const timeAgo = feedback.created_at
                 ? formatDistanceToNow(new Date(feedback.created_at), {
-                    addSuffix: true,
-                    locale: id,
-                  })
+                  addSuffix: true,
+                  locale: id,
+                })
                 : "";
 
               return (
@@ -149,14 +152,24 @@ export default function FeedbackSection({
                     <div className="flex-1 min-w-0">
                       <div className="text-xs md:text-sm text-muted-foreground">
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full bg-secondary text-xs md:text-sm font-semibold text-secondary-foreground">
-                              {profile?.fullname.charAt(0).toUpperCase() || "U"}
-                            </div>
-                            <span className="text-foreground">
+                          <Link href={`/${profile?.fullname.toLowerCase().replace(/\s/g, "-")}-${profile?.id_dummy}`} className="flex group items-center gap-2">
+                            {profile?.profile_pic ? (
+                              <Image
+                                src={profile.profile_pic}
+                                alt={profile.fullname}
+                                width={24}
+                                height={24}
+                                className="rounded-full"
+                              />
+                            ) : (
+                              <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full bg-secondary text-xs md:text-sm font-semibold text-secondary-foreground">
+                                {profile?.fullname.charAt(0).toUpperCase() || "U"}
+                              </div>
+                            )}
+                            <span className="text-foreground group-hover:text-primary">
                               {profile?.fullname || "Pengguna"}
                             </span>
-                          </div>
+                          </Link>
 
                           <div className="flex items-center gap-2 md:gap-3">
                             <p className="text-muted-foreground hidden sm:inline">
