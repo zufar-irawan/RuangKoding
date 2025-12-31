@@ -94,7 +94,7 @@ export default async function RequestContent({
                 alt={profile.fullname}
                 width={24}
                 height={24}
-                className="rounded-full"
+                className="rounded-full h-7 w-7 md:h-8 md:w-8"
               />
             ) : (
               <div className="flex h-7 w-7 md:h-8 md:w-8 lg:w-9 lg:h-9 items-center justify-center rounded-full bg-secondary text-xs md:text-sm lg:text-md font-semibold text-secondary-foreground">

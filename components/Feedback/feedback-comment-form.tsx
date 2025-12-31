@@ -357,7 +357,7 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
                         alt={profile?.fullname}
                         width={24}
                         height={24}
-                        className="rounded-full"
+                        className="rounded-full h-7 w-7 md:h-8 md:w-8"
                       />
                     ) : (
                       <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full bg-secondary text-xs md:text-sm font-semibold text-secondary-foreground">
@@ -548,7 +548,7 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
                           alt={profile.fullname}
                           width={40}
                           height={40}
-                          className="rounded-full"
+                          className="rounded-full w-8 h-8 md:w-10 md:h-10"
                         />
                       ) : (
                         <div className="flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-full bg-secondary text-xs md:text-sm font-semibold text-secondary-foreground">

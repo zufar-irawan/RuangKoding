@@ -95,7 +95,7 @@ export default function FeedbackRequestCard({
                   alt={userProfile.fullname}
                   width={24}
                   height={24}
-                  className="rounded-full"
+                  className="rounded-full w-5 h-5"
                 />
               ) : (
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-secondary/80 text-xs font-semibold text-secondary-foreground">
@@ -134,7 +134,7 @@ export default function FeedbackRequestCard({
 
           <div className="flex-1 min-w-0">
             <Link
-              href={`/lautan-feedback/${request.title.toLowerCase().replace(" ", "-")}-${request.id}`}
+              href={`/lautan-feedback/${request.title.toLowerCase().replaceAll(" ", "-").replaceAll("/", "-")}-${request.id}`}
               className="text-base font-semibold text-foreground hover:text-primary transition-colors line-clamp-2 leading-snug"
             >
               {request.title}

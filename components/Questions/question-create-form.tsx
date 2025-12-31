@@ -198,9 +198,6 @@ export default function QuestionCreateForm() {
           <Button type="submit" variant="default" disabled={isSubmitting} className="w-full sm:w-auto">
             {isSubmitting ? "Mengirim..." : "Kirim, dan tunggu jawabannya!"}
           </Button>
-          <Button variant="outline" disabled={isSubmitting} className="w-full sm:w-auto">
-            Simpan sebagai draft
-          </Button>
         </div>
       </form>
     </div>

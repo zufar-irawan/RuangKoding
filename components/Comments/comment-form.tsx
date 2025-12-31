@@ -366,7 +366,7 @@ export default function CommentForm({ question_id, answer }: Props) {
                           alt={profile.fullname}
                           width={40}
                           height={40}
-                          className="rounded-full"
+                          className="rounded-full h-8 w-8"
                         />
                       ) : (
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-secondary-foreground">

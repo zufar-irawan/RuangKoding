@@ -159,7 +159,7 @@ export default function FeedbackSection({
                                 alt={profile.fullname}
                                 width={24}
                                 height={24}
-                                className="rounded-full"
+                                className="rounded-full h-7 w-7 md:h-8 md:w-8"
                               />
                             ) : (
                               <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full bg-secondary text-xs md:text-sm font-semibold text-secondary-foreground">

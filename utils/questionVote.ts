@@ -156,24 +156,24 @@ export async function handleQuestionVote(
       if (insertError) throw insertError;
 
       // Create notification (only if not voting own question)
-      if (questionOwnerId !== user.id) {
-        const notificationContent = voteType
-          ? `${voterName} memberikan vote up pada pertanyaan "${questionTitle}"`
-          : `${voterName} memberikan vote down pada pertanyaan "${questionTitle}"`;
+      // if (questionOwnerId !== user.id) {
+      //   const notificationContent = voteType
+      //     ? `${voterName} memberikan vote up pada pertanyaan "${questionTitle}"`
+      //     : `${voterName} memberikan vote down pada pertanyaan "${questionTitle}"`;
 
-        const { error: notifError } = await supabase
-          .from("notifications")
-          .insert({
-            receiver_id: questionOwnerId,
-            sender_id: user.id,
-            question_id: questionId,
-            answer_id: null,
-            content: notificationContent,
-            read: false,
-          });
+      //   const { error: notifError } = await supabase
+      //     .from("notifications")
+      //     .insert({
+      //       receiver_id: questionOwnerId,
+      //       sender_id: user.id,
+      //       question_id: questionId,
+      //       answer_id: null,
+      //       content: notificationContent,
+      //       read: false,
+      //     });
 
-        if (notifError) throw notifError;
-      }
+      //   if (notifError) throw notifError;
+      // }
 
       return {
         success: true,

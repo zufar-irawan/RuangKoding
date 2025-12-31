@@ -160,7 +160,7 @@ export default function FeedbackRequestForm() {
       }
 
       toast.success(result.message);
-      router.push("/");
+      router.push("/lautan-feedback");
       router.refresh();
     } catch (error) {
       console.error("Unexpected error:", error);

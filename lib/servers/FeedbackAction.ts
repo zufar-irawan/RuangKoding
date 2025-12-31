@@ -75,7 +75,8 @@ export async function getRequestById(requestId: number) {
 export async function getFeedbacksByRequestId(requestId: number) {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  // 1. Fetch feedbacks
+  const { data: feedbacks, error } = await supabase
     .from("feedback")
     .select(
       `
@@ -93,15 +94,57 @@ export async function getFeedbacksByRequestId(requestId: number) {
       )
     `,
     )
-    .eq("request_id", requestId)
-    .order("created_at", { ascending: false });
+    .eq("request_id", requestId);
 
   if (error) {
     console.error("Error fetching feedbacks:", error);
     return [];
   }
 
-  return data as FeedbackDetailItem[];
+  if (!feedbacks || feedbacks.length === 0) {
+    return [];
+  }
+
+  // 2. Fetch vote counts for these feedbacks
+  const feedbackIds = feedbacks.map((f) => f.id);
+
+  const { data: votes, error: voteError } = await supabase
+    .from("feedback_vote")
+    .select("feedback_id, vote")
+    .in("feedback_id", feedbackIds);
+
+  if (voteError) {
+    console.error("Error fetching feedback votes:", voteError);
+    // If vote fetch fails, return unsorted (or default sorted) feedbacks
+    return feedbacks.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) as FeedbackDetailItem[];
+  }
+
+  // 3. Calculate score for each feedback
+  const feedbackScores = new Map<number, number>();
+
+  // Initialize scores with 0
+  feedbackIds.forEach(id => feedbackScores.set(id, 0));
+
+  // Calculate scores
+  votes?.forEach((vote) => {
+    const currentScore = feedbackScores.get(vote.feedback_id) || 0;
+    feedbackScores.set(vote.feedback_id, currentScore + (vote.vote ? 1 : -1));
+  });
+
+  // 4. Sort feedbacks by score desc, then by created_at desc
+  const sortedFeedbacks = feedbacks.sort((a, b) => {
+    const scoreA = feedbackScores.get(a.id) || 0;
+    const scoreB = feedbackScores.get(b.id) || 0;
+
+    if (scoreA !== scoreB) {
+      return scoreB - scoreA; // Highest score first
+    }
+
+    // Tie-breaker: newest first
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
+
+  return sortedFeedbacks as FeedbackDetailItem[];
 }
 
 // Create new feedback

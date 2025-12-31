@@ -76,7 +76,7 @@ export default function CommentReplies({
                       alt={replyProfile.fullname}
                       width={32}
                       height={32}
-                      className="rounded-full"
+                      className="rounded-full h-8 w-8"
                     />
                   ) : (
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-secondary-foreground">
