@@ -19,7 +19,8 @@ const nextConfig: NextConfig = {
         pathname: "/storage/v1/object/public/**",            // bila ada folder lain
       },
     ],
-  }
+  },
+  output: 'standalone'
 };
 
 export default nextConfig;
