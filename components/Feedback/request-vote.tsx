@@ -46,7 +46,6 @@ export default function RequestVote({
   const [userVote, setUserVote] = useState<boolean | null>(null);
   const [currentVoteCount, setCurrentVoteCount] = useState(initialVoteCount);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isAuthor, setIsAuthor] = useState(false);
 
   const shareUrl =
@@ -65,7 +64,6 @@ export default function RequestVote({
       // Get current user
       const user = await getClientUser();
       const userId = user?.id || null;
-      setCurrentUserId(userId);
 
       // Check if current user is the author
       const userIsAuthor = userId !== null && userId === requestUserId;
@@ -321,9 +319,8 @@ export default function RequestVote({
               )}
             </Button>
             <span
-              className={`text-3xl font-bold min-w-[3ch] text-center transition-all duration-300 ${
-                isVoteLoading ? "opacity-50 scale-95" : "opacity-100 scale-100"
-              }`}
+              className={`text-3xl font-bold min-w-[3ch] text-center transition-all duration-300 ${isVoteLoading ? "opacity-50 scale-95" : "opacity-100 scale-100"
+                }`}
             >
               {currentVoteCount}
             </span>

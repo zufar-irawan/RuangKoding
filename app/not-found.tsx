@@ -29,7 +29,7 @@ export default function NotFound() {
             </h2>
 
             <p className="max-w-[600px] text-muted-foreground mb-8 text-lg animate-in slide-in-from-bottom-6 duration-700 delay-200">
-                Oops! We couldn't find the page you were looking for. It might have been moved, deleted, or you may have mistyped the address.
+                Oops! We couldn&apos;t find the page you were looking for. It might have been moved, deleted, or you may have mistyped the address.
             </p>
 
             <div className="flex gap-4 animate-in slide-in-from-bottom-7 duration-700 delay-300">

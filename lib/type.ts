@@ -88,6 +88,7 @@ type FeedbackListItem = {
     fullname: string;
     bio: string | null;
     profile_pic: string | null;
+    id_dummy: number;
   } | null;
   voteScore?: number;
 };

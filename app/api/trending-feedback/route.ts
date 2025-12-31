@@ -70,7 +70,8 @@ export async function GET(request: NextRequest) {
           id,
           fullname,
           bio,
-          profile_pic
+          profile_pic,
+          id_dummy
         )
       `,
       )

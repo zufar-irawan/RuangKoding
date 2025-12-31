@@ -3,6 +3,23 @@ import { MessageSquarePlus } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+type FeedbackRequest = {
+    id: number;
+    title: string;
+    description: unknown;
+    project_url: string;
+    icon_url: string | null;
+    created_at: string;
+    user_id: string;
+    profiles: {
+        fullname: string;
+        id_dummy: number;
+        profile_pic: string | null;
+    } | null;
+    vote_count?: number;
+    feedback_count?: number;
+};
+
 type YourFeedbackListProps = {
     feedbackRequests: unknown;
 };
@@ -12,7 +29,7 @@ export default function YourFeedbackList({
 }: YourFeedbackListProps) {
     const validRequests = (
         Array.isArray(feedbackRequests) ? feedbackRequests : []
-    ).filter((f: unknown) => f !== null && typeof f === "object" && "id" in f);
+    ).filter((f: unknown) => f !== null && typeof f === "object" && "id" in f) as FeedbackRequest[];
 
     if (!validRequests || validRequests.length === 0) {
         return (
@@ -38,7 +55,7 @@ export default function YourFeedbackList({
 
     return (
         <div className="space-y-4">
-            {validRequests.map((request: any) => (
+            {validRequests.map((request) => (
                 <FeedbackRequestCard key={request.id} request={request} />
             ))}
         </div>

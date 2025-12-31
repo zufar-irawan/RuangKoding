@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
+import { Json } from "@/lib/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -31,7 +32,7 @@ type FeedbackWithHTML = {
   id: number;
   request_id: number;
   user_id: string;
-  feedback: any;
+  feedback: Json;
   created_at: string;
   html?: string;
   profiles: {

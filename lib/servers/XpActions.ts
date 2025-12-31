@@ -6,7 +6,7 @@ type props = {
   user_id: string;
   xp: number;
   reference: number;
-  source_user_id?: string;
+  source_user_id: string;
 };
 
 async function acceptedAnswerXP({

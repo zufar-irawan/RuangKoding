@@ -272,11 +272,13 @@ export async function acceptAnswer(
     return error.message;
   }
 
+  if (!user?.sub) return "Terjadi kesalahan saat mengidentifikasi pengguna!";
+
   await acceptedAnswerXP({
     user_id: answer_user_id,
     xp: 40,
     reference: answer_id,
-    source_user_id: user?.sub,
+    source_user_id: user.sub,
   });
 
   return "Jawaban ditandai sebagai membantu!";

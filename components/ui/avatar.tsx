@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const Avatar = React.forwardRef<
@@ -19,24 +20,28 @@ const Avatar = React.forwardRef<
 Avatar.displayName = "Avatar";
 
 const AvatarImage = React.forwardRef<
-  HTMLImageElement,
-  React.ImgHTMLAttributes<HTMLImageElement>
->(({ className, src, alt, ...props }, ref) => {
+  HTMLDivElement,
+  Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src'> & { src?: string }
+>(({ className, src, alt }, ref) => {
   const [imageLoaded, setImageLoaded] = React.useState(false);
 
+  if (!src) return null;
+
   return (
-    <img
-      ref={ref}
-      className={cn(
-        "aspect-square h-full w-full object-cover",
-        imageLoaded ? "block" : "hidden",
-        className
-      )}
-      src={src}
-      alt={alt}
-      onLoad={() => setImageLoaded(true)}
-      {...props}
-    />
+    <div ref={ref} className="relative h-full w-full">
+      <Image
+        className={cn(
+          "aspect-square h-full w-full object-cover",
+          imageLoaded ? "block" : "hidden",
+          className
+        )}
+        src={src}
+        alt={alt || ""}
+        fill
+        sizes="40px"
+        onLoad={() => setImageLoaded(true)}
+      />
+    </div>
   );
 });
 AvatarImage.displayName = "AvatarImage";

@@ -10,8 +10,6 @@ import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
 import type { TagsType } from "@/lib/type";
 import { getClientUser } from "@/utils/GetClientUser";
-import { showXPAlert } from "@/utils/xpAlert";
-import Swal from "sweetalert2";
 import { toast } from "sonner";
 
 export default function QuestionCreateForm() {
@@ -125,7 +123,7 @@ export default function QuestionCreateForm() {
       // Associate tags
       await handleTagSubmit(data.id);
 
-      router.push("/");
+      router.push("/question");
       router.refresh();
     } catch (error) {
       console.error("Unexpected error:", error);

@@ -1,23 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { GetUserProps } from "@/lib/profiles";
-import { User, Shield, Bell, Loader2 } from "lucide-react";
+import { User, Shield, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Database } from "@/lib/supabase/types";
 import {
   SettingsSidebar,
   SettingsSection,
   AccountSection,
-  NotificationSection,
   SecuritySection,
 } from "@/components/Settings";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
-export default function SettingsPage() {
+function Settings() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [user, setUser] = useState<Profile | null>(null);
@@ -203,5 +202,18 @@ export default function SettingsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+        </div>
+      }>
+      <Settings />
+    </Suspense>
   );
 }

@@ -4,6 +4,8 @@ import Footer from "@/components/ui/footer";
 import ExplainYourCodeContent from "../../components/ExplainYourCode/explain-your-code-content";
 import { getExplainRequestHistory } from "@/lib/servers/ExplainYourCodeAction";
 
+export const dynamic = 'force-dynamic';
+
 export default async function ExplainYourCodePage() {
   const historyResult = await getExplainRequestHistory(1, 20);
 

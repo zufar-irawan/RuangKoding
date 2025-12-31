@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, Home, UserX, CheckCircle2 } from "lucide-react";
+import { Heart, Home, UserX, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 
-export default function SelamatTinggalPage() {
+function SelamatTinggal() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isDeleted, setIsDeleted] = useState(false);
@@ -132,5 +132,17 @@ export default function SelamatTinggalPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function SelamatTinggalPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+      </div>
+    }>
+      <SelamatTinggal />
+    </Suspense>
   );
 }

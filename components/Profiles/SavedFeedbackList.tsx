@@ -1,6 +1,23 @@
 import FeedbackRequestCard from "@/components/feedback-request-card";
 import { MessageSquareX } from "lucide-react";
 
+type FeedbackRequest = {
+    id: number;
+    title: string;
+    description: unknown;
+    project_url: string;
+    icon_url: string | null;
+    created_at: string;
+    user_id: string;
+    profiles: {
+        fullname: string;
+        id_dummy: number;
+        profile_pic: string | null;
+    } | null;
+    vote_count?: number;
+    feedback_count?: number;
+};
+
 type SavedFeedbackListProps = {
     savedFeedback: unknown;
 };
@@ -10,7 +27,7 @@ export default function SavedFeedbackList({
 }: SavedFeedbackListProps) {
     const validFeedback = (
         Array.isArray(savedFeedback) ? savedFeedback : []
-    ).filter((f: unknown) => f !== null && typeof f === "object" && "id" in f);
+    ).filter((f: unknown) => f !== null && typeof f === "object" && "id" in f) as FeedbackRequest[];
 
     if (!validFeedback || validFeedback.length === 0) {
         return (
@@ -33,7 +50,7 @@ export default function SavedFeedbackList({
 
     return (
         <div className="space-y-4">
-            {validFeedback.map((feedback: any) => (
+            {validFeedback.map((feedback) => (
                 <FeedbackRequestCard key={feedback.id} request={feedback} />
             ))}
         </div>

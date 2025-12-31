@@ -362,7 +362,6 @@ export async function getFeedbackRequests(
     }
 
     // Get vote counts and feedback counts for each request
-    const requestIds = (data || []).map((req) => req.id);
     const requestsWithCounts = await Promise.all(
       (data || []).map(async (req) => {
         // Get vote count

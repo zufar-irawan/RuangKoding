@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +23,8 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { updateUserEmail } from "@/lib/servers/UserActions";
 
-export default function EditEmailPage() {
+// Komponen Internal yang menggunakan searchParams
+function EditEmailForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const verified = searchParams.get("verified");
@@ -73,7 +74,6 @@ export default function EditEmailPage() {
     }
 
     try {
-      // Call server action
       const result = await updateUserEmail(newEmail);
 
       if (result.success) {
@@ -84,12 +84,10 @@ export default function EditEmailPage() {
             "Email berhasil diperbarui! Silakan cek inbox email baru Anda untuk konfirmasi.",
         });
 
-        // Redirect after 3 seconds
         setTimeout(() => {
           router.push("/protected/settings/account");
         }, 3000);
       } else {
-        // Check if it's a rate limit error
         if (result.error?.includes("tunggu")) {
           setMessage({
             type: "warning",
@@ -142,19 +140,20 @@ export default function EditEmailPage() {
         <CardContent className="p-4 sm:p-6">
           {message && (
             <div
-              className={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg ${
-                message.type === "success"
+              className={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg ${message.type === "success"
                   ? "bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20"
                   : message.type === "warning"
                     ? "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20"
                     : "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
-              }`}
+                }`}
             >
               <div className="flex items-center gap-2">
                 {message.type === "success" && (
                   <CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4 shrink-0" />
                 )}
-                {message.type === "warning" && <Clock className="w-3 h-3 sm:w-4 sm:h-4 shrink-0" />}
+                {message.type === "warning" && (
+                  <Clock className="w-3 h-3 sm:w-4 sm:h-4 shrink-0" />
+                )}
                 <p className="text-xs sm:text-sm">{message.text}</p>
               </div>
             </div>
@@ -162,7 +161,9 @@ export default function EditEmailPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="current-email" className="text-sm">Email Saat Ini</Label>
+              <Label htmlFor="current-email" className="text-sm">
+                Email Saat Ini
+              </Label>
               <Input
                 id="current-email"
                 type="email"
@@ -173,7 +174,9 @@ export default function EditEmailPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="new-email" className="text-sm">Email Baru</Label>
+              <Label htmlFor="new-email" className="text-sm">
+                Email Baru
+              </Label>
               <Input
                 id="new-email"
                 type="email"
@@ -210,10 +213,17 @@ export default function EditEmailPage() {
               >
                 Batal
               </Button>
-              <Button type="submit" disabled={isLoading} className="flex-1 text-sm">
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="flex-1 text-sm"
+              >
                 {isLoading ? (
                   <>
-                    <Loader2 size={14} className="sm:w-4 sm:h-4 animate-spin mr-2" />
+                    <Loader2
+                      size={14}
+                      className="sm:w-4 sm:h-4 animate-spin mr-2"
+                    />
                     Menyimpan...
                   </>
                 ) : (
@@ -228,5 +238,20 @@ export default function EditEmailPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+// Komponen Utama (Export Default) dengan Suspense Boundary
+export default function EditEmailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+        </div>
+      }
+    >
+      <EditEmailForm />
+    </Suspense>
   );
 }

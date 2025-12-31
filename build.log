@@ -1,0 +1,45 @@
+
+> build
+> next build
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Γû▓ Next.js 16.0.3 (Turbopack)
+   - Environments: .env.local
+
+ ΓÜá The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+   Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+ Γ£ô Compiled successfully in 6.9s
+   Running TypeScript ...
+   Collecting page data using 11 workers ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 11 workers (0/36) ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   Generating static pages using 11 workers (9/36) 
+   Generating static pages using 11 workers (18/36) 
+   Generating static pages using 11 workers (27/36) 
+ Γ¿» useSearchParams() should be wrapped in a suspense boundary at page "/selamat-tinggal". Read more: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
+    at S (D:\Zufar\Documents\Projects\RuangKoding\.next\server\chunks\ssr\node_modules_next_cf02c53c._.js:2:2111)
+    at p (D:\Zufar\Documents\Projects\RuangKoding\.next\server\chunks\ssr\node_modules_next_cf02c53c._.js:4:4847)
+    at m (D:\Zufar\Documents\Projects\RuangKoding\.next\server\chunks\ssr\_52094c74._.js:1:2281)
+    at ar (D:\Zufar\Documents\Projects\RuangKoding\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:84366)
+    at aa (D:\Zufar\Documents\Projects\RuangKoding\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:86185)
+    at as (D:\Zufar\Documents\Projects\RuangKoding\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:107952)
+    at ao (D:\Zufar\Documents\Projects\RuangKoding\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:105374)
+    at an (D:\Zufar\Documents\Projects\RuangKoding\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:84718)
+    at aa (D:\Zufar\Documents\Projects\RuangKoding\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:86234)
+    at aa (D:\Zufar\Documents\Projects\RuangKoding\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:104714)
+Error occurred prerendering page "/selamat-tinggal". Read more: https://nextjs.org/docs/messages/prerender-error
+Export encountered an error on /selamat-tinggal/page: /selamat-tinggal, exiting the build.
+ Γ¿» Next.js build worker exited with code: 1 and signal: null
