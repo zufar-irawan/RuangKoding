@@ -1,5 +1,7 @@
 "use client";
 
+import { SocialAuth } from "./social-auth";
+
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -115,6 +117,7 @@ export function LoginForm({
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Logging in..." : "Masuk"}
               </Button>
+              <SocialAuth />
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}

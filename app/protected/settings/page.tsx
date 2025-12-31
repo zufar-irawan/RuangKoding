@@ -121,14 +121,14 @@ export default function SettingsPage() {
       color: "text-blue-500",
       bgColor: "bg-blue-500/10",
     },
-    {
-      id: "notifications",
-      title: "Notifikasi",
-      description: "Atur preferensi notifikasi dan pemberitahuan",
-      icon: Bell,
-      color: "text-orange-500",
-      bgColor: "bg-orange-500/10",
-    },
+    // {
+    //   id: "notifications",
+    //   title: "Notifikasi",
+    //   description: "Atur preferensi notifikasi dan pemberitahuan",
+    //   icon: Bell,
+    //   color: "text-orange-500",
+    //   bgColor: "bg-orange-500/10",
+    // },
     {
       id: "security",
       title: "Keamanan",
@@ -195,7 +195,7 @@ export default function SettingsPage() {
             <AccountSection email={user?.email || ""} />
 
             {/* Notification Section */}
-            <NotificationSection userId={userId} />
+            {/* <NotificationSection userId={userId} /> */}
 
             {/* Security Section */}
             <SecuritySection />

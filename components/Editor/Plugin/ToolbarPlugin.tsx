@@ -101,7 +101,7 @@ function sanitizeUrl(url: string) {
   return `https://${trimmed}`;
 }
 
-export function ToolbarPlugin() {
+function ToolbarPlugin() {
   const [editor] = useLexicalComposerContext();
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
@@ -621,3 +621,5 @@ export function ToolbarPlugin() {
     </div>
   );
 }
+
+export default ToolbarPlugin;

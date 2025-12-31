@@ -8,7 +8,7 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import { ToolbarPlugin } from "./Plugin/ToolbarPlugin";
+import ToolbarPlugin from "./Plugin/ToolbarPlugin";
 
 import { LinkNode } from "@lexical/link";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
