@@ -3,6 +3,6 @@ export { ChangePasswordModal } from "./ChangePasswordModal";
 export { ContactInfoForm } from "./ContactInfoForm";
 export { EditEmailModal } from "./EditEmailModal";
 export { NotificationSection } from "./NotificationSection";
-export { ProfileInfoForm } from "./ProfileInforForm";
+export { ProfileInfoForm } from "./ProfileInfoForm";
 export { SecuritySection } from "./SecuritySection";
 export { SettingsSidebar, type SettingsSection } from "./SettingsSidebar";
