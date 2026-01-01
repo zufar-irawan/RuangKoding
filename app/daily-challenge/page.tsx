@@ -35,10 +35,10 @@ export default async function DailyChallengePage() {
       <main className="min-h-screen flex flex-col bg-background">
         <Navbar />
 
-        <div className="flex flex-1 w-full mt-16">
+        <div className="flex w-full mt-16">
           <Sidebar tabs="home" />
 
-          <div className="flex-1 p-6 lg:p-8 overflow-y-auto">
+          <div className="flex-1 lg:ml-[22rem] p-6 lg:p-8 overflow-y-auto">
             <div className="max-w-4xl mx-auto">
               <div className="flex items-center gap-3 mb-6">
                 <Flame className="w-8 h-8 text-orange-500 fill-orange-500" />
@@ -67,11 +67,11 @@ export default async function DailyChallengePage() {
     <main className="min-h-screen flex flex-col bg-background">
       <Navbar />
 
-      <div className="flex flex-1 w-full mt-16">
+      <div className="flex w-full mt-16">
         <Sidebar tabs="home" />
 
-        <div className="flex-1 p-6 lg:p-8 overflow-y-auto">
-          <div className="max-w-5xl mx-auto">
+        <div className="flex-1 lg:ml-[22rem] p-6 lg:p-8 overflow-y-auto min-h-[calc(100vh-4rem)]">
+          <div className="max-w-5xl mx-auto pb-20">
             <ChallengeEditor
               challengeId={todayChallenge.id}
               challenge={todayChallenge.challenge}
