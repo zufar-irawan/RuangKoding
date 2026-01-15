@@ -84,8 +84,14 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           error: "Failed to fetch feedback requests",
+          details: fetchError.message || "Unknown error",
         },
-        { status: 500 },
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
       );
     }
 
@@ -120,22 +126,37 @@ export async function GET(request: NextRequest) {
     const endIndex = startIndex + limit;
     const paginatedRequests = sortedRequests.slice(startIndex, endIndex);
 
-    return NextResponse.json({
-      success: true,
-      data: paginatedRequests,
-      totalPages,
-      currentPage: page,
-      period,
-      totalCount,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        data: paginatedRequests,
+        totalPages,
+        currentPage: page,
+        period,
+        totalCount,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
   } catch (error) {
     console.error("Unexpected error in trending-feedback API:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
       {
         success: false,
         error: "Internal server error",
+        details: errorMessage,
       },
-      { status: 500 },
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
     );
   }
 }

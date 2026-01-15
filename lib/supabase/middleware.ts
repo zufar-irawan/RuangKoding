@@ -52,7 +52,12 @@ export async function updateSession(request: NextRequest) {
     !user &&
     !request.nextUrl.pathname.startsWith("/login") &&
     !request.nextUrl.pathname.startsWith("/auth") &&
-    !request.nextUrl.pathname.startsWith("/selamat-tinggal")
+    !request.nextUrl.pathname.startsWith("/api") &&
+    !request.nextUrl.pathname.startsWith("/selamat-tinggal") &&
+    !request.nextUrl.pathname.startsWith("/question") &&
+    !request.nextUrl.pathname.startsWith("/question/") &&
+    !request.nextUrl.pathname.startsWith("/lautan-feedback") &&
+    !request.nextUrl.pathname.startsWith("/lautan-feedback/")
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();

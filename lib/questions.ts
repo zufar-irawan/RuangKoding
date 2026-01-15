@@ -239,21 +239,6 @@ const getSavedQuestions = async (
     return { data: [], total: 0 };
   }
 
-  // Sort questions to match the order of savedData (most recently saved first)
-  // The 'in' query doesn't guarantee order, so we need to sort manually if we want to preserve "Saved At" order
-  // However, existing implementation ordered by questions.created_at ... wait.
-  // The original implementation: .in("id", questionIds).order("created_at", { ascending: false });
-  // This orders by *question creation date*, not *saved date*.
-  // Ideally saved items should be ordered by when they were saved?
-  // User request: "Masing masing section limit hingga tiga item dan gunakan pagination. saved feedback bisa diambil di table saved_req"
-  // It doesn't specify order. But normally "Saved" lists are ordered by saved date.
-  // The previous implementation was:
-  // 1. Get saved items ordered by created_at (saved date).
-  // 2. Get questions WHERE id IN (savedIds) ORDER by created_at (question date).
-  // So it was showing saved questions ordered by their creation date, essentially.
-  // I will keep the ordering logic same as before to avoid changing behavior implicitly:
-  // "order('created_at', { ascending: false })" on questions table.
-
   if (!questions || questions.length === 0) {
     return { data: [], total: count || 0 };
   }

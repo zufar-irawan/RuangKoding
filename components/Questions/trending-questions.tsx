@@ -38,6 +38,32 @@ export default function TrendingQuestions({
         const response = await fetch(
           `/api/trending-questions?period=${period}&page=${currentPage}&limit=${ITEMS_PER_PAGE}`,
         );
+
+        // Check if response is OK and content-type is JSON
+        if (!response.ok) {
+          console.error(
+            "Failed to fetch trending questions:",
+            response.status,
+            response.statusText,
+          );
+          try {
+            const errorData = await response.json();
+            console.error("Error details:", errorData);
+          } catch {
+            const textResponse = await response.text();
+            console.error("Response text:", textResponse.substring(0, 200));
+          }
+          return;
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          console.error("Invalid response content-type:", contentType);
+          const textResponse = await response.text();
+          console.error("Response preview:", textResponse.substring(0, 200));
+          return;
+        }
+
         const data = await response.json();
 
         if (data.success && data.data) {

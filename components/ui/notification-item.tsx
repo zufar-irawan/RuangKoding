@@ -34,6 +34,9 @@ export function NotificationItem({
     locale: localeId,
   });
 
+  // Debug: Check profile_pic value
+  console.log("Sender:", sender.fullname, "Profile pic:", sender.profile_pic);
+
   const getInitials = (name: string) => {
     return name.charAt(0).toUpperCase();
   };
@@ -57,10 +60,11 @@ export function NotificationItem({
       <Avatar className="h-10 w-10 flex-shrink-0">
         {sender.profile_pic ? (
           <AvatarImage src={sender.profile_pic} alt={sender.fullname} />
-        ) : null}
-        <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-          {getInitials(sender.firstname)}
-        </AvatarFallback>
+        ) : (
+          <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+            {getInitials(sender.firstname)}
+          </AvatarFallback>
+        )}
       </Avatar>
 
       <div className="flex-1 min-w-0">

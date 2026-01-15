@@ -43,7 +43,7 @@ export async function getNotifications(limit: number = 10) {
     return { data: null, error: "Unauthorized" };
   }
 
-  console.log("[NotificationAction] Fetching notifications for user:", user.id);
+  // console.log("[NotificationAction] Fetching notifications for user:", user.id);
 
   // Fetch notifications with sender profile
   const { data: rawData, error } = await supabase
