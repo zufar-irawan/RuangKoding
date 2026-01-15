@@ -116,6 +116,7 @@ Detail lisensi dapat disesuaikan sesuai kebutuhan.
 --- 
 
 ##🗄️ Supabase Database Schema (Ringkasan)
+
 RuangKoding menggunakan Supabase sebagai backend utama untuk autentikasi, penyimpanan data, dan relasi antar fitur.
 Struktur database dirancang modular untuk mendukung fitur komunitas, feedback proyek, AI assistance, dan gamifikasi.
 
