@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ExplainRequestForm from "./explain-request-form";
 import LoadingState from "./LoadingState";
 import AIQuestionSection from "./ai-question-section";
@@ -42,24 +42,30 @@ export default function ExplainYourCodeContent({
     question: string;
     options: string[];
   } | null>(null);
-  const [reviewData, setReviewData] = useState<{
-    id: number;
-    code: string;
-    answer: string;
-    greetings: string;
-    explanation: string;
-    tips: string;
-    conclusions: string;
-  } | null>(null);
+  const [reviewData, setReviewData] = useState<any | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>(initialHistory);
   const [showHistory, setShowHistory] = useState(true);
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!currentRequestId) return;
 
+    // Clear previous polling and timeout
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+
     const supabase = createClient();
 
     if (phase === "waiting-question") {
+      let isDataReceived = false;
+
       // Subscribe to AI question
       const questionChannel = supabase
         .channel(`code_ai_question_${currentRequestId}`)
@@ -73,10 +79,18 @@ export default function ExplainYourCodeContent({
           },
           async (payload: unknown) => {
             console.log("Question received:", payload);
+            if (isDataReceived) return;
             const result = await getAIQuestion(currentRequestId);
             if (result.success && result.data) {
+              isDataReceived = true;
               setQuestionData(result.data);
               setPhase("question");
+              if (pollingIntervalRef.current) {
+                clearInterval(pollingIntervalRef.current);
+              }
+              if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+              }
             }
           },
         )
@@ -84,21 +98,53 @@ export default function ExplainYourCodeContent({
 
       // Check if question already exists
       const checkQuestion = async () => {
+        if (isDataReceived) return;
         const result = await getAIQuestion(currentRequestId);
         if (result.success && result.data) {
+          isDataReceived = true;
           setQuestionData(result.data);
           setPhase("question");
+          if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current);
+          }
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+          }
         }
       };
 
       checkQuestion();
 
+      // Polling fallback every 3 seconds
+      pollingIntervalRef.current = setInterval(() => {
+        checkQuestion();
+      }, 3000);
+
+      // Timeout after 60 seconds
+      timeoutRef.current = setTimeout(() => {
+        if (!isDataReceived) {
+          console.error("Timeout waiting for question");
+          alert("Timeout menunggu pertanyaan. Silakan coba lagi.");
+          setPhase("form");
+          setCurrentRequestId(null);
+          setShowHistory(true);
+        }
+      }, 60000);
+
       return () => {
         supabase.removeChannel(questionChannel);
+        if (pollingIntervalRef.current) {
+          clearInterval(pollingIntervalRef.current);
+        }
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
       };
     }
 
     if (phase === "waiting-review") {
+      let isDataReceived = false;
+
       // Subscribe to AI review
       const reviewChannel = supabase
         .channel(`code_ai_review_${currentRequestId}`)
@@ -112,10 +158,18 @@ export default function ExplainYourCodeContent({
           },
           async (payload: unknown) => {
             console.log("Review received:", payload);
+            if (isDataReceived) return;
             const result = await getAIReview(currentRequestId);
             if (result.success && result.data) {
+              isDataReceived = true;
               setReviewData(result.data);
               setPhase("review");
+              if (pollingIntervalRef.current) {
+                clearInterval(pollingIntervalRef.current);
+              }
+              if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+              }
             }
           },
         )
@@ -123,17 +177,47 @@ export default function ExplainYourCodeContent({
 
       // Check if review already exists
       const checkReview = async () => {
+        if (isDataReceived) return;
         const result = await getAIReview(currentRequestId);
         if (result.success && result.data) {
+          isDataReceived = true;
           setReviewData(result.data);
           setPhase("review");
+          if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current);
+          }
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+          }
         }
       };
 
       checkReview();
 
+      // Polling fallback every 3 seconds
+      pollingIntervalRef.current = setInterval(() => {
+        checkReview();
+      }, 3000);
+
+      // Timeout after 60 seconds
+      timeoutRef.current = setTimeout(() => {
+        if (!isDataReceived) {
+          console.error("Timeout waiting for review");
+          alert("Timeout menunggu review. Silakan coba lagi.");
+          setPhase("form");
+          setCurrentRequestId(null);
+          setShowHistory(true);
+        }
+      }, 60000);
+
       return () => {
         supabase.removeChannel(reviewChannel);
+        if (pollingIntervalRef.current) {
+          clearInterval(pollingIntervalRef.current);
+        }
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
       };
     }
   }, [phase, currentRequestId]);
@@ -168,7 +252,7 @@ export default function ExplainYourCodeContent({
   };
 
   return (
-    <div className="space-y-4 md:space-y-6 lg:space-y-8">
+    <div className="space-y-4 md:space-y-6 lg:space-y-8 flex-1">
       {/* Top Section */}
       <div
         className={`transition-all duration-500 ${
