@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   BookOpen,
   AlertCircle,
+  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ReactMarkdown from "react-markdown";
@@ -298,7 +299,7 @@ export default function AIReviewSection({
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-sm sm:text-base md:text-lg font-semibold text-foreground mb-1.5 sm:mb-2 md:mb-3 flex items-center gap-1 sm:gap-2">
-                {review.greetings.isCorrect ? "✅" : "ℹ️"} Penjelasan dari AI
+                Penjelasan dari AI
               </h3>
               <div className="text-xs sm:text-sm md:text-base text-foreground/90 leading-5 sm:leading-6 md:leading-7">
                 <p>{review.greetings.reason}</p>
@@ -318,7 +319,7 @@ export default function AIReviewSection({
             </div>
             <div className="flex-1 min-w-0">
               <h4 className="text-xs sm:text-sm md:text-base font-semibold text-foreground flex items-center gap-1 sm:gap-2">
-                📚 Penjelasan Detail
+                Penjelasan Detail
               </h4>
             </div>
           </div>
@@ -360,7 +361,7 @@ export default function AIReviewSection({
                       : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   }`}
                 >
-                  📝 Deskripsi
+                  Deskripsi
                 </button>
                 <button
                   onClick={() => setActiveTab("tips")}
@@ -370,7 +371,7 @@ export default function AIReviewSection({
                       : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   }`}
                 >
-                  💡 Tips
+                  Tips
                 </button>
               </div>
 
