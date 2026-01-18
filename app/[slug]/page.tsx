@@ -6,6 +6,7 @@ import LinksCard from "@/components/Profiles/LinksCard";
 import BioViewer from "@/components/Profiles/BioViewer";
 import { parseSlug } from "@/lib/utils";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
 type Props = {
   params: Promise<{
@@ -13,11 +14,32 @@ type Props = {
   }>;
 };
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const { id } = parseSlug(slug);
+
+  if (!id) {
+    return notFound();
+  }
+
+  const { userProfile } = await GetUserPropsByDummyId(id);
+  const user = userProfile.data;
+
+  if (!user) {
+    return notFound();
+  }
+
+  return {
+    title: `${user.fullname} - Profil Publik`,
+    description: `Public profile page for ${user.fullname}`,
+  };
+}
+
 export default async function PublicProfilePage({ params }: Props) {
   const { slug } = await params;
   const { id } = parseSlug(slug);
 
-  console.log(id)
+  console.log(id);
 
   if (!id) {
     return notFound();
@@ -50,11 +72,11 @@ export default async function PublicProfilePage({ params }: Props) {
       {/*body */}
       <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 md:py-8">
         <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6 md:space-y-8">
-
-
           {/* Level Display (Text Only) */}
           <div className="flex items-center gap-2 px-1">
-            <span className="text-lg font-medium">Level {user?.level || 1}</span>
+            <span className="text-lg font-medium">
+              Level {user?.level || 1}
+            </span>
           </div>
 
           <BioViewer bioContent={user?.bio || null} />

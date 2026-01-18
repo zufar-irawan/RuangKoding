@@ -14,6 +14,12 @@ import {
   TrendingUp,
   HelpCircle,
 } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Profil Kamu - RuangKoding",
+  description: "Your dashboard on RuangKoding",
+};
 
 export default async function ProtectedPage() {
   const supabase = await createClient();
@@ -50,7 +56,9 @@ export default async function ProtectedPage() {
         <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6 md:space-y-8">
           {/* Level Bar Section */}
           <div className="bg-card border rounded-lg p-4 sm:p-6 shadow-sm">
-            <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Progress Kamu</h2>
+            <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
+              Progress Kamu
+            </h2>
             <LevelBar level={user?.level || 1} xp={user?.xp || 0} />
           </div>
 

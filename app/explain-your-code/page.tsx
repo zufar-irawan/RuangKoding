@@ -3,8 +3,13 @@ import Sidebar from "@/components/ui/sidebar";
 import Footer from "@/components/ui/footer";
 import ExplainYourCodeContent from "../../components/ExplainYourCode/explain-your-code-content";
 import { getExplainRequestHistory } from "@/lib/servers/ExplainYourCodeAction";
+import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Explain Your Code",
+};
 
 export default async function ExplainYourCodePage() {
   const historyResult = await getExplainRequestHistory(1, 20);
@@ -38,8 +43,6 @@ export default async function ExplainYourCodePage() {
               />
             </div>
           </div>
-
-          <Footer />
         </main>
       </div>
     </div>

@@ -1,4 +1,9 @@
 import { LoginForm } from "@/components/Auth/login-form";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Masuk ke RuangKoding",
+};
 
 export default function Page() {
   return (

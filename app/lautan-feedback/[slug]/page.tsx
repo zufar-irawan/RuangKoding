@@ -5,12 +5,35 @@ import Sidebar from "@/components/ui/sidebar";
 import { BackButton } from "@/components/ui/back-button";
 import RequestContent from "@/components/Feedback/request-content";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Metadata } from "next";
+import { getRequestById } from "@/lib/servers/FeedbackAction";
+import { notFound } from "next/navigation";
 
 type Props = {
   params: {
     slug: string;
   };
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const { id: requestId } = parseSlug(slug);
+
+  const request = await getRequestById(Number(requestId));
+
+  if (!request) {
+    return {
+      title: "Request Not Found - RuangKoding",
+    };
+  }
+
+  return {
+    title: `${request.title} - RuangKoding`,
+    description: request.description
+      ? String(request.description)
+      : request.title,
+  };
+}
 
 function RequestDetailSkeleton() {
   return (

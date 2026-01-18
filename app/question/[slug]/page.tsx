@@ -5,12 +5,35 @@ import Sidebar from "@/components/ui/sidebar";
 import { BackButton } from "@/components/ui/back-button";
 import QuestionContent from "@/components/Questions/question-content";
 import QuestionDetailSkeleton from "@/components/Questions/question-detail-skeleton";
+import { Metadata } from "next";
+import { getQuestionFromID } from "@/lib/questions";
 
 type Props = {
   params: {
     slug: string;
   };
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const { id: questionId } = parseSlug(slug);
+
+  const { data: questionData } = await getQuestionFromID(Number(questionId));
+  const question = questionData?.[0];
+
+  if (!question) {
+    return {
+      title: "Question Not Found - RuangKoding",
+    };
+  }
+
+  return {
+    title: `${question.title} - RuangKoding`,
+    description: question.body
+      ? String(question.body).substring(0, 160)
+      : question.title,
+  };
+}
 
 export default async function QuestionDetailPage({ params }: Props) {
   const { slug } = await params;

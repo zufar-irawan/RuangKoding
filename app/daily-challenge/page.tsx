@@ -11,6 +11,11 @@ import {
   getDailyChallengeStatus,
 } from "@/lib/daily-challenge";
 import { createClient } from "@/lib/supabase/server";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Daily Coding Challenge",
+};
 
 export default async function DailyChallengePage() {
   const supabase = await createClient();

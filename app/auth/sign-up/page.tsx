@@ -1,4 +1,9 @@
 import { SignUpForm } from "@/components/Auth/sign-up-form";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Daftar ke RuangKoding",
+};
 
 export default function Page() {
   return (

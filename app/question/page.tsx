@@ -6,10 +6,16 @@ import { getAllTags, getFilteredQuestions } from "@/lib/questions";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { Metadata } from "next";
 
 interface PageProps {
   searchParams: Promise<{ search?: string }>;
 }
+
+export const metadata: Metadata = {
+  title: "Pertanyaan",
+  description: "Halaman Pertanyaan RuangKoding",
+};
 
 export default async function QuestionPage({ searchParams }: PageProps) {
   const params = await searchParams;

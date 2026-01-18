@@ -7,10 +7,16 @@ import Footer from "@/components/ui/footer";
 import FilteredFeedbackRequests from "@/components/Feedback/filtered-feedback-requests";
 import { getFilteredFeedbackRequests } from "@/lib/servers/FeedbackRequestAction";
 import { getAllTags } from "@/lib/questions";
+import { Metadata } from "next";
 
 interface PageProps {
   searchParams: Promise<{ search?: string }>;
 }
+
+export const metadata: Metadata = {
+  title: "Lautan Feedback",
+  description: "Halaman Lautan Feedback RuangKoding",
+};
 
 export default async function LautanFeedbackPage({ searchParams }: PageProps) {
   const params = await searchParams;

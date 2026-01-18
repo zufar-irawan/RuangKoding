@@ -17,6 +17,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useEffect } from "react";
 import Image from "next/image";
 
+
 export default function CompleteProfilePage() {
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | null>(null);

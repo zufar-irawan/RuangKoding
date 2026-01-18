@@ -5,6 +5,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Daftar ke RuangKoding",
+};
 
 export default function Page() {
   return (
