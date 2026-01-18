@@ -43,6 +43,7 @@ import {
   getCommentsLikesData,
 } from "@/lib/servers/commentLikeAction";
 import Link from "next/link";
+import ReportButton from "@/components/Report/report-button";
 
 type Props = {
   question_id?: number;
@@ -359,7 +360,10 @@ export default function CommentForm({ question_id, answer }: Props) {
                   {/* Parent Comment */}
                   <div className="flex gap-3">
                     {/* Avatar */}
-                    <Link href={`/${profile?.fullname?.toLowerCase().replace(" ", "-")}-${profile?.id_dummy}`} className="flex-shrink-0">
+                    <Link
+                      href={`/${profile?.fullname?.toLowerCase().replace(" ", "-")}-${profile?.id_dummy}`}
+                      className="flex-shrink-0"
+                    >
                       {profile?.profile_pic ? (
                         <Image
                           src={profile.profile_pic}
@@ -379,7 +383,10 @@ export default function CommentForm({ question_id, answer }: Props) {
                     <div className="flex-1 min-w-0">
                       {/* Header */}
                       <div className="flex items-center justify-between">
-                        <Link href={`/${profile?.fullname?.toLowerCase().replace(" ", "-")}-${profile?.id_dummy}`} className="font-semibold text-sm hover:text-primary">
+                        <Link
+                          href={`/${profile?.fullname?.toLowerCase().replace(" ", "-")}-${profile?.id_dummy}`}
+                          className="font-semibold text-sm hover:text-primary"
+                        >
                           {profile?.fullname ?? "Pengguna"}
                         </Link>
 
@@ -390,6 +397,15 @@ export default function CommentForm({ question_id, answer }: Props) {
                               locale: id,
                             })}
                           </span>
+
+                          {currentUser && profile?.id !== currentUser && (
+                            <ReportButton
+                              type="comment"
+                              referenceId={comment.id}
+                              variant="ghost"
+                              size="sm"
+                            />
+                          )}
 
                           {currentUser && profile?.id === currentUser && (
                             <AlertDialog>
@@ -456,9 +472,10 @@ export default function CommentForm({ question_id, answer }: Props) {
                           className={`
                             group relative flex items-center gap-2 px-4 py-2.5 rounded-xl
                             font-semibold transition-all duration-300 ease-out
-                            ${likesData.get(comment.id)?.liked
-                              ? "bg-primary/10 hover:bg-primary/20 text-primary"
-                              : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
+                            ${
+                              likesData.get(comment.id)?.liked
+                                ? "bg-primary/10 hover:bg-primary/20 text-primary"
+                                : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
                             }
                             ${likingComments.has(comment.id) ? "opacity-50 cursor-not-allowed" : "hover:scale-105 active:scale-95"}
                             disabled:pointer-events-none
@@ -468,9 +485,10 @@ export default function CommentForm({ question_id, answer }: Props) {
                             size={20}
                             className={`
                               transition-all duration-300 ease-out
-                              ${likesData.get(comment.id)?.liked
-                                ? "fill-primary stroke-primary scale-110"
-                                : "group-hover:scale-110"
+                              ${
+                                likesData.get(comment.id)?.liked
+                                  ? "fill-primary stroke-primary scale-110"
+                                  : "group-hover:scale-110"
                               }
                               ${likingComments.has(comment.id) ? "animate-pulse" : ""}
                             `}

@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import Image from "next/image";
 import Link from "next/link";
+import ReportButton from "@/components/Report/report-button";
 
 type FeedbackWithHTML = {
   id: number;
@@ -131,9 +132,9 @@ export default function FeedbackSection({
               const profile = feedback.profiles;
               const timeAgo = feedback.created_at
                 ? formatDistanceToNow(new Date(feedback.created_at), {
-                  addSuffix: true,
-                  locale: id,
-                })
+                    addSuffix: true,
+                    locale: id,
+                  })
                 : "";
 
               return (
@@ -153,7 +154,10 @@ export default function FeedbackSection({
                     <div className="flex-1 min-w-0">
                       <div className="text-xs md:text-sm text-muted-foreground">
                         <div className="flex items-center justify-between">
-                          <Link href={`/${profile?.fullname.toLowerCase().replace(/\s/g, "-")}-${profile?.id_dummy}`} className="flex group items-center gap-2">
+                          <Link
+                            href={`/${profile?.fullname.toLowerCase().replace(/\s/g, "-")}-${profile?.id_dummy}`}
+                            className="flex group items-center gap-2"
+                          >
                             {profile?.profile_pic ? (
                               <Image
                                 src={profile.profile_pic}
@@ -164,7 +168,8 @@ export default function FeedbackSection({
                               />
                             ) : (
                               <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full bg-secondary text-xs md:text-sm font-semibold text-secondary-foreground">
-                                {profile?.fullname.charAt(0).toUpperCase() || "U"}
+                                {profile?.fullname.charAt(0).toUpperCase() ||
+                                  "U"}
                               </div>
                             )}
                             <span className="text-foreground group-hover:text-primary">
@@ -176,6 +181,16 @@ export default function FeedbackSection({
                             <p className="text-muted-foreground hidden sm:inline">
                               {timeAgo}
                             </p>
+
+                            {currentUser &&
+                              feedback.user_id !== currentUser.id && (
+                                <ReportButton
+                                  type="feedback"
+                                  referenceId={feedback.id}
+                                  variant="ghost"
+                                  size="sm"
+                                />
+                              )}
 
                             {currentUser &&
                               feedback.user_id === currentUser.id && (

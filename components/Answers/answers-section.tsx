@@ -28,6 +28,7 @@ import { useRouter } from "next/navigation";
 import { acceptAnswer } from "@/lib/servers/AnswerAction";
 import Image from "next/image";
 import Link from "next/link";
+import ReportButton from "@/components/Report/report-button";
 
 type Props = {
   answers?: AnswerWithHTML[];
@@ -51,9 +52,9 @@ export default function AnswersSection({
   const createdAtLabel = answers.map((answer) =>
     answer.created_at
       ? formatDistanceToNow(new Date(answer.created_at), {
-        addSuffix: true,
-        locale: id,
-      })
+          addSuffix: true,
+          locale: id,
+        })
       : "",
   );
 
@@ -188,7 +189,10 @@ export default function AnswersSection({
                           : answer.profiles;
                         return (
                           <div className="flex items-center justify-between gap-2">
-                            <Link href={`/${profile?.fullname?.toLowerCase().replace(" ", "-")}-${profile?.id_dummy}`} className="flex items-center gap-2 min-w-0 group">
+                            <Link
+                              href={`/${profile?.fullname?.toLowerCase().replace(" ", "-")}-${profile?.id_dummy}`}
+                              className="flex items-center gap-2 min-w-0 group"
+                            >
                               {profile?.profile_pic ? (
                                 <Image
                                   src={profile.profile_pic}
@@ -212,6 +216,16 @@ export default function AnswersSection({
                               <p className="text-muted-foreground text-xs md:text-sm whitespace-nowrap">
                                 {createdAtLabel[idx]}
                               </p>
+
+                              {currentUser &&
+                                answer?.user_id !== currentUser.id && (
+                                  <ReportButton
+                                    type="answer"
+                                    referenceId={answer.id}
+                                    variant="ghost"
+                                    size="sm"
+                                  />
+                                )}
 
                               {currentUser &&
                                 answer?.user_id === currentUser.id && (

@@ -19,6 +19,7 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 import Link from "next/link";
+import ReportButton from "@/components/Report/report-button";
 
 type Props = {
   replies: AnswerCommentItem[];
@@ -69,7 +70,10 @@ export default function CommentReplies({
             return (
               <div key={reply.id} className="flex gap-3">
                 {/* Avatar */}
-                <Link href={`/${replyProfile?.fullname?.toLowerCase().replace(" ", "-")}-${replyProfile?.id_dummy}`} className="flex-shrink-0">
+                <Link
+                  href={`/${replyProfile?.fullname?.toLowerCase().replace(" ", "-")}-${replyProfile?.id_dummy}`}
+                  className="flex-shrink-0"
+                >
                   {replyProfile?.profile_pic ? (
                     <Image
                       src={replyProfile.profile_pic}
@@ -89,7 +93,10 @@ export default function CommentReplies({
                 <div className="flex-1 min-w-0">
                   {/* Header */}
                   <div className="flex items-center justify-between">
-                    <Link href={`/${replyProfile?.fullname?.toLowerCase().replace(" ", "-")}-${replyProfile?.id_dummy}`} className="font-semibold text-sm hover:text-primary">
+                    <Link
+                      href={`/${replyProfile?.fullname?.toLowerCase().replace(" ", "-")}-${replyProfile?.id_dummy}`}
+                      className="font-semibold text-sm hover:text-primary"
+                    >
                       {replyProfile?.fullname ?? "Pengguna"}
                     </Link>
                     <div className="flex items-center gap-2">
@@ -99,6 +106,16 @@ export default function CommentReplies({
                           locale: id,
                         })}
                       </span>
+
+                      {currentUser && replyProfile?.id !== currentUser && (
+                        <ReportButton
+                          type="comment"
+                          referenceId={reply.id}
+                          variant="ghost"
+                          size="sm"
+                        />
+                      )}
+
                       {currentUser && replyProfile?.id === currentUser && (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
@@ -154,9 +171,10 @@ export default function CommentReplies({
                       className={`
                         group relative flex items-center gap-2 px-3 py-2 rounded-xl
                         font-semibold transition-all duration-300 ease-out
-                        ${likesData.get(reply.id)?.liked
-                          ? "bg-primary/10 hover:bg-primary/20 text-primary"
-                          : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
+                        ${
+                          likesData.get(reply.id)?.liked
+                            ? "bg-primary/10 hover:bg-primary/20 text-primary"
+                            : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
                         }
                         ${likingComments.has(reply.id) ? "opacity-50 cursor-not-allowed" : "hover:scale-105 active:scale-95"}
                         disabled:pointer-events-none
@@ -166,9 +184,10 @@ export default function CommentReplies({
                         size={16}
                         className={`
                           transition-all duration-300 ease-out
-                          ${likesData.get(reply.id)?.liked
-                            ? "fill-primary stroke-primary scale-110"
-                            : "group-hover:scale-110"
+                          ${
+                            likesData.get(reply.id)?.liked
+                              ? "fill-primary stroke-primary scale-110"
+                              : "group-hover:scale-110"
                           }
                           ${likingComments.has(reply.id) ? "animate-pulse" : ""}
                         `}

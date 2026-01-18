@@ -12,6 +12,7 @@ import { parseLexicalBodyToHTML } from "@/lib/lexical/lexical-parser";
 
 import RequestVote from "@/components/Feedback/request-vote";
 import FeedbackSection from "@/components/Feedback/feedback-section";
+import RequestReportButton from "@/components/Feedback/request-report-button";
 import Link from "next/link";
 
 type RequestContentProps = {
@@ -85,27 +86,38 @@ export default async function RequestContent({
         </div>
       </div>
 
-      <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
-        {profile && (
-          <Link href={`/${profile.fullname.toLowerCase().replace(/\s/g, "-")}-${profile.id_dummy}`} className="flex group items-center gap-2">
-            {profile.profile_pic ? (
-              <Image
-                src={profile.profile_pic}
-                alt={profile.fullname}
-                width={24}
-                height={24}
-                className="rounded-full h-7 w-7 md:h-8 md:w-8"
-              />
-            ) : (
-              <div className="flex h-7 w-7 md:h-8 md:w-8 lg:w-9 lg:h-9 items-center justify-center rounded-full bg-secondary text-xs md:text-sm lg:text-md font-semibold text-secondary-foreground">
-                {profile.fullname.charAt(0).toUpperCase()}
-              </div>
-            )}
-            <span className="group-hover:text-primary">{profile.fullname}</span>
-          </Link>
-        )}
-        <span>•</span>
-        <span>{createdAtLabel}</span>
+      <div className="flex items-center justify-between gap-2 text-xs md:text-sm text-muted-foreground">
+        <div className="flex items-center gap-2">
+          {profile && (
+            <Link
+              href={`/${profile.fullname.toLowerCase().replace(/\s/g, "-")}-${profile.id_dummy}`}
+              className="flex group items-center gap-2"
+            >
+              {profile.profile_pic ? (
+                <Image
+                  src={profile.profile_pic}
+                  alt={profile.fullname}
+                  width={24}
+                  height={24}
+                  className="rounded-full h-7 w-7 md:h-8 md:w-8"
+                />
+              ) : (
+                <div className="flex h-7 w-7 md:h-8 md:w-8 lg:w-9 lg:h-9 items-center justify-center rounded-full bg-secondary text-xs md:text-sm lg:text-md font-semibold text-secondary-foreground">
+                  {profile.fullname.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <span className="group-hover:text-primary">
+                {profile.fullname}
+              </span>
+            </Link>
+          )}
+          <span>•</span>
+          <span>{createdAtLabel}</span>
+        </div>
+        <RequestReportButton
+          requestId={request.id}
+          requestUserId={request.user_id}
+        />
       </div>
 
       <div className="flex gap-4 md:gap-8 text-xs md:text-sm mt-2">

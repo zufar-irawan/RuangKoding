@@ -11,6 +11,7 @@ import QuestionBody from "@/components/Questions/question-body";
 import SharesNVote from "@/components/Questions/share-vote";
 import CommentForm from "@/components/Comments/comment-form";
 import AnswersSection from "@/components/Answers/answers-section";
+import QuestionReportButton from "@/components/Questions/question-report-button";
 
 function getCountValue(relation?: CountRelation | null): number {
   if (!relation) {
@@ -81,9 +82,15 @@ export default async function QuestionContent({
 
   return (
     <div className="flex flex-col gap-3 md:gap-4">
-      <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary leading-tight">
-        {question?.title}
-      </h1>
+      <div className="flex items-start justify-between gap-2">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary leading-tight flex-1">
+          {question?.title}
+        </h1>
+        <QuestionReportButton
+          questionId={question?.id}
+          questionUserId={question?.user_id}
+        />
+      </div>
 
       <UserProfilesQuestion
         profile={profile ?? {}}

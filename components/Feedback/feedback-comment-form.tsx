@@ -12,6 +12,7 @@ import {
   toggleCommentLike,
   getCommentsLikesData,
 } from "@/lib/servers/commentLikeAction";
+import ReportButton from "@/components/Report/report-button";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import {
@@ -347,10 +348,12 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
             {replies.map((reply) => {
               const profile = reply.profiles;
               return (
-
                 <div key={reply.id} className="flex gap-2 md:gap-3">
                   {/* Avatar */}
-                  <Link href={`/${profile?.fullname.toLowerCase().replace(/\s/g, "-")}-${profile?.id_dummy}`} className="flex-shrink-0">
+                  <Link
+                    href={`/${profile?.fullname.toLowerCase().replace(/\s/g, "-")}-${profile?.id_dummy}`}
+                    className="flex-shrink-0"
+                  >
                     {profile?.profile_pic ? (
                       <Image
                         src={profile?.profile_pic}
@@ -370,7 +373,10 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
                   <div className="flex-1 min-w-0">
                     {/* Header */}
                     <div className="flex items-center justify-between">
-                      <Link href={`/${profile?.fullname.toLowerCase().replace(/\s/g, "-")}-${profile?.id_dummy}`} className="hover:text-primary font-semibold text-xs md:text-sm">
+                      <Link
+                        href={`/${profile?.fullname.toLowerCase().replace(/\s/g, "-")}-${profile?.id_dummy}`}
+                        className="hover:text-primary font-semibold text-xs md:text-sm"
+                      >
                         {profile?.fullname ?? "Pengguna"}
                       </Link>
 
@@ -381,6 +387,15 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
                             locale: id,
                           })}
                         </span>
+
+                        {currentUser && reply.user_id !== currentUser.id && (
+                          <ReportButton
+                            type="comment"
+                            referenceId={reply.id}
+                            variant="ghost"
+                            size="sm"
+                          />
+                        )}
 
                         {currentUser && reply.user_id === currentUser.id && (
                           <AlertDialog>
@@ -444,14 +459,18 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
                       <button
                         type="button"
                         onClick={() => toggleLike(reply.id, reply.user_id)}
-                        disabled={likingComments.has(reply.id) || (currentUser?.id === reply.user_id)}
+                        disabled={
+                          likingComments.has(reply.id) ||
+                          currentUser?.id === reply.user_id
+                        }
                         className={`
                             group relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl
                             font-semibold transition-all duration-300 ease-out
-                            ${likesData.get(reply.id)?.liked
-                            ? "bg-primary/10 hover:bg-primary/20 text-primary"
-                            : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                          }
+                            ${
+                              likesData.get(reply.id)?.liked
+                                ? "bg-primary/10 hover:bg-primary/20 text-primary"
+                                : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                            }
                             ${likingComments.has(reply.id) ? "opacity-50 cursor-not-allowed" : "active:scale-95"}
                              ${currentUser?.id === reply.user_id ? "opacity-50 cursor-not-allowed" : ""}
                             disabled:pointer-events-none
@@ -461,10 +480,11 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
                           size={14}
                           className={`
                               transition-all duration-300 ease-out
-                              ${likesData.get(reply.id)?.liked
-                              ? "fill-primary stroke-primary scale-110"
-                              : "group-hover:scale-110"
-                            }
+                              ${
+                                likesData.get(reply.id)?.liked
+                                  ? "fill-primary stroke-primary scale-110"
+                                  : "group-hover:scale-110"
+                              }
                               ${likingComments.has(reply.id) ? "animate-pulse" : ""}
                             `}
                         />
@@ -473,11 +493,9 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
                         </span>
                       </button>
                     </div>
-
                   </div>
                 </div>
               );
-
             })}
           </div>
         )}
@@ -541,7 +559,10 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
                   {/* Parent Comment */}
                   <div className="flex gap-2 md:gap-3">
                     {/* Avatar */}
-                    <Link href={`/${profile?.fullname.toLowerCase().replace(/\s/g, "-")}-${profile?.id_dummy}`} className="flex-shrink-0">
+                    <Link
+                      href={`/${profile?.fullname.toLowerCase().replace(/\s/g, "-")}-${profile?.id_dummy}`}
+                      className="flex-shrink-0"
+                    >
                       {profile?.profile_pic ? (
                         <Image
                           src={profile.profile_pic}
@@ -561,7 +582,10 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
                     <div className="flex-1 min-w-0">
                       {/* Header */}
                       <div className="flex items-center justify-between">
-                        <Link href={`/${profile?.fullname.toLowerCase().replace(/\s/g, "-")}-${profile?.id_dummy}`} className="font-semibold text-xs md:text-sm hover:text-primary">
+                        <Link
+                          href={`/${profile?.fullname.toLowerCase().replace(/\s/g, "-")}-${profile?.id_dummy}`}
+                          className="font-semibold text-xs md:text-sm hover:text-primary"
+                        >
                           {profile?.fullname ?? "Pengguna"}
                         </Link>
 
@@ -572,6 +596,16 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
                               locale: id,
                             })}
                           </span>
+
+                          {currentUser &&
+                            comment.user_id !== currentUser.id && (
+                              <ReportButton
+                                type="comment"
+                                referenceId={comment.id}
+                                variant="ghost"
+                                size="sm"
+                              />
+                            )}
 
                           {currentUser &&
                             comment.user_id === currentUser.id && (
@@ -648,14 +682,20 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
 
                         <button
                           type="button"
-                          onClick={() => toggleLike(comment.id, comment.user_id)}
-                          disabled={likingComments.has(comment.id) || (currentUser?.id === comment.user_id)}
+                          onClick={() =>
+                            toggleLike(comment.id, comment.user_id)
+                          }
+                          disabled={
+                            likingComments.has(comment.id) ||
+                            currentUser?.id === comment.user_id
+                          }
                           className={`
                             group relative flex items-center gap-2 px-4 py-1.5 rounded-xl
                             font-semibold transition-all duration-300 ease-out
-                            ${likesData.get(comment.id)?.liked
-                              ? "bg-primary/10 hover:bg-primary/20 text-primary"
-                              : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
+                            ${
+                              likesData.get(comment.id)?.liked
+                                ? "bg-primary/10 hover:bg-primary/20 text-primary"
+                                : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground"
                             }
                             ${likingComments.has(comment.id) ? "opacity-50 cursor-not-allowed" : "hover:scale-105 active:scale-95"}
                             ${currentUser?.id === comment.user_id ? "opacity-50 cursor-not-allowed" : ""}
@@ -666,9 +706,10 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
                             size={16}
                             className={`
                               transition-all duration-300 ease-out
-                              ${likesData.get(comment.id)?.liked
-                                ? "fill-primary stroke-primary scale-110"
-                                : "group-hover:scale-110"
+                              ${
+                                likesData.get(comment.id)?.liked
+                                  ? "fill-primary stroke-primary scale-110"
+                                  : "group-hover:scale-110"
                               }
                               ${likingComments.has(comment.id) ? "animate-pulse" : ""}
                             `}
@@ -699,8 +740,8 @@ export default function FeedbackCommentForm({ feedbackId }: Props) {
               );
             })
           )}
-        </div >
+        </div>
       )}
-    </div >
+    </div>
   );
 }
