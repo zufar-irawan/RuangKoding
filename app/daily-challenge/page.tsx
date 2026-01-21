@@ -69,25 +69,15 @@ export default async function DailyChallengePage() {
   const userSubmission = await getUserSubmission(todayChallenge.id);
 
   return (
-    <main className="min-h-screen flex flex-col bg-background">
-      <Navbar />
-
-      <div className="flex w-full mt-16">
-        <Sidebar tabs="home" />
-
-        <div className="flex-1 lg:ml-[22rem] p-6 lg:p-8 overflow-y-auto min-h-[calc(100vh-4rem)]">
-          <div className="max-w-5xl mx-auto pb-20">
-            <ChallengeEditor
-              challengeId={todayChallenge.id}
-              challenge={todayChallenge.challenge}
-              initialSubmission={userSubmission}
-              streak={challengeStatus?.streak || 0}
-            />
-          </div>
-        </div>
+    <div className="flex-1 lg:ml-[22rem] p-6 lg:p-8 overflow-y-auto min-h-[calc(100vh-4rem)]">
+      <div className="max-w-5xl mx-auto pb-20">
+        <ChallengeEditor
+          challengeId={todayChallenge.id}
+          challenge={todayChallenge.challenge}
+          initialSubmission={userSubmission}
+          streak={challengeStatus?.streak || 0}
+        />
       </div>
-
-      <Footer />
-    </main>
+    </div>
   );
 }

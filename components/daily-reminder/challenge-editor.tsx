@@ -17,8 +17,9 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, CheckCircle2, XCircle, Flame, Info } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, Flame, Info, ChartBar } from "lucide-react";
 import { toast } from "sonner";
+import Link from "next/link";
 
 interface UserSubmission {
   id: string;
@@ -271,6 +272,28 @@ export function ChallengeEditor({
                 }}
               />
             </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              Leadeboard
+            </CardTitle>
+          </CardHeader>
+
+          <CardContent className="flex w-full justify-between">
+            <p className="flex max-w-lg">
+              Lihat leaderboard pengerjaan daily challenge
+              hari ini, dan lihat penyelesaian user lain!
+            </p>
+
+            <Link href={"/daily-challenge/leaderboard"}>
+              <Button>
+                <ChartBar />
+                Leaderboard
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
